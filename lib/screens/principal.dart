@@ -1,0 +1,521 @@
+import 'package:flutter/material.dart';
+import 'info_general.dart';
+import 'guardar_archivo.dart';
+import 'recinto1/muro_p_r1.dart';
+import 'recinto1/muro_eje_b_r1.dart';
+import 'recinto1/muro_eje_c_r1.dart';
+import 'recinto1/piso_cielo_r1.dart';
+import 'package:provider/provider.dart';
+import '../providers/app_state.dart';
+
+class PantallaPrincipal extends StatefulWidget {
+  const PantallaPrincipal({super.key});
+
+  @override
+  State<PantallaPrincipal> createState() => _PantallaPrincipalState();
+}
+
+class _PantallaPrincipalState extends State<PantallaPrincipal> {
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final pantallas = [
+      const InformacionGeneral(key: ValueKey('infoGeneral')),// ==> 0
+      const GuardarArchivo(key: ValueKey('guardarArchivo')),// ==> 1
+
+      //Recinto 1
+      const Muro_Principal_R1(key: ValueKey('muro_Eje_A_R1')),// ==> 2 Principal
+      const Muro_Eje_B_R1(key: ValueKey('muro_Eje_B_R1')),// ==> 3 Muros
+      const Muro_Eje_C_R1(key: ValueKey('muro_Eje_C_R1')),// ==> 4
+      //const Muro_Eje_D_R1(key: ValueKey('muro_Eje_D_R1')),// ==> 5
+      //const Muro_Eje_E_R1(key: ValueKey('muro_Eje_E_R1')),// ==> 6
+      //const Muro_Eje_F_R1(key: ValueKey('muro_Eje_F_R1')),// ==> 7
+      //const Muro_Eje_G_R1(key: ValueKey('muro_Eje_G_R1')),// ==> 8
+      const Piso_Cielo_R1(key: ValueKey('piso_cielo_R1')),// ==> 9 Piso cielo
+
+      //Recinto 2
+      //const Muro_Principal_R2(key: ValueKey('muro_Eje_A_R2')),// ==> 10 Principal
+      //const Muro_Eje_B_R2(key: ValueKey('muro_Eje_B_R2')),// ==> 11 Muros
+      //const Muro_Eje_C_R2(key: ValueKey('muro_Eje_C_R2')),// ==> 12
+      //const Muro_Eje_D_R2(key: ValueKey('muro_Eje_D_R2')),// ==> 13
+      //const Muro_Eje_E_R2(key: ValueKey('muro_Eje_E_R2')),// ==> 14
+      //const Muro_Eje_F_R2(key: ValueKey('muro_Eje_F_R2')),// ==> 15
+      //const Muro_Eje_G_R2(key: ValueKey('muro_Eje_G_R2')),// ==> 16
+      //const Piso_Cielo_R2(key: ValueKey('piso_cielo_R2')),// ==> 17 Piso Cielo
+
+      //Recinto 3
+      //const Muro_Principal_R3(key: ValueKey('muro_Eje_A_R3')),// ==> 18 Principal
+      //const Muro_Eje_B_R3(key: ValueKey('muro_Eje_B_R3')),// ==> 19 Muros
+      //const Muro_Eje_C_R3(key: ValueKey('muro_Eje_C_R3')),// ==> 20
+      //const Muro_Eje_D_R3(key: ValueKey('muro_Eje_D_R3')),// ==> 21
+      //const Muro_Eje_E_R3(key: ValueKey('muro_Eje_D_R3')),// ==> 22
+      //const Muro_Eje_F_R3(key: ValueKey('muro_Eje_D_R3')),// ==> 23
+      //const Muro_Eje_G_R3(key: ValueKey('muro_Eje_D_R3')),// ==> 24
+      //const Piso_Cielo_R3(key: ValueKey('piso_cielo_R3')),// ==> 25 Piso Cielo
+
+      //Recinto 4
+      //const Muro_Principal_R4(key: ValueKey('muro_Eje_A_R4')),// ==> 26 Principal
+      //const Muro_Eje_B_R4(key: ValueKey('muro_Eje_B_R4')),// ==> 27 Muros
+      //const Muro_Eje_C_R4(key: ValueKey('muro_Eje_C_R4')),// ==> 28
+      //const Muro_Eje_D_R4(key: ValueKey('muro_Eje_D_R4')),// ==> 29
+      //const Muro_Eje_E_R4(key: ValueKey('muro_Eje_D_R4')),// ==> 30
+      //const Muro_Eje_F_R4(key: ValueKey('muro_Eje_D_R4')),// ==> 31
+      //const Muro_Eje_G_R4(key: ValueKey('muro_Eje_D_R4')),// ==> 32
+      //const Piso_Cielo_R4(key: ValueKey('piso_cielo_R4')),// ==> 33 Piso Cielo
+
+      //Recinto 5
+      //const Muro_Principal_R5(key: ValueKey('muro_Eje_A_R5')),// ==> 34 Principal
+      //const Muro_Eje_B_R5(key: ValueKey('muro_Eje_B_R5')),// ==> 35 Muros
+      //const Muro_Eje_C_R5(key: ValueKey('muro_Eje_C_R5')),// ==> 36
+      //const Muro_Eje_D_R5(key: ValueKey('muro_Eje_D_R5')),// ==> 37
+      //const Muro_Eje_E_R5(key: ValueKey('muro_Eje_D_R5')),// ==> 38
+      //const Muro_Eje_F_R5(key: ValueKey('muro_Eje_D_R5')),// ==> 39
+      //const Muro_Eje_G_R5(key: ValueKey('muro_Eje_D_R5')),// ==> 40
+      //const Piso_Cielo_R5(key: ValueKey('piso_cielo_R5')),// ==> 41 Piso Cielo
+
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'App Citec Ubb',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: Colors.blueAccent,
+        centerTitle: true,
+        actions: [
+          if (appState.pantallaActual != 1)
+            IconButton(
+              icon: Icon(Icons.save, color: Colors.white),
+              onPressed: () {
+                appState.HoraFin();
+                appState.cambiarPantalla(1);
+              },
+            ),
+
+          if (appState.pantallaActual != 0 && appState.pantallaActual != 1)
+            IconButton(
+              icon: Icon(Icons.delete, color: Colors.white),
+              onPressed: () async {
+                if(
+                  appState.pantallaActual == 2
+                /*|| appState.pantallaActual == 10
+                  || appState.pantallaActual == 18
+                  || appState.pantallaActual == 26
+                  || appState.pantallaActual == 34
+                  || appState.pantallaActual == 42
+                 Seguir agregando pantallas principales para eliminarlas
+               */
+                )
+                  await appState.eliminarPantallaPrincipalActual(context);
+                if(
+                  appState.pantallaActual == 3
+                  || appState.pantallaActual == 4
+               /* || appState.pantallaActual == 5
+                  || appState.pantallaActual == 6
+                  || appState.pantallaActual == 7
+                  || appState.pantallaActual == 8
+                  || appState.pantallaActual == 11
+                  || appState.pantallaActual == 12
+                  || appState.pantallaActual == 13
+                  || appState.pantallaActual == 14
+                  || appState.pantallaActual == 15
+                  || appState.pantallaActual == 16
+                  || appState.pantallaActual == 19
+                  || appState.pantallaActual == 20
+                  || appState.pantallaActual == 21
+                  || appState.pantallaActual == 22
+                  || appState.pantallaActual == 23
+                  || appState.pantallaActual == 24
+                  || appState.pantallaActual == 27
+                  || appState.pantallaActual == 28
+                  || appState.pantallaActual == 29
+                  || appState.pantallaActual == 30
+                  || appState.pantallaActual == 31
+                  || appState.pantallaActual == 32
+                  || appState.pantallaActual == 35
+                  || appState.pantallaActual == 36
+                  || appState.pantallaActual == 37
+                  || appState.pantallaActual == 38
+                  || appState.pantallaActual == 39
+                  || appState.pantallaActual == 40
+                  Seguir agregando pantallas de muros para eliminarlas
+               */
+                )
+                  await appState.eliminarPantallaMuroActual(context);
+
+
+
+                if(
+                  appState.pantallaActual == 5
+              /*  || appState.pantallaActual == 17
+                  || appState.pantallaActual == 25
+                  || appState.pantallaActual == 33
+                  || appState.pantallaActual == 41
+                  Seguir agregando pantallas de piso cielo para eliminarlas
+              */
+                  )
+                  await appState.eliminarPantallaPisoCieloActual(context);
+
+
+              },
+            ),
+
+          IconButton(
+            icon: Icon(Icons.cancel, color: Colors.white),
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Reiniciar el proceso'),
+                  content: Text(
+                    '¿Estás seguro de que deseas cancelar la inspección? '
+                        'Se perderán todos los datos.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text('Cancelar'),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                      ),
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text('Reiniciar'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirm == true) {
+                final appState = context.read<AppState>();
+                appState.reiniciarApp();
+                Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+              }
+            },
+          ),
+        ],
+      ),
+
+      drawer: Drawer(
+        child: Column(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Row(
+                children: [
+                  Icon(Icons.description, color: Colors.white, size: 40),
+                  SizedBox(width: 10),
+                  Text(
+                    'Hojas del archivo',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.info_outline_rounded),
+                    title: Text('Información General'),
+                    selected: appState.pantallaActual == 0,
+                    onTap: () {
+                      setState(() => appState.pantallaActual = 0);
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                  ExpansionTile(
+                    leading: Icon(Icons.looks_one),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            appState.recinto1_nombreController.text,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blueAccent),
+                          onPressed: () async {
+                            final nuevoNombre = await appState.EditarNombre(
+                              context,
+                              appState.recinto1_nombreController.text,
+                            );
+                            if (nuevoNombre != null && nuevoNombre.isNotEmpty) {
+                              appState.actualizarNombreRecinto(1, nuevoNombre);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+
+                    childrenPadding: const EdgeInsets.only(left: 30),
+                    children: [
+                      ListTile(
+                        title: Text("- "+appState.r1_murop_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_p_r1 = true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 1");
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_p_r1
+                          ? Icon(Icons.edit_document, color: Colors.green)
+                          : Icon(Icons.edit_off, color: Colors.grey),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_murob_nombreController.text),
+                        selected: appState.pantallaActual == 3,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 3);
+                          appState.muro_eje_b_r1=true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 1");
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_b_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_muroc_nombreController.text),
+                        selected: appState.pantallaActual == 4,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 4);
+                          appState.muro_eje_c_r1=true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 1");
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_c_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_murod_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_d_r1=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_d_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_muroe_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_e_r1=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_e_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_murof_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_f_r1=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_f_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_murog_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_g_r1=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_g_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r1_pisocielo_nombreController.text),
+                        selected: appState.pantallaActual == 5,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 5);
+                          appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 1");
+                          appState.piso_cielo_r1=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.piso_cielo_r1
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      )
+                    ],
+                  ),
+
+                  ExpansionTile(
+                    leading: Icon(Icons.looks_one),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            appState.recinto2_nombreController.text,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blueAccent),
+                          onPressed: () async {
+                            final nuevoNombre = await appState.EditarNombre(
+                              context,
+                              appState.recinto2_nombreController.text,
+                            );
+                            if (nuevoNombre != null && nuevoNombre.isNotEmpty) {
+                              appState.actualizarNombreRecinto(1, nuevoNombre);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+
+                    childrenPadding: const EdgeInsets.only(left: 30),
+                    children: [
+
+                      ListTile(
+                        title: Text("- "+appState.r2_murop_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_p_r2 = true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 2");
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_p_r2
+                            ? Icon(Icons.edit_document, color: Colors.green)
+                            : Icon(Icons.edit_off, color: Colors.grey),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_murob_nombreController.text),
+                        selected: appState.pantallaActual == 3,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 3);
+                          appState.muro_eje_b_r2=true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 2");
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_b_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_muroc_nombreController.text),
+                        selected: appState.pantallaActual == 4,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 4);
+                          appState.muro_eje_c_r2=true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 2");
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_c_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_murod_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_d_r2=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_d_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_muroe_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_e_r2=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_e_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_murof_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_f_r2=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_f_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_murog_nombreController.text),
+                        selected: appState.pantallaActual == 2,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 2);
+                          appState.muro_eje_g_r2=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.muro_eje_g_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      ),
+                      ListTile(
+                        title: Text("- "+appState.r2_pisocielo_nombreController.text),
+                        selected: appState.pantallaActual == 5,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 5);
+                          appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 2");
+                          appState.piso_cielo_r2=true;
+                          Navigator.pop(context);
+                        },
+                        trailing: appState.piso_cielo_r2
+                            ? Icon(Icons.edit_document, color: Colors.green, size: 24.0)
+                            : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
+                      )
+                    ],
+                  ),
+
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        child: pantallas[appState.pantallaActual],
+      ),
+    );
+  }
+
+
+}
