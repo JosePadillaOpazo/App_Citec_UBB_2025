@@ -4,24 +4,25 @@ import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import 'package:image_picker/image_picker.dart';
 
-class Piso_Cielo_R1 extends StatefulWidget {
-  const Piso_Cielo_R1({super.key});
+class Muro_Eje_F_R1 extends StatefulWidget {
+  const Muro_Eje_F_R1({super.key});
 
   @override
-  State<Piso_Cielo_R1> createState() => _Piso_Cielo_R1State();
+  State<Muro_Eje_F_R1> createState() => _Muro_Eje_F_R1State();
 }
 
-class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
-  GlobalKey canvaskeyPiso_R1 = GlobalKey();
-  GlobalKey canvaskeyCielo_R1 = GlobalKey();
+class _Muro_Eje_F_R1State extends State<Muro_Eje_F_R1> {
+  GlobalKey canvaskeyImg1_Murof_R1 = GlobalKey();//---------------------------------------------------------------------> Editar al copiar la hoja
+  GlobalKey canvaskeyImg2_Murof_R1 = GlobalKey();
 
-  List<Offset?> _pointsPiso = [];
-  List<Offset?> _pointsCielo = [];
+  List<Offset?> _pointsImg1_FR1 = [];//---------------------------------------------------------------------> Editar al copiar la hoja
+  List<Offset?> _pointsImg2_FR1 = [];
+
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final hojaActual = appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 1"); //---------------------------------------------------------------------> Editar al copiar la hoja
+    final hojaActual = appState.obtenerHojaMuro("Muro Eje F - Recinto 1"); //---------------------------------------------------------------------> Editar al copiar la hoja
 
 
     return SingleChildScrollView(
@@ -35,9 +36,23 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Piso",//----------------------------------------------------------------------------------> Editar al copiar la hoja
+                  appState.r1_murof_nombreController.text,//----------------------------------------------------------------------------------> Editar al copiar la hoja
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
+
+                IconButton(
+                  onPressed:() async {
+                    final nuevoNombre = await appState.EditarNombre(
+                      context,
+                      appState.r1_murof_nombreController.text,//------------------------------------------------------------------------------> Editar al copiar la hoja
+                    );
+
+                    if (nuevoNombre != null && nuevoNombre.isNotEmpty) {
+                      appState.actualizarNombreMuro(6,nuevoNombre);//--------------------------------------------------------------------------> Editar al copiar la hoja
+                    }
+                  },
+                  icon: Icon(Icons.edit, color: Colors.blueAccent),
+                )
               ]
             )
           ),
@@ -46,18 +61,25 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
-          // INFORMACION DEL PISO
+          // INFORMACION DEL MURO
           // -------------------------------------------------------------------
 
           Text(
-            "Superficie Piso",
+            "🧱  Informacion del Muro",
             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
 
+          Text(
+            "Muro Eje:",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
           TextFormField(
-            controller: hojaActual.supPisoController,
+            controller: hojaActual.muroejeController,
             decoration: const InputDecoration(
               labelText: "Asignar Eje al Muro",
               border: OutlineInputBorder(),
@@ -73,14 +95,126 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Nivel de afectacion",
+            "Superficie muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.supmuroController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Superficie ventana",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.supventanaController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Muro perimetral",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.muroperimetralController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Muro interior",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.murointController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Nivel de afectación",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.nivelafecPisoController,
+            valueListenable: hojaActual.nivelafecController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -92,7 +226,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.nivelafecPisoController.text = newSelection.first;
+                  hojaActual.nivelafecController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -141,14 +275,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Perímetro",
+            "Encuentro esquina muro",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.mh_perimetroPisoController,
+            valueListenable: hojaActual.mh_encEsqMurController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -158,7 +292,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_perimetroPisoController.text = newSelection.first;
+                  hojaActual.mh_encEsqMurController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -182,7 +316,255 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.mh_supperimetroPisoController,
+            controller: hojaActual.mh_supencEsqMurController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro cielo muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_encCieMurController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.mh_encCieMurController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.mh_supencCieMurController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro piso muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_encPisMurController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.mh_encPisMurController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.mh_supencPisMurController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Rasgo de ventana",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_rasgventController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.mh_rasgventController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.mh_suprasgventController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Bajo ventana (antepecho)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_bajovenController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.mh_bajovenController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.mh_supbajovenController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -210,7 +592,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.mh_aCentralPisoController,
+            valueListenable: hojaActual.mh_aCentralController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -220,7 +602,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_aCentralPisoController.text = newSelection.first;
+                  hojaActual.mh_aCentralController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -244,7 +626,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.mh_supaCentralPisoController,
+            controller: hojaActual.mh_supaCentralController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -272,7 +654,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.mh_punlocPisoController,
+            valueListenable: hojaActual.mh_punLocController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -282,7 +664,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_punlocPisoController.text = newSelection.first;
+                  hojaActual.mh_punLocController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -306,7 +688,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.mh_supPunlocPisoController,
+            controller: hojaActual.mh_suppunLocController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -324,7 +706,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "▪️Daño físico mecánico",
@@ -334,14 +716,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Perímetro",
+            "Encuentro esquina muro",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.df_perimetroPisoController,
+            valueListenable: hojaActual.df_encEsqMurController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -351,7 +733,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_perimetroPisoController.text = newSelection.first;
+                  hojaActual.df_encEsqMurController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -375,7 +757,255 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.df_supperimetroPisoController,
+            controller: hojaActual.df_supencEsqMurController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro cielo muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_encCieMurController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.df_encCieMurController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.df_supencCieMurController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro piso muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_encPisMurController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.df_encPisMurController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.df_supencPisMurController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Rasgo de ventana",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_rasgventController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.df_rasgventController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.df_suprasgventController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Bajo ventana (antepecho)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_bajovenController,
+            builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Si', label: Text('Sí')),
+                  ButtonSegment(value: 'No', label: Text('No')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.df_bajovenController.text = newSelection.first;
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return seleccion == 'No' ? Colors.red : Colors.green;
+                      }
+                      return Colors.grey.shade300;
+                    },
+                  ),
+                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                        (states) => states.contains(WidgetState.selected)
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.df_supbajovenController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -403,7 +1033,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.df_aCentralPisoController,
+            valueListenable: hojaActual.df_aCentralController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -413,7 +1043,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_aCentralPisoController.text = newSelection.first;
+                  hojaActual.df_aCentralController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -437,7 +1067,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.df_supaCentralPisoController,
+            controller: hojaActual.df_supaCentralController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -465,7 +1095,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.df_punlocPisoController,
+            valueListenable: hojaActual.df_punLocController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text;
               return SegmentedButton<String>(
@@ -475,7 +1105,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_punlocPisoController.text = newSelection.first;
+                  hojaActual.df_punLocController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -499,7 +1129,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.df_supPunlocPisoController,
+            controller: hojaActual.df_suppunLocController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -520,14 +1150,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 20),
 
           Text(
-            "▪️Total superficie de piso afectada",
+            "▪️Total superficie de muro afectada",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.totpalsupafecPisoController,
+            controller: hojaActual.totpalsupafecController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -547,12 +1177,17 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
 
           const SizedBox(height: 20),
 
-          // -------------------------------------------------------------------
-          // SECCIÓN DE FOTO PISO
+
+
+
+
+
+          // --------------------------------------------------------------------
+          // SECCIÓN DE FOTO PATOLOGIA
           // -------------------------------------------------------------------
 
           Text(
-            "Respaldo Visual",
+            "Respaldo Visual ",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
 
@@ -561,24 +1196,22 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPisoCielo(
+                onPressed: () => appState.obtenerImagenHojaMuro(
                   fuente: ImageSource.camera,
                   hoja: hojaActual,
                   imgnum: 1,
                   onImagenSeleccionada: (img) {
                     setState(() {
-                      hojaActual.imgpiso = img;
-                      hojaActual.imgPisoGuardada = null;
-                      _pointsPiso.clear();
-                      canvaskeyPiso_R1 = GlobalKey();
+                      hojaActual.imgpatol = img;
+                      hojaActual.imgpatolGuardada = null;
+                      _pointsImg1_FR1.clear();
                     });
                   },
-
                 ),
-                icon: const Icon(Icons.camera_alt),
-                label: const Text("Tomar Foto"),
+                icon: Icon(Icons.camera_alt),
+                label: Text("Tomar Foto"),
               ),
-              //const SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
           ),
 
@@ -588,7 +1221,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           // SECCIÓN DIBUJO
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgpiso != null && hojaActual.imgPisoGuardada == null) ...[
+          if (hojaActual.imgpatol != null && hojaActual.imgpatolGuardada == null) ...[
             Text(
               "Dibuja observaciones sobre la imagen:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -598,14 +1231,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
 
             Center(
               child: RepaintBoundary(
-                key: canvaskeyPiso_R1, //---------------------------------------------------------------------------> Editar al copiar la hoja
+                key: canvaskeyImg1_Murof_R1,
                 child: Container(
                   width: 900,
                   height: 800,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
-                      image: FileImage(hojaActual.imgpiso!),
+                      image: FileImage(hojaActual.imgpatol!),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -620,13 +1253,13 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                                 localPosition.dx <= constraints.maxWidth &&
                                 localPosition.dy >= 0 &&
                                 localPosition.dy <= constraints.maxHeight) {
-                              _pointsPiso = List.from(_pointsPiso)..add(localPosition);
+                              _pointsImg1_FR1 = List.from(_pointsImg1_FR1)..add(localPosition);
                             }
                           });
                         },
-                        onPanEnd: (_) => setState(() => _pointsPiso.add(null)),
+                        onPanEnd: (_) => setState(() => _pointsImg1_FR1.add(null)),
                         child: CustomPaint(
-                          painter: DibujoPainter(_pointsPiso),
+                          painter: DibujoPainter(_pointsImg1_FR1),
                         ),
                       );
                     },
@@ -642,14 +1275,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 icon: Icon(Icons.save),
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
-                  await appState.guardarDibujoHojaPisoCielo(
-                    canvasKey: canvaskeyPiso_R1, //---------------------------------------------------------------------> Editar al copiar la hoja
+                  await appState.guardarDibujoHojaMuro(
+                    canvasKey: canvaskeyImg1_Murof_R1,
                     hoja: hojaActual,
                     imgnum: 1,
                     onGuardado: (file) {
                       setState(() {
-                        hojaActual.imgPisoGuardada= file;
-                        _pointsPiso.clear();
+                        hojaActual.imgpatolGuardada= file;
+                        _pointsImg1_FR1.clear();
                       });
                     },
                     context: context,
@@ -665,7 +1298,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           // SECCIÓN RESULTADO (IMAGEN GUARDADA)
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgPisoGuardada != null) ...[
+          if (hojaActual.imgpatolGuardada != null) ...[
             Text(
               "Imagen guardada:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -675,7 +1308,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
 
             Center(
               child: Image.file(
-                hojaActual.imgPisoGuardada!,
+                hojaActual.imgpatolGuardada!,
                 width: 900,
                 height: 800,
                 fit: BoxFit.contain,
@@ -687,13 +1320,13 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await appState.eliminarDibujoHojaPisoCielo(
+                  await appState.eliminarDibujoHojaMuro(
                     context: context,
                     hoja: hojaActual,
                     imgnum: 1,
                   );
                   setState(() {
-                    _pointsPiso.clear();
+                    _pointsImg1_FR1.clear();
                   });
                 },
                 icon: Icon(Icons.delete),
@@ -701,535 +1334,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               ),
             ),
+
           ],
 
-         //---------------------------------------------------------------------
-         // INFORMACION DEL CIELO
-         // --------------------------------------------------------------------
-
-          const SizedBox(height: 50),
-
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Cielo",//----------------------------------------------------------------------------------> Editar al copiar la hoja
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
-                ),
-              ]
-            )
-          ),
-
-
           const SizedBox(height: 20),
 
-          Text(
-            "Superficie Cielo",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 20),
-
-          TextFormField(
-            controller: hojaActual.supCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Nivel de afectacion",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.nivelafecCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Nulo', label: Text('Nulo')),
-                  ButtonSegment(value: 'Bajo', label: Text('Bajo')),
-                  ButtonSegment(value: 'Medio', label: Text('Medio')),
-                  ButtonSegment(value: 'Alto', label: Text('Alto')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.nivelafecCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        switch (seleccion) {
-                          case 'Nulo':
-                            return Colors.greenAccent;
-                          case 'Bajo':
-                            return Colors.green;
-                          case 'Medio':
-                            return Colors.amber;
-                          case 'Alto':
-                            return Colors.red;
-                          default:
-                            return Colors.grey;
-                        }
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 40),
-
-          Text(
-            "🎯  Ubicacion de Patologia Detectada",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 20),
-
-          Text(
-            "▪️Manchas de humedad / moho",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Perímetro",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.mh_perimetroCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_perimetroCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supperimetroCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Área central",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.mh_aCentralCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_aCentralCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supaCentralCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Puntual localizada y/o extendida",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.mh_punlocCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_punlocCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supPunlocCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Perímetro",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_perimetroCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_perimetroCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supperimetroCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Área central",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_aCentralCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_aCentralCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supaCentralCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Puntual localizada y/o extendida",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_punlocCieloController,
-            builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_punlocCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supPunlocCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 20),
-
-          Text(
-            "▪️Total superficie de cielo afectada",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.totpalsupafecCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN DE FOTO CIELO
-          // -------------------------------------------------------------------
+          //--------------------------------------------------------------------
+          // SECCIÓN DE FOTO ELEVACIONES
+          //--------------------------------------------------------------------
 
           Text(
             "Respaldo Visual",
@@ -1241,34 +1353,32 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPisoCielo(
+                onPressed: () => appState.obtenerImagenHojaMuro(
                   fuente: ImageSource.camera,
                   hoja: hojaActual,
                   imgnum: 2,
                   onImagenSeleccionada: (img) {
                     setState(() {
-                      hojaActual.imgcielo = img;
-                      hojaActual.imgCieloGuardada = null;
-                      _pointsCielo.clear();
-                      canvaskeyCielo_R1 = GlobalKey();
+                      hojaActual.imgelev = img;
+                      hojaActual.imgelevGuardada = null;
+                      _pointsImg2_FR1.clear();
                     });
                   },
-
                 ),
                 icon: Icon(Icons.camera_alt),
                 label: Text("Tomar Foto"),
               ),
-              //const SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
           ),
 
           const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
-          // SECCIÓN DIBUJO
-          // -------------------------------------------------------------------
+          // SECCIÓN DIBUJO IMAGEN 2
+          //--------------------------------------------------------------------
 
-          if (hojaActual.imgcielo != null && hojaActual.imgCieloGuardada == null) ...[
+          if (hojaActual.imgelev != null && hojaActual.imgelevGuardada == null) ...[
             Text(
               "Dibuja observaciones sobre la imagen:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -1278,14 +1388,14 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
 
             Center(
               child: RepaintBoundary(
-                key: canvaskeyCielo_R1, //---------------------------------------------------------------------------> Editar al copiar la hoja
+                key: canvaskeyImg2_Murof_R1,
                 child: Container(
                   width: 900,
                   height: 800,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
-                      image: FileImage(hojaActual.imgcielo!),
+                      image: FileImage(hojaActual.imgelev!),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -1300,13 +1410,13 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                                 localPosition.dx <= constraints.maxWidth &&
                                 localPosition.dy >= 0 &&
                                 localPosition.dy <= constraints.maxHeight) {
-                              _pointsCielo = List.from(_pointsCielo)..add(localPosition);
+                              _pointsImg2_FR1 = List.from(_pointsImg2_FR1)..add(localPosition);
                             }
                           });
                         },
-                        onPanEnd: (_) => setState(() => _pointsCielo.add(null)),
+                        onPanEnd: (_) => setState(() => _pointsImg2_FR1.add(null)),
                         child: CustomPaint(
-                          painter: DibujoPainter(_pointsCielo),
+                          painter: DibujoPainter(_pointsImg2_FR1),
                         ),
                       );
                     },
@@ -1322,17 +1432,16 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 icon: Icon(Icons.save),
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
-                  await appState.guardarDibujoHojaPisoCielo(
-                    canvasKey: canvaskeyCielo_R1, //---------------------------------------------------------------------> Editar al copiar la hoja
+                  await appState.guardarDibujoHojaMuro(
+                    canvasKey: canvaskeyImg2_Murof_R1,
                     hoja: hojaActual,
                     imgnum: 2,
                     onGuardado: (file) {
                       setState(() {
-                        hojaActual.imgCieloGuardada= file;
-                        _pointsCielo.clear();
+                        hojaActual.imgelevGuardada= file;
+                        _pointsImg2_FR1.clear();
                       });
                     },
-
                     context: context,
                   );
                 },
@@ -1346,7 +1455,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           // SECCIÓN RESULTADO (IMAGEN GUARDADA)
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgCieloGuardada != null) ...[
+          if (hojaActual.imgelevGuardada != null) ...[
             Text(
               "Imagen guardada:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -1356,7 +1465,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
 
             Center(
               child: Image.file(
-                hojaActual.imgCieloGuardada!,
+                hojaActual.imgelevGuardada!,
                 width: 900,
                 height: 800,
                 fit: BoxFit.contain,
@@ -1368,13 +1477,13 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await appState.eliminarDibujoHojaPisoCielo(
+                  await appState.eliminarDibujoHojaMuro(
                     context: context,
                     hoja: hojaActual,
                     imgnum: 2,
                   );
                   setState(() {
-                    _pointsCielo.clear();
+                    _pointsImg2_FR1.clear();
                   });
                 },
                 icon: Icon(Icons.delete),
@@ -1382,10 +1491,7 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               ),
             ),
-
           ],
-
-
 
         ],
       ),

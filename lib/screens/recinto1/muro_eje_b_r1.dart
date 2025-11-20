@@ -57,7 +57,7 @@ class _Muro_Eje_B_R1State extends State<Muro_Eje_B_R1> {
           ),
 
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
           // INFORMACION DEL MURO

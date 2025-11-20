@@ -205,7 +205,7 @@ class AppState extends ChangeNotifier {
   late TextEditingController r2_muroe_nombreController = TextEditingController(text: "Muro Eje E");
   late TextEditingController r2_murof_nombreController = TextEditingController(text: "Muro Eje F");
   late TextEditingController r2_murog_nombreController = TextEditingController(text: "Muro Eje G");
-  late TextEditingController r2_pisocielo_nombreController = TextEditingController(text: "Piso Cielo - Recinto 2");
+  late TextEditingController r2_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
   //-->Nombres de Muros Recinto 3 (tambien se utilizan para nombrar las hojas del excel)
   late TextEditingController r3_murop_nombreController = TextEditingController(text: "Muro Eje A");
@@ -215,7 +215,7 @@ class AppState extends ChangeNotifier {
   late TextEditingController r3_muroe_nombreController = TextEditingController(text: "Muro Eje E");
   late TextEditingController r3_murof_nombreController = TextEditingController(text: "Muro Eje F");
   late TextEditingController r3_murog_nombreController = TextEditingController(text: "Muro Eje G");
-  late TextEditingController r3_pisocielo_nombreController = TextEditingController(text: "Piso Cielo - Recinto 3");
+  late TextEditingController r3_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 //-->Nombres de Muros Recinto 4 (tambien se utilizan para nombrar las hojas del excel)
   late TextEditingController r4_murop_nombreController = TextEditingController(text: "Muro Eje A");
@@ -225,7 +225,7 @@ class AppState extends ChangeNotifier {
   late TextEditingController r4_muroe_nombreController = TextEditingController(text: "Muro Eje E");
   late TextEditingController r4_murof_nombreController = TextEditingController(text: "Muro Eje F");
   late TextEditingController r4_murog_nombreController = TextEditingController(text: "Muro Eje G");
-  late TextEditingController r4_pisocielo_nombreController = TextEditingController(text: "Piso Cielo - Recinto 4");
+  late TextEditingController r4_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 //-->Nombres de Muros Recinto 5 (tambien se utilizan para nombrar las hojas del excel)
   late TextEditingController r5_murop_nombreController = TextEditingController(text: "Muro Eje A");
@@ -235,7 +235,7 @@ class AppState extends ChangeNotifier {
   late TextEditingController r5_muroe_nombreController = TextEditingController(text: "Muro Eje E");
   late TextEditingController r5_murof_nombreController = TextEditingController(text: "Muro Eje F");
   late TextEditingController r5_murog_nombreController = TextEditingController(text: "Muro Eje G");
-  late TextEditingController r5_pisocielo_nombreController = TextEditingController(text: "Piso Cielo - Recinto 1");
+  late TextEditingController r5_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 
 
@@ -1317,24 +1317,23 @@ class AppState extends ChangeNotifier {
           break;
         case 4:
           muro_eje_c_r1 = false;
-          r1_murob_nombreController = TextEditingController(text: "Muro Eje C");
+          r1_muroc_nombreController = TextEditingController(text: "Muro Eje C");
           break;
         case 5:
           muro_eje_d_r1 = false;
-          r1_murob_nombreController = TextEditingController(text: "Muro Eje D");
+          r1_murod_nombreController = TextEditingController(text: "Muro Eje D");
           break;
         case 6:
           muro_eje_e_r1 = false;
-          r1_murob_nombreController = TextEditingController(text: "Muro Eje E");
+          r1_muroe_nombreController = TextEditingController(text: "Muro Eje E");
           break;
         case 7:
           muro_eje_f_r1 = false;
-          r1_murob_nombreController = TextEditingController(text: "Muro Eje F");
+          r1_murof_nombreController = TextEditingController(text: "Muro Eje F");
           break;
         case 8:
           muro_eje_g_r1 = false;
-          r1_murob_nombreController = TextEditingController(text: "Muro Eje G");
-          break;
+          r1_murog_nombreController = TextEditingController(text: "Muro Eje G");
           break;
         case 11:
           muro_eje_b_r2 = false;
@@ -1448,7 +1447,7 @@ class AppState extends ChangeNotifier {
     String? nombreHojaActual;
 
     switch (pantallaActual) {
-      case 5: //--------------------------------------------------cambiar al agregar las demas pantallas de muros de r1
+      case 9: //--------------------------------------------------cambiar al agregar las demas pantallas de muros de r1
         nombreHojaActual = "Piso Cielo - Recinto 1";
         break;
       case 17:
@@ -1502,7 +1501,7 @@ class AppState extends ChangeNotifier {
 
       //--> Actualiza flags según la pantalla
       switch (pantallaActual) {
-        case 5: //--------------------------------------------------cambiar al agregar las demas pantallas de muros de r1
+        case 9: //--------------------------------------------------cambiar al agregar las demas pantallas de muros de r1
           piso_cielo_r1 = false;
           r1_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
           break;

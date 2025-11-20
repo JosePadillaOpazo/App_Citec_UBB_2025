@@ -37,6 +37,8 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             ),
           ),
 
+          const SizedBox(height: 20),
+
           Text(
             "Nombre del proyecto",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -83,7 +85,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 20),
 
           Text(
-            "Direccion:",
+            "Dirección:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -152,7 +154,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 10),
 
           Text(
-            "Numero de Pisos:",
+            "Número de Pisos:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -161,12 +163,12 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.nPisosController,
             decoration: const InputDecoration(
-              labelText: "Numero de Pisos",
+              labelText: "Número de Pisos",
               border: OutlineInputBorder(),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el numero de pisos';
+                return 'Por favor ingrese el número de pisos';
               }
               return null;
             },
@@ -189,7 +191,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la orientacion de la fachada';
+                return 'Por favor ingrese la orientación de la fachada';
               }
               return null;
             },
@@ -212,7 +214,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la orienacion del acceso';
+                return 'Por favor ingrese la orienación del acceso';
               }
               return null;
             },

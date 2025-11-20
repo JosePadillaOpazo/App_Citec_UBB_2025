@@ -58,7 +58,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ),
 
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
           // INFORMACION DEL MURO

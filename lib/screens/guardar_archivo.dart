@@ -68,25 +68,43 @@ class _GuardarArchivoState extends State<GuardarArchivo> {
               "pantalla A=" +appState.muro_eje_p_r1.toString(),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             Text(
               "pantalla  B=" +appState.muro_eje_b_r1.toString(),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             Text(
               "pantalla  C=" +appState.muro_eje_c_r1.toString(),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             Text(
               "pantalla  D=" +appState.muro_eje_d_r1.toString(),
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
+
+            Text(
+              "pantalla  E=" +appState.muro_eje_e_r1.toString(),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            Text(
+              "pantalla  F=" +appState.muro_eje_f_r1.toString(),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            Text(
+              "pantalla  G=" +appState.muro_eje_g_r1.toString(),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
 
             Text(
               "pantalla piso cielo=" +appState.piso_cielo_r1.toString(),
