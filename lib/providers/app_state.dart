@@ -2230,8 +2230,8 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('O23').setText("¿Cuál?");
     sheet.getRangeByName('O23').cellStyle.bold = true;
 
-    sheet.getRangeByName('M22:N22').merge();
-    sheet.getRangeByName('M22').setText(hojaMuroPrincipal.cualpolController.text);
+    sheet.getRangeByName('O24:R24').merge();
+    sheet.getRangeByName('O24').setText(hojaMuroPrincipal.cualmodController.text);
 
     sheet.getRangeByName('C25:F26').merge();
     sheet.getRangeByName('C25').setText("Sistema de Calefacción");
@@ -2656,11 +2656,11 @@ class AppState extends ChangeNotifier {
       try {
         final Uint8List imageBytes = await hojaMuroPrincipal.imgpatolGuardada!.readAsBytes();
         final xlsio.Picture picture = sheet.pictures.addBase64(
-          9, // fila (
+          9, // fila
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 230;
+        picture.height = 240;
         picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
@@ -2675,8 +2675,8 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 150;
-        picture.width = 200;
+        picture.height = 160;
+        picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
@@ -3021,8 +3021,8 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 300;
-        picture.width = 200;
+        picture.height = 250;
+        picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
@@ -3036,8 +3036,8 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 150;
-        picture.width = 200;
+        picture.height = 160;
+        picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
@@ -3431,8 +3431,8 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 350;
-        picture.width = 200;
+        picture.height = 360;
+        picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
@@ -3446,8 +3446,8 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 350;
-        picture.width = 200;
+        picture.height = 360;
+        picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }

@@ -327,6 +327,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
                   hojaActual.pinOlimpController.text = newSelection.first;
+                  print(hojaActual.pinOlimpController.text);
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
