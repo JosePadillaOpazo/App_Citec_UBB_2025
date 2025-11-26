@@ -11,7 +11,15 @@ class InformacionGeneral extends StatefulWidget {
 }
 
 class _InformacionGeneralState extends State<InformacionGeneral> {
-  List<Offset?> _points = [];
+  final GlobalKey canvasKey_InfoGeneral_1 = GlobalKey();
+  final GlobalKey canvasKey_InfoGeneral_2 = GlobalKey();
+  final GlobalKey canvasKey_InfoGeneral_3 = GlobalKey();
+  final GlobalKey canvasKey_InfoGeneral_4 = GlobalKey();
+
+  List<Offset?> _pointsImg1 = [];
+  List<Offset?> _pointsImg2 = [];
+  List<Offset?> _pointsImg3 = [];
+  List<Offset?> _pointsImg4 = [];
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +45,69 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             ),
           ),
 
-          const SizedBox(height: 20),
+
+          Text(
+            "Plano de la Vivienda:",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => appState.obtenerImagenInfoGeneral(
+                  fuente: ImageSource.camera,
+                  imgnum: 1,
+                  onImagenSeleccionada: (img) {
+                    setState(() {
+                      appState.imagen1_Info_General = img;
+                      appState.imagen1GuardadaInfoGeneral = img;
+                      appState.cantFotos++;
+                      print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                    });
+                  },
+                ),
+                icon: Icon(Icons.camera_alt),
+                label: Text("Tomar Foto"),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 15),
+
+          if (appState.imagen1GuardadaInfoGeneral != null) ...[
+            Center(
+              child: Image.file(
+                appState.imagen1GuardadaInfoGeneral!,
+                width: 900,
+                height: 800,
+                fit: BoxFit.contain,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await appState.eliminarDibujoInfoGeneral(
+                    context: context,
+                    imgnum: 1,
+                  );
+                  setState(() {
+                    print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                  });
+
+                },
+                icon: Icon(Icons.delete),
+                label: Text("Eliminar"),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 30),
 
           Text(
             "Nombre del proyecto",
@@ -924,12 +994,13 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 35),
 
+
           // -------------------------------------------------------------------
-          // SECCIÓN DE FOTO
+          // SECCIÓN DE FOTO 2
           // -------------------------------------------------------------------
           Text(
-            "Fotografía:",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          "Fotografía 2:",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -939,11 +1010,13 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               ElevatedButton.icon(
                 onPressed: () => appState.obtenerImagenInfoGeneral(
                   fuente: ImageSource.camera,
+                  imgnum: 2,
                   onImagenSeleccionada: (img) {
                     setState(() {
-                      appState.imagen_Info_General = img;
-                      appState.imagenGuardadaInfoGeneral = null;
-                      _points.clear();
+                      appState.imagen2_Info_General = img;
+                      appState.imagen2GuardadaInfoGeneral = null;
+                      print("Se tomo la foto 2 y se guardon en: " + appState.imagen1_Info_General!.path.toString());
+                      _pointsImg2.clear();
                     });
                   },
                 ),
@@ -955,11 +1028,11 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 20),
 
-          // -------------------------------------------------------------------
-          // SECCIÓN DIBUJO
-          // -------------------------------------------------------------------
+         // -------------------------------------------------------------------
+         // SECCIÓN DIBUJO
+         // -------------------------------------------------------------------
 
-          if (appState.imagen_Info_General != null && appState.imagenGuardadaInfoGeneral == null) ...[
+          if (appState.imagen2_Info_General != null && appState.imagen2GuardadaInfoGeneral == null) ...[
             Text(
               "Dibuja observaciones sobre la imagen:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -969,14 +1042,14 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
             Center(
               child: RepaintBoundary(
-                key: appState.canvasKey_InfoGeneral,
+                key: canvasKey_InfoGeneral_2,
                 child: Container(
                   width: 900,
                   height: 800,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
-                      image: FileImage(appState.imagen_Info_General!),
+                      image: FileImage(appState.imagen2_Info_General!),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -988,16 +1061,16 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                             final RenderBox box = context.findRenderObject() as RenderBox;
                             final localPosition = box.globalToLocal(details.globalPosition);
                             if (localPosition.dx >= 0 &&
-                                localPosition.dx <= constraints.maxWidth &&
-                                localPosition.dy >= 0 &&
-                                localPosition.dy <= constraints.maxHeight) {
-                              _points = List.from(_points)..add(localPosition);
+                              localPosition.dx <= constraints.maxWidth &&
+                              localPosition.dy >= 0 &&
+                              localPosition.dy <= constraints.maxHeight) {
+                              _pointsImg2 = List.from(_pointsImg2)..add(localPosition);
                             }
                           });
                         },
-                        onPanEnd: (_) => setState(() => _points.add(null)),
+                        onPanEnd: (_) => setState(() => _pointsImg2.add(null)),
                         child: CustomPaint(
-                          painter: DibujoPainter(_points),
+                          painter: DibujoPainter(_pointsImg2),
                         ),
                       );
                     },
@@ -1014,11 +1087,15 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
                   await appState.guardarDibujoInfoGeneral(
-                    canvasKey: appState.canvasKey_InfoGeneral,
+                    canvasKey: canvasKey_InfoGeneral_2,
+                    imgnum: 2,
+                    nombreArchivo: "Imagen2_Info_General",
                     onGuardado: (file) {
                       setState(() {
-                        appState.imagenGuardadaInfoGeneral = file;
-                        _points.clear();
+                        appState.imagen2GuardadaInfoGeneral = file;
+                        appState.cantFotos++;
+                        print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                        _pointsImg2.clear();
                       });
                     },
                     context: context,
@@ -1034,9 +1111,9 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           // SECCIÓN RESULTADO (IMAGEN GUARDADA)
           // -------------------------------------------------------------------
 
-          if (appState.imagenGuardadaInfoGeneral != null) ...[
+          if (appState.imagen2GuardadaInfoGeneral != null) ...[
             Text(
-              "Imagen guardada:",
+              "Imagen 2 guardada:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
 
@@ -1044,7 +1121,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
             Center(
               child: Image.file(
-                appState.imagenGuardadaInfoGeneral!,
+                appState.imagen2GuardadaInfoGeneral!,
                 width: 900,
                 height: 800,
                 fit: BoxFit.contain,
@@ -1058,9 +1135,11 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                 onPressed: () async {
                   await appState.eliminarDibujoInfoGeneral(
                     context: context,
+                    imgnum: 2,
                   );
                   setState(() {
-                    _points.clear();
+                    print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                    _pointsImg2.clear();
                   });
                 },
                 icon: Icon(Icons.delete),
@@ -1068,6 +1147,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               ),
             ),
+
           ],
         ],
       ),

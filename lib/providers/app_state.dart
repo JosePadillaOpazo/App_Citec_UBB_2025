@@ -23,6 +23,9 @@ class AppState extends ChangeNotifier {
   final List<HojaMuro> hojasM = [];
   final List<HojaPisoCielo> hojasPC = [];
   int pantallaActual = 0;
+  int cantFotos = 0;
+  String? rutaGuardada;
+  bool guardando = false;
 
   //--> Fechas / horas
   String horaInicio = "00:00";
@@ -92,56 +95,21 @@ class AppState extends ChangeNotifier {
   // IMAGEN DE LA HOJA INFO GENERAL
   // ---------------------------------------------------------------------------
 
-  File? imagen_Info_General;
-  File? imagenGuardadaInfoGeneral;
+  File? imagen1_Info_General;
+  File? imagen1GuardadaInfoGeneral;
+  File? imagen2_Info_General;
+  File? imagen2GuardadaInfoGeneral;
+  File? imagen3_Info_General;
+  File? imagen3GuardadaInfoGeneral;
+  File? imagen4_Info_General;
+  File? imagen4GuardadaInfoGeneral;
 
-
-  // ---------------------------------------------------------------------------
-  // Keys para los canvas de cada hoja
-  // ---------------------------------------------------------------------------
-
-  //-->Info General
-  final GlobalKey canvasKey_InfoGeneral = GlobalKey();
-
-  //-->Recinto 2
-  final GlobalKey canvasKey_EjeAR2 = GlobalKey();
-  final GlobalKey canvasKey_EjeBR2 = GlobalKey();
-  final GlobalKey canvasKey_EjeCR2 = GlobalKey();
-  final GlobalKey canvasKey_EjeDR2 = GlobalKey();
-  final GlobalKey canvasKey_EjeER2 = GlobalKey();
-  final GlobalKey canvasKey_EjeFR2 = GlobalKey();
-  final GlobalKey canvasKey_EjeGR2 = GlobalKey();
-  final GlobalKey canvasKey_EjeHR2 = GlobalKey();
-  final GlobalKey canvasKey_PisoCieloR2 = GlobalKey();
-
-  //-->Recinto 3
-  final GlobalKey canvasKey_EjeAR3 = GlobalKey();
-  final GlobalKey canvasKey_EjeBR3 = GlobalKey();
-  final GlobalKey canvasKey_EjeCR3 = GlobalKey();
-  final GlobalKey canvasKey_EjeDR3 = GlobalKey();
-  final GlobalKey canvasKey_EjeER3 = GlobalKey();
-  final GlobalKey canvasKey_EjeFR3 = GlobalKey();
-  final GlobalKey canvasKey_EjeGR3 = GlobalKey();
-  final GlobalKey canvasKey_EjeHR3 = GlobalKey();
-  final GlobalKey canvasKey_PisoCieloR3 = GlobalKey();
-
-  //-->Recinto 4
-  final GlobalKey canvasKey_EjeAR4 = GlobalKey();
-  final GlobalKey canvasKey_EjeBR4 = GlobalKey();
-  final GlobalKey canvasKey_EjeCR4 = GlobalKey();
-  final GlobalKey canvasKey_EjeDR4 = GlobalKey();
-  final GlobalKey canvasKey_EjeER4 = GlobalKey();
-  final GlobalKey canvasKey_EjeFR4 = GlobalKey();
-  final GlobalKey canvasKey_EjeGR4 = GlobalKey();
-  final GlobalKey canvasKey_EjeHR4 = GlobalKey();
-  final GlobalKey canvasKey_PisoCieloR4 = GlobalKey();
 
   // ---------------------------------------------------------------------------
   // Controllers
   // ---------------------------------------------------------------------------
 
   //-->Formularios generales
-  final TextEditingController nombreArchivoController = TextEditingController();
   final TextEditingController nFichaController = TextEditingController();
 
   //-->Hoja Información general
@@ -242,6 +210,272 @@ class AppState extends ChangeNotifier {
   //--------------------------------------------------------------------------------------------------------------------------------------------------------
   //                                                                            Funciones
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
+  void resetApp(BuildContext context) {
+    // ---------------------------------------------------------------------------
+    // LIMPIAR CONTROLES DE TEXTO
+    // ---------------------------------------------------------------------------
+    List<TextEditingController> controllers = [
+      // Formularios generales
+      nFichaController,
+
+      // Información general
+      nombreProyectoController,
+      tipologiaViviendaController,
+      direccionController,
+      etapaController,
+      supViviendaController,
+      nPisosController,
+      oriFachadaController,
+      oriAccesoController,
+      climaController,
+      tempExteriorController,
+      humExteriorController,
+      tempInteriorController,
+      humInteriorController,
+      reciPorController,
+      nombreReciController,
+      nombreInspectorController,
+      usoViviendaController,
+      rutInspectorController,
+      reparacionesController,
+      detalleReparacionesController,
+      ampliacionesController,
+      detalleAmpliacionesController,
+      obsInfoGeneralController,
+      numRecintosController,
+      totalHabitantesController,
+      nnumAdultosController,
+      numMenoresController,
+      numAdulMayoresController,
+      ocupDiaCompController,
+      ocupIntermitenteController,
+      densOcupPrevController,
+      densOcupRealController,
+      obsOcupVivController,
+
+      // Nombres Recintos
+      recinto1_nombreController,
+      recinto2_nombreController,
+      recinto3_nombreController,
+      recinto4_nombreController,
+      recinto5_nombreController,
+
+      // Recinto 1
+      r1_murop_nombreController,
+      r1_murob_nombreController,
+      r1_muroc_nombreController,
+      r1_murod_nombreController,
+      r1_muroe_nombreController,
+      r1_murof_nombreController,
+      r1_murog_nombreController,
+      r1_pisocielo_nombreController,
+
+      // Recinto 2
+      r2_murop_nombreController,
+      r2_murob_nombreController,
+      r2_muroc_nombreController,
+      r2_murod_nombreController,
+      r2_muroe_nombreController,
+      r2_murof_nombreController,
+      r2_murog_nombreController,
+      r2_pisocielo_nombreController,
+
+      // Recinto 3
+      r3_murop_nombreController,
+      r3_murob_nombreController,
+      r3_muroc_nombreController,
+      r3_murod_nombreController,
+      r3_muroe_nombreController,
+      r3_murof_nombreController,
+      r3_murog_nombreController,
+      r3_pisocielo_nombreController,
+
+      // Recinto 4
+      r4_murop_nombreController,
+      r4_murob_nombreController,
+      r4_muroc_nombreController,
+      r4_murod_nombreController,
+      r4_muroe_nombreController,
+      r4_murof_nombreController,
+      r4_murog_nombreController,
+      r4_pisocielo_nombreController,
+
+      // Recinto 5
+      r5_murop_nombreController,
+      r5_murob_nombreController,
+      r5_muroc_nombreController,
+      r5_murod_nombreController,
+      r5_muroe_nombreController,
+      r5_murof_nombreController,
+      r5_murog_nombreController,
+      r5_pisocielo_nombreController,
+    ];
+
+    for (var c in controllers) {
+      c.clear();
+    }
+
+    // Reiniciar textos por defecto
+    recinto1_nombreController.text = "Recinto 1";
+    recinto2_nombreController.text = "Recinto 2";
+    recinto3_nombreController.text = "Recinto 3";
+    recinto4_nombreController.text = "Recinto 4";
+    recinto5_nombreController.text = "Recinto 5";
+
+    // Recinto 1
+    r1_murop_nombreController.text = "Muro Eje A";
+    r1_murob_nombreController.text = "Muro Eje B";
+    r1_muroc_nombreController.text = "Muro Eje C";
+    r1_murod_nombreController.text = "Muro Eje D";
+    r1_muroe_nombreController.text = "Muro Eje E";
+    r1_murof_nombreController.text = "Muro Eje F";
+    r1_murog_nombreController.text = "Muro Eje G";
+    r1_pisocielo_nombreController.text = "Piso Cielo";
+
+    // Recinto 2
+    r2_murop_nombreController.text = "Muro Eje A";
+    r2_murob_nombreController.text = "Muro Eje B";
+    r2_muroc_nombreController.text = "Muro Eje C";
+    r2_murod_nombreController.text = "Muro Eje D";
+    r2_muroe_nombreController.text = "Muro Eje E";
+    r2_murof_nombreController.text = "Muro Eje F";
+    r2_murog_nombreController.text = "Muro Eje G";
+    r2_pisocielo_nombreController.text = "Piso Cielo";
+
+    // Recinto 3
+    r3_murop_nombreController.text = "Muro Eje A";
+    r3_murob_nombreController.text = "Muro Eje B";
+    r3_muroc_nombreController.text = "Muro Eje C";
+    r3_murod_nombreController.text = "Muro Eje D";
+    r3_muroe_nombreController.text = "Muro Eje E";
+    r3_murof_nombreController.text = "Muro Eje F";
+    r3_murog_nombreController.text = "Muro Eje G";
+    r3_pisocielo_nombreController.text = "Piso Cielo";
+
+    // Recinto 4
+    r4_murop_nombreController.text = "Muro Eje A";
+    r4_murob_nombreController.text = "Muro Eje B";
+    r4_muroc_nombreController.text = "Muro Eje C";
+    r4_murod_nombreController.text = "Muro Eje D";
+    r4_muroe_nombreController.text = "Muro Eje E";
+    r4_murof_nombreController.text = "Muro Eje F";
+    r4_murog_nombreController.text = "Muro Eje G";
+    r4_pisocielo_nombreController.text = "Piso Cielo";
+
+    // Recinto 5
+    r5_murop_nombreController.text = "Muro Eje A";
+    r5_murob_nombreController.text = "Muro Eje B";
+    r5_muroc_nombreController.text = "Muro Eje C";
+    r5_murod_nombreController.text = "Muro Eje D";
+    r5_muroe_nombreController.text = "Muro Eje E";
+    r5_murof_nombreController.text = "Muro Eje F";
+    r5_murog_nombreController.text = "Muro Eje G";
+    r5_pisocielo_nombreController.text = "Piso Cielo";
+
+    // ---------------------------------------------------------------------------
+    // REINICIAR FLAGS
+    // ---------------------------------------------------------------------------
+    List<bool Function()> setters = [
+          () => muro_eje_p_r1 = false,
+          () => muro_eje_b_r1 = false,
+          () => muro_eje_c_r1 = false,
+          () => muro_eje_d_r1 = false,
+          () => muro_eje_e_r1 = false,
+          () => muro_eje_f_r1 = false,
+          () => muro_eje_g_r1 = false,
+          () => muro_eje_h_r1 = false,
+          () => piso_cielo_r1 = false,
+
+          () => muro_eje_p_r2 = false,
+          () => muro_eje_b_r2 = false,
+          () => muro_eje_c_r2 = false,
+          () => muro_eje_d_r2 = false,
+          () => muro_eje_e_r2 = false,
+          () => muro_eje_f_r2 = false,
+          () => muro_eje_g_r2 = false,
+          () => muro_eje_h_r2 = false,
+          () => piso_cielo_r2 = false,
+
+          () => muro_eje_p_r3 = false,
+          () => muro_eje_b_r3 = false,
+          () => muro_eje_c_r3 = false,
+          () => muro_eje_d_r3 = false,
+          () => muro_eje_e_r3 = false,
+          () => muro_eje_f_r3 = false,
+          () => muro_eje_g_r3 = false,
+          () => muro_eje_h_r3 = false,
+          () => piso_cielo_r3 = false,
+
+          () => muro_eje_p_r4 = false,
+          () => muro_eje_b_r4 = false,
+          () => muro_eje_c_r4 = false,
+          () => muro_eje_d_r4 = false,
+          () => muro_eje_e_r4 = false,
+          () => muro_eje_f_r4 = false,
+          () => muro_eje_g_r4 = false,
+          () => muro_eje_h_r4 = false,
+          () => piso_cielo_r4 = false,
+
+          () => muro_eje_p_r5 = false,
+          () => muro_eje_b_r5 = false,
+          () => muro_eje_c_r5 = false,
+          () => muro_eje_d_r5 = false,
+          () => muro_eje_e_r5 = false,
+          () => muro_eje_f_r5 = false,
+          () => muro_eje_g_r5 = false,
+          () => muro_eje_h_r5 = false,
+          () => piso_cielo_r5 = false,
+    ];
+
+    for (var reset in setters) {
+      reset();
+    }
+
+    // ---------------------------------------------------------------------------
+    // REINICIAR IMÁGENES
+    // ---------------------------------------------------------------------------
+    imagen1_Info_General = null;
+    imagen1GuardadaInfoGeneral = null;
+    imagen2_Info_General = null;
+    imagen2GuardadaInfoGeneral = null;
+    imagen3_Info_General = null;
+    imagen3GuardadaInfoGeneral = null;
+    imagen4_Info_General = null;
+    imagen4GuardadaInfoGeneral = null;
+
+    // ---------------------------------------------------------------------------
+    // REINICIAR LISTAS Y ESTADOS GENERALES
+    // ---------------------------------------------------------------------------
+    hojasP.clear();
+    hojasM.clear();
+    hojasPC.clear();
+
+    pantallaActual = 0;
+    cantFotos = 0;
+    rutaGuardada = null;
+    guardando = false;
+
+    // REINICIAR HORAS
+    horaInicio = "00:00";
+    horaFin = "00:00";
+    // fechaFormateada = (se mantiene la del día)
+
+    notifyListeners();
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) => const Inicio(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+
 
   // ---------------------------------------------------------------------------
   // Funcion de agregar hojas a la lista de hojas principales
@@ -357,9 +591,6 @@ class AppState extends ChangeNotifier {
   // Funciones usadas para el guardado de excel
   // ---------------------------------------------------------------------------
 
-  String? rutaGuardada;
-  bool guardando = false;
-
   void rutaGuardarExcel(String? ruta) {
     rutaGuardada = ruta;
     notifyListeners();
@@ -378,13 +609,29 @@ class AppState extends ChangeNotifier {
   Future<void> obtenerImagenInfoGeneral({
     required ImageSource fuente,
     required Function(File) onImagenSeleccionada,
+    required int imgnum,
   }) async {
     final XFile? imagen = await picker.pickImage(source: fuente);
     if (imagen != null) {
       final file = File(imagen.path);
-
-      imagenGuardadaInfoGeneral = null;
-      imagen_Info_General = file;
+      switch (imgnum){
+        case 1:
+          imagen1GuardadaInfoGeneral = null;
+          imagen1_Info_General = file;
+          break;
+        case 2:
+          imagen2GuardadaInfoGeneral = null;
+          imagen2_Info_General = file;
+          break;
+        case 3:
+          imagen3GuardadaInfoGeneral = null;
+          imagen3_Info_General = file;
+          break;
+        case 4:
+          imagen4GuardadaInfoGeneral = null;
+          imagen4_Info_General = file;
+          break;
+      }
 
       notifyListeners();
       onImagenSeleccionada(file);
@@ -395,9 +642,11 @@ class AppState extends ChangeNotifier {
   Future<void> guardarDibujoInfoGeneral({
     required GlobalKey canvasKey,
     required void Function(File file) onGuardado,
+    required String nombreArchivo,
+    required int imgnum,
     BuildContext? context,
     bool silencioso = false,
-    String nombreArchivo = "ImagenInfoGeneral",
+
   }) async {
     try {
       final renderObject = canvasKey.currentContext?.findRenderObject();
@@ -432,7 +681,20 @@ class AppState extends ChangeNotifier {
       await file.writeAsBytes(jpegBytes);
 
       // Guardar referencia global
-      imagenGuardadaInfoGeneral = file;
+      switch (imgnum) {
+        case 1:
+          imagen1GuardadaInfoGeneral = file;
+          break;
+        case 2:
+          imagen2GuardadaInfoGeneral = file;
+          break;
+        case 3:
+          imagen3GuardadaInfoGeneral = file;
+          break;
+        case 4:
+          imagen4GuardadaInfoGeneral = file;
+          break;
+      };
       onGuardado(file);
       notifyListeners();
 
@@ -454,6 +716,7 @@ class AppState extends ChangeNotifier {
   //--> eliminar edicion de la imagen de info general
   Future<void> eliminarDibujoInfoGeneral({
     required BuildContext context,
+    required int imgnum,
   }) async {
     final bool? confirmar = await showDialog<bool>(
       context: context,
@@ -468,8 +731,25 @@ class AppState extends ChangeNotifier {
     );
 
     if (confirmar == true) {
-      imagen_Info_General = null;
-      imagenGuardadaInfoGeneral = null;
+      switch (imgnum) {
+        case 1:
+          imagen1_Info_General = null;
+          imagen1GuardadaInfoGeneral = null;
+          break;
+        case 2:
+          imagen2_Info_General = null;
+          imagen2GuardadaInfoGeneral = null;
+          break;
+        case 3:
+          imagen3_Info_General = null;
+          imagen3GuardadaInfoGeneral = null;
+          break;
+        case 4:
+          imagen4_Info_General = null;
+          imagen4GuardadaInfoGeneral = null;
+          break;
+      }
+      cantFotos--;
       notifyListeners();
     }
   }
@@ -1537,12 +1817,12 @@ class AppState extends ChangeNotifier {
       guardando = true;
       notifyListeners();
 
-      String nombreArchivo = nombreArchivoController.text.trim();
+      String nombreArchivo = "Inspección " + direccionController.text.trim();
       if (nombreArchivo.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Por favor, ingrese un nombre de archivo.")),
+          const SnackBar(content: Text("Por favor, ingrese la direccion de la vivienda.")),
         );
-        pantallaActual = 1;
+        pantallaActual = 0;
         guardando = false;
         notifyListeners();
         return;
@@ -1771,12 +2051,17 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('C23').setText("Reparaciones");
       sheet.getRangeByName('C23').cellStyle.bold = true;
 
-      sheet.getRangeByName('F23:G23').merge();
-      sheet.getRangeByName('F23').setText("SI o NO");
+      sheet.getRangeByName('F23').setText("SI");
       sheet.getRangeByName('F23').cellStyle.bold = true;
 
-      sheet.getRangeByName('F24:G24').merge();
-      sheet.getRangeByName('F24').setText(reparacionesController.text);
+      sheet.getRangeByName('G23').setText("NO");
+      sheet.getRangeByName('G23').cellStyle.bold = true;
+
+      if (reparacionesController.text == "Si") {
+        sheet.getRangeByName('F24').setText("✔");
+      }else {
+        sheet.getRangeByName('G24').setText("✔");
+      }
 
       sheet.getRangeByName('H23:R23').merge();
       sheet.getRangeByName('H23').setText("¿Cuántas y de qué tipo?");
@@ -1789,12 +2074,17 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('C25').setText("Ampliaciones");
       sheet.getRangeByName('C25').cellStyle.bold = true;
 
-      sheet.getRangeByName('F25:G25').merge();
-      sheet.getRangeByName('F25').setText("SI o NO");
+      sheet.getRangeByName('F25').setText("SI");
       sheet.getRangeByName('F25').cellStyle.bold = true;
 
-      sheet.getRangeByName('F26:G26').merge();
-      sheet.getRangeByName('F26').setText(ampliacionesController.text);
+      sheet.getRangeByName('G25').setText("NO");
+      sheet.getRangeByName('G25').cellStyle.bold = true;
+
+      if (ampliacionesController.text == "Si") {
+        sheet.getRangeByName('F26').setText("✔");
+      }else {
+        sheet.getRangeByName('G26').setText("✔");
+      }
 
       sheet.getRangeByName('H25:R25').merge();
       sheet.getRangeByName('H25').setText("¿Cuántas y de qué tipo?");
@@ -1933,19 +2223,201 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('C42').setText("Indicar tipología de vivienda a inspeccionar");
       sheet.getRangeByName('C42').cellStyle.bold = true;
 
-      sheet.getRangeByName('C43:R65').merge();
 
+      switch (cantFotos) {
+        case 1:
+          sheet.getRangeByName('C43:R65').merge();
+          File? imagenAguardar;
 
-      //--> Imagen Info General
-      if (imagenGuardadaInfoGeneral != null && imagenGuardadaInfoGeneral!.existsSync()) {
-        final Uint8List imageBytes = await imagenGuardadaInfoGeneral!.readAsBytes();
-        final xlsio.Picture picture = sheet.pictures.addBase64(
-          43, // fila
-          6, // columna
-          base64Encode(imageBytes),
-        );
-        picture.height = 460;
-        picture.width = 1010;
+          if (imagen1GuardadaInfoGeneral != null){
+            imagenAguardar = imagen1GuardadaInfoGeneral!;
+          }
+          if (imagen2GuardadaInfoGeneral != null){
+            imagenAguardar = imagen2GuardadaInfoGeneral!;
+          }
+          if (imagen3GuardadaInfoGeneral != null){
+            imagenAguardar = imagen3GuardadaInfoGeneral!;
+          }
+          if (imagen4GuardadaInfoGeneral != null){
+            imagenAguardar = imagen4GuardadaInfoGeneral!;
+          }
+
+          //--> Info General 1 imagen
+          if (imagenAguardar != null && imagenAguardar!.existsSync()) {
+            final Uint8List imageBytes = await imagenAguardar!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              6, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 1010;
+          }
+          break;
+        case 2:
+          sheet.getRangeByName('C43:J65').merge();
+          sheet.getRangeByName('K43:R65').merge();
+          File? imagen1Aguardar;
+          File? imagen2Aguardar;
+
+          if (imagen1GuardadaInfoGeneral != null && imagen2GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen2GuardadaInfoGeneral!;
+          }
+          if (imagen1GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen3GuardadaInfoGeneral!;
+          }
+          if (imagen1GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen4GuardadaInfoGeneral!;
+          }
+          if (imagen2GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen2GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen3GuardadaInfoGeneral!;
+          }
+          if (imagen2GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen2GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen3GuardadaInfoGeneral!;
+          }
+          if (imagen3GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen3GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen4GuardadaInfoGeneral!;
+          }
+
+          //--> Info General 2 imagenes
+          if (imagen1Aguardar != null && imagen1Aguardar!.existsSync()) {
+            final Uint8List imageBytes = await imagen1Aguardar!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              5, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 450;
+          }
+
+          if (imagen2Aguardar != null && imagen2Aguardar!.existsSync()) {
+            final Uint8List imageBytes = await imagen2Aguardar!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              13, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 450;
+          }
+          break;
+        case 3:
+          sheet.getRangeByName('C43:G65').merge();
+          sheet.getRangeByName('H43:M655').merge();
+          sheet.getRangeByName('N43:R65').merge();
+          File? imagen1Aguardar;
+          File? imagen2Aguardar;
+          File? imagen3Aguardar;
+
+          if (imagen1GuardadaInfoGeneral != null && imagen2GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen2GuardadaInfoGeneral!;
+            imagen3Aguardar = imagen3GuardadaInfoGeneral!;
+          }
+          if (imagen1GuardadaInfoGeneral != null && imagen2GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen2GuardadaInfoGeneral!;
+            imagen3Aguardar = imagen4GuardadaInfoGeneral!;
+          }
+          if (imagen1GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen2GuardadaInfoGeneral!;
+            imagen3Aguardar = imagen4GuardadaInfoGeneral!;
+          }
+          if (imagen2GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral != null){
+            imagen1Aguardar = imagen1GuardadaInfoGeneral!;
+            imagen2Aguardar = imagen2GuardadaInfoGeneral!;
+            imagen3Aguardar = imagen4GuardadaInfoGeneral!;
+          }
+
+          //--> Info General 2 imagenes
+          if (imagen1Aguardar != null && imagen1Aguardar.existsSync()) {
+            final Uint8List imageBytes = await imagen1Aguardar.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              4, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+
+          if (imagen2Aguardar != null && imagen2Aguardar.existsSync()) {
+            final Uint8List imageBytes = await imagen2Aguardar.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              9, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+          if (imagen3Aguardar != null && imagen3Aguardar.existsSync()) {
+            final Uint8List imageBytes = await imagen3Aguardar.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              15, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+          break;
+        case 4:
+          sheet.getRangeByName('C43:F65').merge();
+          sheet.getRangeByName('G43:J65').merge();
+          sheet.getRangeByName('K43:N65').merge();
+          sheet.getRangeByName('O43:R65').merge();
+
+          //--> Info General 2 imagenes
+          if (imagen1GuardadaInfoGeneral != null && imagen1GuardadaInfoGeneral!.existsSync()) {
+            final Uint8List imageBytes = await imagen1GuardadaInfoGeneral!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              3, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+          if (imagen2GuardadaInfoGeneral != null && imagen2GuardadaInfoGeneral!.existsSync()) {
+            final Uint8List imageBytes = await imagen2GuardadaInfoGeneral!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              8, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+          if (imagen3GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral!.existsSync()) {
+            final Uint8List imageBytes = await imagen3GuardadaInfoGeneral!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              12, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+          if (imagen4GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral!.existsSync()) {
+            final Uint8List imageBytes = await imagen4GuardadaInfoGeneral!.readAsBytes();
+            final xlsio.Picture picture = sheet.pictures.addBase64(
+              43, // fila
+              16, // columna
+              base64Encode(imageBytes),
+            );
+            picture.height = 460;
+            picture.width = 500;
+          }
+          break;
       }
 
       sheet.showGridlines = false;
@@ -2095,7 +2567,6 @@ class AppState extends ChangeNotifier {
           },
         ),
       );
-      reiniciarApp();
       guardando = false;
       notifyListeners();
     }
@@ -3464,76 +3935,6 @@ class AppState extends ChangeNotifier {
   }
 
 
-  // ---------------------------------------------------------------------------
-  // Reiniciar toda la app
-  // ---------------------------------------------------------------------------
-
-  void reiniciarApp() {
-
-    imagen_Info_General = null;
-    imagenGuardadaInfoGeneral = null;
-
-    for (var controller in [
-      nombreArchivoController,
-      nFichaController,
-      nombreProyectoController,
-      tipologiaViviendaController,
-      direccionController,
-      etapaController,
-      supViviendaController,
-      nPisosController,
-      oriFachadaController,
-      oriAccesoController,
-      climaController,
-      tempExteriorController,
-      humExteriorController,
-      tempInteriorController,
-      humInteriorController,
-      reciPorController,
-      nombreReciController,
-      nombreInspectorController,
-      usoViviendaController,
-      rutInspectorController,
-      reparacionesController,
-      detalleReparacionesController,
-      ampliacionesController,
-      detalleAmpliacionesController,
-      obsInfoGeneralController,
-      numRecintosController,
-      totalHabitantesController,
-      nnumAdultosController,
-      numMenoresController,
-      numAdulMayoresController,
-      ocupDiaCompController,
-      ocupIntermitenteController,
-      densOcupPrevController,
-      densOcupRealController,
-      obsOcupVivController,
-    ]) {
-      controller.clear();
-    }
-
-    // Restablecer nombres por defecto
-    recinto2_nombreController.text = "Recinto 2";
-    recinto3_nombreController.text = "Recinto 3";
-    r1_murob_nombreController.text = "Muro Eje B";
-
-    // Reiniciar flags
-    muro_eje_p_r1 = false;
-    muro_eje_b_r1 = false;
-    muro_eje_c_r1 = false;
-    muro_eje_d_r1 = false;
-    piso_cielo_r1 = false;
-
-    // Reiniciar horas y estados
-    horaInicio = "00:00";
-    horaFin = "00:00";
-    rutaGuardada = null;
-    guardando = false;
-
-    notifyListeners();
-  }
-
   @override
   void dispose() {
     nombreProyectoController.dispose();
@@ -3569,7 +3970,6 @@ class AppState extends ChangeNotifier {
     densOcupPrevController.dispose();
     densOcupRealController.dispose();
     obsOcupVivController.dispose();
-    nombreArchivoController.dispose();
     nFichaController.dispose();
     recinto1_nombreController.dispose();
     recinto2_nombreController.dispose();

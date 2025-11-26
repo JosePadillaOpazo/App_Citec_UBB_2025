@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'info_general.dart';
-import 'guardar_archivo.dart';
+import 'recinto1/info_recinto_1.dart';
 import 'recinto1/muro_p_r1.dart';
 import 'recinto1/muro_eje_b_r1.dart';
 import 'recinto1/muro_eje_c_r1.dart';
@@ -25,8 +25,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
     final pantallas = [
-      const InformacionGeneral(key: ValueKey('infoGeneral')),// ==> 0
-      const GuardarArchivo(key: ValueKey('guardarArchivo')),// ==> 1
+      const InformacionGeneral(key: ValueKey('info_General')),// ==> 0
+      const Info_Recinto_1(key: ValueKey('info_Recinto_1')),// ==> 1
 
       //Recinto 1
       const Muro_Principal_R1(key: ValueKey('muro_Eje_A_R1')),// ==> 2 Principal
@@ -89,14 +89,40 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
         actions: [
-          if (appState.pantallaActual != 1)
-            IconButton(
-              icon: Icon(Icons.save, color: Colors.white),
-              onPressed: () {
-                appState.HoraFin();
-                appState.cambiarPantalla(1);
-              },
-            ),
+          IconButton(
+            icon: Icon(Icons.save, color: Colors.white),
+            onPressed: () async {
+              // Verifica si está vacío
+              if (appState.direccionController.text.isEmpty) {
+
+                // Muestra alerta
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Falta Información"),
+                      content: const Text("Debe ingresar la dirección antes de guardar el Excel."),
+                      actions: [
+                        TextButton(
+                          onPressed: (){
+                            Navigator.of(context).pop();
+                            if (appState.pantallaActual != 0){
+                              setState(() => appState.pantallaActual = 0);
+                            }
+                          },
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                return; // No continúa
+              }
+              appState.HoraFin();
+              await appState.guardarExcel(context);
+            },
+          ),
 
           if (appState.pantallaActual != 0 && appState.pantallaActual != 1)
             IconButton(
@@ -190,9 +216,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               );
 
               if (confirm == true) {
-                final appState = context.read<AppState>();
-                appState.reiniciarApp();
-                Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                context.read<AppState>().resetApp(context);
               }
             },
           ),
@@ -266,7 +290,20 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     childrenPadding: const EdgeInsets.only(left: 30),
                     children: [
                       ListTile(
-                        title: Text("- "+appState.r1_murop_nombreController.text), //--> Muros principal (Muro Eje A - Reciento 1)
+                        title: Text("- Informacion " + appState.recinto1_nombreController.text), //--> Informacion de Recinto 1
+                        selected: appState.pantallaActual == 1,
+                        onTap: () {
+                          setState(() => appState.pantallaActual = 1);
+                          appState.muro_eje_p_r1 = true;
+                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 1");
+                          Navigator.pop(context);
+                        },
+                        /*trailing: appState.muro_eje_p_r1
+                            ? Icon(Icons.edit_document, color: Colors.green)
+                            : Icon(Icons.edit_off, color: Colors.grey),*/
+                      ),
+                      ListTile(
+                        title: Text("- Muro Eje Principal (Obligatorio)"), //--> Muros principal (Muro Eje A - Reciento 1)
                         selected: appState.pantallaActual == 2,
                         onTap: () {
                           setState(() => appState.pantallaActual = 2);
