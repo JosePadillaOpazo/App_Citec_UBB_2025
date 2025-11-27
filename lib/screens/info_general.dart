@@ -299,29 +299,6 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 10),
 
-          TextFormField(
-            controller: appState.climaController,
-            decoration: const InputDecoration(
-              labelText: "Clima",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el clima';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Clima",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
           ValueListenableBuilder(
             valueListenable: appState.climaController,
             builder: (context, TextEditingValue value, _) {
@@ -572,57 +549,69 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 10),
 
-          TextFormField(
-            controller: appState.reparacionesController,
-            decoration: const InputDecoration(
-              labelText: "Reparaciones",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese reparaciones';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Reparaciones",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
           ValueListenableBuilder(
             valueListenable: appState.reparacionesController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  appState.reparacionesController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                appState.reparacionesController.text = "No";
+              }
+              final seleccion = appState.reparacionesController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      appState.reparacionesController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        appState.detalleReparacionesController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: appState.detalleReparacionesController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Detalles de reparaciones",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese detalles de las reparaciones';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
             },
           ),
@@ -630,114 +619,80 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 10),
 
           Text(
-            "¿Cuántas y de qué tipo?",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: appState.detalleReparacionesController,
-            decoration: const InputDecoration(
-              labelText: "Detalles de reparaciones",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese detalles de las reparaciones';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
             "Ampliaciones",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
-
-          TextFormField(
-            controller: appState.ampliacionesController,
-            decoration: const InputDecoration(
-              labelText: "",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese si existen ampliaciones';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Ampliaciones",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
 
           ValueListenableBuilder(
             valueListenable: appState.ampliacionesController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  appState.ampliacionesController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                appState.ampliacionesController.text = "No";
+              }
+              final seleccion = appState.ampliacionesController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      appState.ampliacionesController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        appState.detalleAmpliacionesController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: appState.detalleAmpliacionesController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Detalles de Amplaciones",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese detalles de las ampliaciones';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
             },
           ),
 
-
-          const SizedBox(height: 10),
-
-          Text(
-            "¿Cuántas y de qué tipo?",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: appState.detalleAmpliacionesController,
-            decoration: const InputDecoration(
-              labelText: "Detalles de ampliaciones",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese los detalles de las ampliaciones';
-              }
-              return null;
-            },
-          ),
 
           const SizedBox(height: 10),
 

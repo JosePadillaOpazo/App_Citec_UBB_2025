@@ -216,7 +216,10 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.nivelafecController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.nivelafecController.text = "Nulo";
+              }
+              final seleccion = hojaActual.nivelafecController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
@@ -285,53 +288,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_encEsqMurController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_encEsqMurController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_encEsqMurController.text = "No";
+              }
+              final seleccion = hojaActual.mh_encEsqMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_encEsqMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supencEsqMurController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supencEsqMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supencEsqMurController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -347,53 +369,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_encCieMurController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_encCieMurController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_encCieMurController.text = "No";
+              }
+              final seleccion = hojaActual.mh_encCieMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_encCieMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supencCieMurController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supencCieMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supencCieMurController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -409,53 +450,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_encPisMurController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_encPisMurController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_encPisMurController.text = "No";
+              }
+              final seleccion = hojaActual.mh_encPisMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_encPisMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supencPisMurController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supencPisMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supencPisMurController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -471,53 +531,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_rasgventController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_rasgventController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_rasgventController.text = "No";
+              }
+              final seleccion = hojaActual.mh_rasgventController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_rasgventController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_suprasgventController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_suprasgventController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_suprasgventController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -533,53 +612,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_bajovenController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_bajovenController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_bajovenController.text = "No";
+              }
+              final seleccion = hojaActual.mh_bajovenController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_bajovenController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supbajovenController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supbajovenController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supbajovenController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -595,53 +693,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_aCentralController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_aCentralController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_aCentralController.text = "No";
+              }
+              final seleccion = hojaActual.mh_aCentralController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_aCentralController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supaCentralController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supaCentralController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supaCentralController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -657,53 +774,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_punLocController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_punLocController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_punLocController.text = "No";
+              }
+              final seleccion = hojaActual.mh_punLocController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_punLocController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_suppunLocController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_suppunLocController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_suppunLocController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -727,53 +863,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_encEsqMurController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_encEsqMurController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_encEsqMurController.text = "No";
+              }
+              final seleccion = hojaActual.df_encEsqMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_encEsqMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supencEsqMurController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supencEsqMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supencEsqMurController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -789,53 +944,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_encCieMurController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_encCieMurController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_encCieMurController.text = "No";
+              }
+              final seleccion = hojaActual.df_encCieMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_encCieMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supencCieMurController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supencCieMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supencCieMurController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -851,53 +1025,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_encPisMurController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_encPisMurController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_encPisMurController.text = "No";
+              }
+              final seleccion = hojaActual.df_encPisMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_encPisMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supencPisMurController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supencPisMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supencPisMurController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number, // teclado numérico
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -913,53 +1106,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_rasgventController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_rasgventController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_rasgventController.text = "No";
+              }
+              final seleccion = hojaActual.df_rasgventController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_rasgventController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_suprasgventController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_suprasgventController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_suprasgventController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -975,53 +1187,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_bajovenController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_bajovenController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_bajovenController.text = "No";
+              }
+              final seleccion = hojaActual.df_bajovenController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_bajovenController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supbajovenController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supbajovenController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supbajovenController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -1037,53 +1268,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_aCentralController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_aCentralController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_aCentralController.text = "No";
+              }
+              final seleccion = hojaActual.df_aCentralController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_aCentralController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supaCentralController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supaCentralController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supaCentralController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -1099,53 +1349,72 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_punLocController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_punLocController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_punLocController.text = "No";
+              }
+              final seleccion = hojaActual.df_punLocController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_punLocController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_suppunLocController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_suppunLocController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Superficie en m²",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                    ],
+                    enableInteractiveSelection: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una superficie';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_suppunLocController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 

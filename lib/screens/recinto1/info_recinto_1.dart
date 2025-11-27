@@ -61,7 +61,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.patvisibleController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.patvisibleController.text = "No";
+              }
+              final seleccion = hojaActual.patvisibleController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Si', label: Text('Sí')),
@@ -102,56 +105,68 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.pinOlimpController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.pinOlimpController.text = newSelection.first;
-                  print(hojaActual.pinOlimpController.text);
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.pinOlimpController.text = "No";
+              }
+              final seleccion = hojaActual.pinOlimpController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.pinOlimpController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.cualpolController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cual?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.cualpolController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Detalles de Manifestaciones Ocultas",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese detalles';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "¿Cuál?" ,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.cualpolController,
-            decoration: const InputDecoration(
-              labelText: "Detalle",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la información';
-              }
-              return null;
             },
           ),
 
@@ -167,7 +182,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.olorhumController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.olorhumController.text = "No";
+              }
+              final seleccion = hojaActual.olorhumController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Si', label: Text('Sí')),
@@ -208,55 +226,68 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.modifController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.modifController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.modifController.text = "No";
+              }
+              final seleccion = hojaActual.modifController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.modifController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.cualmodController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cual?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.cualmodController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Detalles de Manifestaciones Ocultas",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese detalles';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "¿Cuál?" ,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 20),
-
-          TextFormField(
-            controller: hojaActual.cualmodController,
-            decoration: const InputDecoration(
-              labelText: "Detalle",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la información';
-              }
-              return null;
             },
           ),
 
@@ -279,55 +310,73 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.sistcalefController,
             builder: (context, TextEditingValue value, _) {
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(
-                    value: 'Eléctrico (seca)',
-                    label: Text('Eléctrico (seca)'),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(
+                        value: 'Eléctrico (seca)',
+                        label: Text('Eléctrico (seca)'),
+                      ),
+                      ButtonSegment(
+                        value: 'Gas / parafina con evacuacipon exterior (seca)',
+                        label: Text('Gas / parafina con evacuacipon exterior (seca)'),
+                      ),
+                      ButtonSegment(
+                        value: 'Biomasa con evacuación exterior (seca)',
+                        label: Text('Biomasa con evacuación exterior (seca)'),
+                      ),
+                      ButtonSegment(
+                        value: 'Parafina/gas móvil (húmeda)',
+                        label: Text('Parafina/gas móvil (húmeda)'),
+                      ),
+                      ButtonSegment(
+                        value: 'Otro',
+                        label: Text('Otro'),
+                      )
+                    ],
+                    selected: {value.text},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.sistcalefController.text = newSelection.first;
+                      if (newSelection.first != 'Otro') {
+                        hojaActual.otrocalefController.clear();
+                      }
+                    },
                   ),
-                  ButtonSegment(
-                    value: 'Gas / parafina con evacuacipon exterior (seca)',
-                    label: Text('Gas / parafina con evacuacipon exterior (seca)'),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuál?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
-                  ButtonSegment(
-                    value: 'Biomasa con evacuación exterior (seca)',
-                    label: Text('Biomasa con evacuación exterior (seca)'),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.otrocalefController,
+                    enabled: value.text == 'Otro',
+                    decoration: const InputDecoration(
+                      labelText: "Detalle",
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        if (hojaActual.sistcalefController.text == 'Otro') {
+                          return 'Por favor ingrese detalles';
+                        }
+                      }
+                      return null;
+                    },
                   ),
-                  ButtonSegment(
-                    value: 'Parafina/gas móvil (húmeda)',
-                    label: Text('Parafina/gas móvil (húmeda)'),
-                  )
+
+
                 ],
-                selected: {value.text},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.sistcalefController.text = newSelection.first;
-                },
               );
             },
           ),
 
-          const SizedBox(height: 10),
-
-          Text(
-            "Otro ¿cuál?",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.otrocalefController,
-            decoration: const InputDecoration(
-              labelText: "Detalle",
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una etapa';
-              }
-              return null;
-            },
-          ),
 
           const SizedBox(height: 10),
 
@@ -371,7 +420,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.aireadorController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.aireadorController.text = "No Operativo";
+              }
+              final seleccion = hojaActual.aireadorController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
@@ -412,7 +464,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.extractorController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.extractorController.text = "No Operativo";
+              }
+              final seleccion = hojaActual.extractorController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
@@ -453,7 +508,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.campanaController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.campanaController.text = "No Operativo";
+              }
+              final seleccion = hojaActual.campanaController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
@@ -494,7 +552,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.celosiapueController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.celosiapueController.text = "No Operativo";
+              }
+              final seleccion = hojaActual.celosiapueController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
@@ -535,7 +596,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.rebajepueController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.rebajepueController.text = "No Operativo";
+              }
+              final seleccion = hojaActual.rebajepueController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
@@ -576,7 +640,10 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.otroequipController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.otroequipController.text = "No Operativo";
+              }
+              final seleccion = hojaActual.otroequipController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
@@ -606,11 +673,6 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           ),
 
           const SizedBox(height: 40),
-
-
-
-
-          const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
           // SECCIÓN DE FOTO PATOLOGIA

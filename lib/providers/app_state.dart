@@ -2649,23 +2649,33 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('C21').setText("¿Presenta patologías visibles?");
     sheet.getRangeByName('C21').cellStyle.bold = true;
 
-    sheet.getRangeByName('G21:H21').merge();
-    sheet.getRangeByName('G21').setText("Si o No");
+    sheet.getRangeByName('G21').setText("Si");
     sheet.getRangeByName('G21').cellStyle.bold = true;
 
-    sheet.getRangeByName('G22:H22').merge();
-    sheet.getRangeByName('G22').setText(hojaMuroPrincipal.patvisibleController.text);
+    sheet.getRangeByName('H21').setText("No");
+    sheet.getRangeByName('H21').cellStyle.bold = true;
+
+    if (hojaMuroPrincipal.patvisibleController.text == "Si") {
+      sheet.getRangeByName('G22').setText("✔");
+    } else {
+      sheet.getRangeByName('H22').setText("✔");
+    }
 
     sheet.getRangeByName('I21:L22').merge();
     sheet.getRangeByName('I21').setText("Manifestaciones ocultas ¿fue pintado o limpiado últimamente?");
     sheet.getRangeByName('I21').cellStyle.bold = true;
 
-    sheet.getRangeByName('M21:N21').merge();
-    sheet.getRangeByName('M21').setText("Si o No");
+    sheet.getRangeByName('M21').setText("Si");
     sheet.getRangeByName('M21').cellStyle.bold = true;
 
-    sheet.getRangeByName('M22:N22').merge();
-    sheet.getRangeByName('M22').setText(hojaMuroPrincipal.pinOlimpController.text);
+    sheet.getRangeByName('N21').setText("No");
+    sheet.getRangeByName('N21').cellStyle.bold = true;
+
+    if (hojaMuroPrincipal.pinOlimpController.text == "Si") {
+      sheet.getRangeByName('M22').setText("✔");
+    } else {
+      sheet.getRangeByName('N22').setText("✔");
+    }
 
     sheet.getRangeByName('O21:R21').merge();
     sheet.getRangeByName('O21').setText("¿Cuál?");
@@ -2678,24 +2688,33 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('C23').setText("¿Olor a humedad?");
     sheet.getRangeByName('C23').cellStyle.bold = true;
 
-    sheet.getRangeByName('G23:H23').merge();
-    sheet.getRangeByName('G23').setText("Si o No");
+    sheet.getRangeByName('G23').setText("Si");
     sheet.getRangeByName('G23').cellStyle.bold = true;
 
-    sheet.getRangeByName('G24:H24').merge();
-    sheet.getRangeByName('G24').setText(hojaMuroPrincipal.olorhumController.text);
-    sheet.getRangeByName('G24').cellStyle.bold = true;
+    sheet.getRangeByName('H23').setText("No");
+    sheet.getRangeByName('H23').cellStyle.bold = true;
+
+    if (hojaMuroPrincipal.olorhumController.text == "Si") {
+      sheet.getRangeByName('G24').setText("✔");
+    } else {
+      sheet.getRangeByName('H24').setText("✔");
+    }
 
     sheet.getRangeByName('I23:L24').merge();
     sheet.getRangeByName('I23').setText("¿Modificaciones?");
     sheet.getRangeByName('I23').cellStyle.bold = true;
 
-    sheet.getRangeByName('M23:N23').merge();
-    sheet.getRangeByName('M23').setText("Si o No");
+    sheet.getRangeByName('M23').setText("Si");
     sheet.getRangeByName('M23').cellStyle.bold = true;
 
-    sheet.getRangeByName('M24:N24').merge();
-    sheet.getRangeByName('M24').setText(hojaMuroPrincipal.modifController.text);
+    sheet.getRangeByName('N23').setText("No");
+    sheet.getRangeByName('N23').cellStyle.bold = true;
+
+    if (hojaMuroPrincipal.modifController.text == "Si") {
+      sheet.getRangeByName('M24').setText("✔");
+    } else {
+      sheet.getRangeByName('N24').setText("✔");
+    }
 
     sheet.getRangeByName('O23:R23').merge();
     sheet.getRangeByName('O23').setText("¿Cuál?");
@@ -2712,19 +2731,34 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G25').setText("Eléctrico (seca)");
     sheet.getRangeByName('G25').cellStyle.bold = true;
 
+    sheet.getRangeByName('G26:H26').merge();
+
+
     sheet.getRangeByName('I25:J25').merge();
     sheet.getRangeByName('I25').setText("Gas / parafina con evacuacipon exterior (seca)");
     sheet.getRangeByName('I25').cellStyle.bold = true;
+
+    sheet.getRangeByName('I26:J26').merge();
 
     sheet.getRangeByName('K25:L25').merge();
     sheet.getRangeByName('K25').setText("Biomasa con evacuación exterior (seca)");
     sheet.getRangeByName('K25').cellStyle.bold = true;
 
+    sheet.getRangeByName('K26:L26').merge();
+
     sheet.getRangeByName('M25:N25').merge();
     sheet.getRangeByName('M25').setText("Parafina/gas móvil (húmeda)");
     sheet.getRangeByName('M25').cellStyle.bold = true;
 
-    sheet.getRangeByName('G26:N26').merge();
+    sheet.getRangeByName('M26:N26').merge();
+
+    if (hojaMuroPrincipal.sistcalefController.text == "Eléctrico (seca)") {
+      sheet.getRangeByName('G26').setText("✔");
+    }
+    if (hojaMuroPrincipal.sistcalefController.text == "Gas / parafina con evacuación exterior (seca)") {
+      sheet.getRangeByName('I26').setText("✔");
+    }
+
     sheet.getRangeByName('G26').setText(hojaMuroPrincipal.sistcalefController.text);
 
     sheet.getRangeByName('O25:R25').merge();
