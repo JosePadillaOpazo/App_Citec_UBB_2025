@@ -165,6 +165,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -197,6 +198,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -259,6 +261,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -291,6 +294,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -321,6 +325,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -349,6 +354,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -425,6 +431,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                     FilteringTextInputFormatter.allow(
                       RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, °]'),
                     ),
+                    PegarDisabled(),
                   ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -507,6 +514,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                   FilteringTextInputFormatter.allow(
                     RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, °]'),
                   ),
+                  PegarDisabled(),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -582,6 +590,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -638,6 +647,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -666,6 +676,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -696,6 +707,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -728,6 +740,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -758,6 +771,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -788,6 +802,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -820,6 +835,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[0-9kK.\-]'),
               ),
+              PegarDisabled(),
             ],
             validator: appState.validarRut,
           ),
@@ -892,6 +908,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                       FilteringTextInputFormatter.allow(
                         RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
                       ),
+                      PegarDisabled(),
                     ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -978,6 +995,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                       FilteringTextInputFormatter.allow(
                         RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
                       ),
+                      PegarDisabled(),
                     ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -1016,6 +1034,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -1053,6 +1072,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -1081,6 +1101,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -1109,6 +1130,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -1137,6 +1159,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -1165,6 +1188,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -1195,6 +1219,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -1227,6 +1252,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -1259,6 +1285,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -1291,6 +1318,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -1323,6 +1351,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               FilteringTextInputFormatter.allow(
                 RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
               ),
+              PegarDisabled(),
             ],
             validator: (value) {
               if (value == null || value.isEmpty) {

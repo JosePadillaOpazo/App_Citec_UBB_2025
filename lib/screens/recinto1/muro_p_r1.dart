@@ -36,11 +36,11 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Muro Eje " + appState.r1_murop_nombreController.text,
+                  "Muro Principal Eje " + appState.r1_murop_nombreController.text,
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 
-                IconButton(
+                /*IconButton(
                   onPressed:() async {
                     final nuevoNombre = await appState.EditarNombre(
                       context,
@@ -52,7 +52,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     }
                   },
                   icon: Icon(Icons.edit, color: Colors.blueAccent),
-                )
+                )*/
               ]
             )
           ),
@@ -84,10 +84,19 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               labelText: "Asignar Eje al Muro",
               border: OutlineInputBorder(),
             ),
-            enabled: false,
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
+              ),
+              PegarDisabled(),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una asignacion para el muro';
+                return 'Por favor ingrese la información requerida';
+              }
+              if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras y espacios';
               }
               return null;
             },
@@ -96,7 +105,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Superficie muro",
+            "Superficie muro: (m²)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -111,6 +120,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -124,7 +134,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Superficie ventana",
+            "Superficie ventana: (m²)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -139,6 +149,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
             ],
             enableInteractiveSelection: false,
             validator: (value) {
@@ -311,17 +322,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_supencEsqMurController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -392,17 +408,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_supencCieMurController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -473,17 +494,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_supencPisMurController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -554,17 +580,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_suprasgventController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -635,17 +666,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_supbajovenController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -716,17 +752,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_supaCentralController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -797,17 +838,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.mh_suppunLocController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -886,17 +932,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_supencEsqMurController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -967,17 +1018,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_supencCieMurController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -1048,17 +1104,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_supencPisMurController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -1129,17 +1190,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_suprasgventController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -1210,17 +1276,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_supbajovenController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -1291,17 +1362,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_supaCentralController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -1372,17 +1448,22 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     controller: hojaActual.df_suppunLocController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
-                      labelText: "Superficie en m²",
+                      labelText: "Información",
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-                    ],
                     enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese una superficie';
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -1396,7 +1477,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           const SizedBox(height: 20),
 
           const Text(
-            "▪️Total superficie de muro afectada",
+            "▪️Total superficie de muro afectada: (m²)",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 

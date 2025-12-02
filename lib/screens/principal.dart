@@ -303,7 +303,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey),*/
                       ),
                       ListTile(
-                        title: Text("- Muro Eje Principal (Obligatorio)"), //--> Muros principal (Muro Eje A - Reciento 1)
+                        title: Text("- Muro Principal Eje "+ appState.r1_murop_nombreController.text +" (Obligatorio)"), //--> Muros principal (Muro Eje A - Reciento 1)
                         selected: appState.pantallaActual == 2,
                         onTap: () {
                           setState(() => appState.pantallaActual = 2);

@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
@@ -1383,6 +1384,7 @@ class AppState extends ChangeNotifier {
               labelText: 'Nuevo nombre',
               border: OutlineInputBorder(),
             ),
+
             autofocus: true,
           ),
           actions: [
@@ -4476,5 +4478,16 @@ class HojaPisoCielo {
     df_punlocCieloController.dispose();
     df_supPunlocCieloController.dispose();
     totpalsupafecCieloController.dispose();
+  }
+}
+
+class PegarDisabled extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if ((newValue.text.length - oldValue.text.length) > 1) {
+      return oldValue;
+    }
+    return newValue;
   }
 }

@@ -157,9 +157,19 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                       labelText: "Detalles de Manifestaciones Ocultas",
                       border: OutlineInputBorder(),
                     ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese detalles';
+                        return 'Por favor ingrese la información reuqerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -278,9 +288,19 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                       labelText: "Detalles de Manifestaciones Ocultas",
                       border: OutlineInputBorder(),
                     ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese detalles';
+                        return 'Por favor ingrese la información reuqerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -361,11 +381,19 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                       labelText: "Detalle",
                       border: OutlineInputBorder(),
                     ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        if (hojaActual.sistcalefController.text == 'Otro') {
-                          return 'Por favor ingrese detalles';
-                        }
+                        return 'Por favor ingrese la información reuqerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -381,7 +409,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           Text(
-            "¿Cuánto tiempo calefacciona?",
+            "¿Cuánto tiempo calefacciona? (Hrs)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -393,9 +421,15 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               labelText: "Tiempo",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el tiempo de calefacción';
+                return 'Por favor ingrese una superficie';
               }
               return null;
             },
