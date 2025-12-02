@@ -36,7 +36,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  appState.r1_murop_nombreController.text,
+                  "Muro Eje " + appState.r1_murop_nombreController.text,
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 
@@ -79,11 +79,12 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.muroejeController,
+            controller: appState.r1_murop_nombreController,
             decoration: const InputDecoration(
               labelText: "Asignar Eje al Muro",
               border: OutlineInputBorder(),
             ),
+            enabled: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingrese una asignacion para el muro';
@@ -151,56 +152,30 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Muro perimetral",
+            "Tipo de Muro",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
-          TextFormField(
-            controller: hojaActual.muroperimetralController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
+          ValueListenableBuilder(
+            valueListenable: hojaActual.tipomuroController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.tipomuroController.text = "Muro perimetral";
               }
-              return null;
-            },
-          ),
+              final seleccion = hojaActual.tipomuroController.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Muro perimetral', label: Text('Muro perimetral')),
+                  ButtonSegment(value: 'Muro interior', label: Text('Muro interior')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.tipomuroController.text = newSelection.first;
+                },
 
-          const SizedBox(height: 10),
-
-          Text(
-            "Muro interior",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.murointController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
+              );
             },
           ),
 

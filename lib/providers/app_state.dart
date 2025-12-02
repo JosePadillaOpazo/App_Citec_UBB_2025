@@ -120,7 +120,9 @@ class AppState extends ChangeNotifier {
   final TextEditingController supViviendaController = TextEditingController();
   final TextEditingController nPisosController = TextEditingController();
   final TextEditingController oriFachadaController = TextEditingController();
+  final TextEditingController oriFachadainfoController = TextEditingController();
   final TextEditingController oriAccesoController = TextEditingController();
+  final TextEditingController oriAccesoinfoController = TextEditingController();
   final TextEditingController climaController = TextEditingController();
   final TextEditingController tempExteriorController = TextEditingController();
   final TextEditingController humExteriorController = TextEditingController();
@@ -156,13 +158,13 @@ class AppState extends ChangeNotifier {
   late TextEditingController recinto5_nombreController = TextEditingController(text: "Recinto 5");
 
   //-->Nombres de Muros Recinto 1 (tambien se utilizan para nombrar las hojas del excel)
-  late TextEditingController r1_murop_nombreController = TextEditingController(text: "Muro Eje A");
-  late TextEditingController r1_murob_nombreController = TextEditingController(text: "Muro Eje B");
-  late TextEditingController r1_muroc_nombreController = TextEditingController(text: "Muro Eje C");
-  late TextEditingController r1_murod_nombreController = TextEditingController(text: "Muro Eje D");
-  late TextEditingController r1_muroe_nombreController = TextEditingController(text: "Muro Eje E");
-  late TextEditingController r1_murof_nombreController = TextEditingController(text: "Muro Eje F");
-  late TextEditingController r1_murog_nombreController = TextEditingController(text: "Muro Eje G");
+  late TextEditingController r1_murop_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_murob_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_muroc_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_murod_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_muroe_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_murof_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_murog_nombreController = TextEditingController(text: "XX");
   late TextEditingController r1_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
   //-->Nombres de Muros Recinto 2 (tambien se utilizan para nombrar las hojas del excel)
@@ -372,6 +374,7 @@ class AppState extends ChangeNotifier {
     r5_murog_nombreController.text = "Muro Eje G";
     r5_pisocielo_nombreController.text = "Piso Cielo";
 
+
     // ---------------------------------------------------------------------------
     // REINICIAR FLAGS
     // ---------------------------------------------------------------------------
@@ -473,6 +476,59 @@ class AppState extends ChangeNotifier {
         },
       ),
     );
+  }
+
+  // ---------------------------------------------------------------------------
+  // VALIDAR RUT
+  // ---------------------------------------------------------------------------
+
+  String? validarRut(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingrese el RUT';
+    }
+
+    // Quitar puntos y guiones
+    String rut = value.replaceAll(RegExp(r'[^0-9kK]'), '').toUpperCase();
+
+    // Debe tener mínimo 2 caracteres (cuerpo + dígito)
+    if (rut.length < 2) {
+      return 'RUT incompleto';
+    }
+
+    // Separar cuerpo y dígito verificador
+    final cuerpo = rut.substring(0, rut.length - 1);
+    final dvIngresado = rut.substring(rut.length - 1);
+
+    // Validar que el cuerpo sea numérico
+    if (!RegExp(r'^\d+$').hasMatch(cuerpo)) {
+      return 'Formato de RUT no válido';
+    }
+
+    // Calcular dígito verificador correcto
+    int suma = 0;
+    int multiplo = 2;
+
+    for (int i = cuerpo.length - 1; i >= 0; i--) {
+      suma += int.parse(cuerpo[i]) * multiplo;
+      multiplo = multiplo == 7 ? 2 : multiplo + 1;
+    }
+
+    int dvCalculadoNum = 11 - (suma % 11);
+    String dvCalculado;
+
+    if (dvCalculadoNum == 11) {
+      dvCalculado = '0';
+    } else if (dvCalculadoNum == 10) {
+      dvCalculado = 'K';
+    } else {
+      dvCalculado = dvCalculadoNum.toString();
+    }
+
+    if (dvIngresado != dvCalculado) {
+      return 'RUT inválido (dígito verificador incorrecto)';
+    }
+
+    return null; // RUT válido
   }
 
 
@@ -1968,14 +2024,14 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('K12').cellStyle.bold = true;
 
       sheet.getRangeByName('M12:M13').merge();
-      sheet.getRangeByName('M12').setText(oriFachadaController.text);
+      sheet.getRangeByName('M12').setText(oriFachadaController.text +" "+ oriFachadainfoController.text);
 
       sheet.getRangeByName('N12:O13').merge();
       sheet.getRangeByName('N12').setText("Orientación acceso");
       sheet.getRangeByName('N12').cellStyle.bold = true;
 
       sheet.getRangeByName('P12:P13').merge();
-      sheet.getRangeByName('P12').setText(oriAccesoController.text);
+      sheet.getRangeByName('P12').setText(oriAccesoController.text +" "+ oriAccesoinfoController.text);
 
       sheet.getRangeByName('Q12:Q13').merge();
       sheet.getRangeByName('Q12').setText("Clima");
@@ -2310,7 +2366,7 @@ class AppState extends ChangeNotifier {
           break;
         case 3:
           sheet.getRangeByName('C43:G65').merge();
-          sheet.getRangeByName('H43:M655').merge();
+          sheet.getRangeByName('H43:M65').merge();
           sheet.getRangeByName('N43:R65').merge();
           File? imagen1Aguardar;
           File? imagen2Aguardar;
@@ -2337,16 +2393,16 @@ class AppState extends ChangeNotifier {
             imagen3Aguardar = imagen4GuardadaInfoGeneral!;
           }
 
-          //--> Info General 2 imagenes
+          //--> Info General 3 imagenes
           if (imagen1Aguardar != null && imagen1Aguardar.existsSync()) {
             final Uint8List imageBytes = await imagen1Aguardar.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
-              4, // columna
+              3, // columna
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 550;
           }
 
           if (imagen2Aguardar != null && imagen2Aguardar.existsSync()) {
@@ -2357,17 +2413,17 @@ class AppState extends ChangeNotifier {
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 450;
           }
           if (imagen3Aguardar != null && imagen3Aguardar.existsSync()) {
             final Uint8List imageBytes = await imagen3Aguardar.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
-              15, // columna
+              14, // columna
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 550;
           }
           break;
         case 4:
@@ -2376,7 +2432,7 @@ class AppState extends ChangeNotifier {
           sheet.getRangeByName('K43:N65').merge();
           sheet.getRangeByName('O43:R65').merge();
 
-          //--> Info General 2 imagenes
+          //--> Info General 4 imagenes
           if (imagen1GuardadaInfoGeneral != null && imagen1GuardadaInfoGeneral!.existsSync()) {
             final Uint8List imageBytes = await imagen1GuardadaInfoGeneral!.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
@@ -2385,43 +2441,45 @@ class AppState extends ChangeNotifier {
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 440;
           }
           if (imagen2GuardadaInfoGeneral != null && imagen2GuardadaInfoGeneral!.existsSync()) {
             final Uint8List imageBytes = await imagen2GuardadaInfoGeneral!.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
-              8, // columna
+              7, // columna
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 440;
           }
           if (imagen3GuardadaInfoGeneral != null && imagen3GuardadaInfoGeneral!.existsSync()) {
             final Uint8List imageBytes = await imagen3GuardadaInfoGeneral!.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
-              12, // columna
+              11, // columna
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 440;
           }
           if (imagen4GuardadaInfoGeneral != null && imagen4GuardadaInfoGeneral!.existsSync()) {
             final Uint8List imageBytes = await imagen4GuardadaInfoGeneral!.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
-              16, // columna
+              15, // columna
               base64Encode(imageBytes),
             );
             picture.height = 460;
-            picture.width = 500;
+            picture.width = 440;
           }
           break;
       }
 
       sheet.showGridlines = false;
       sheet.getRangeByName('A1:S66').rowHeight = 15;
+      sheet.getRangeByName('A12:S12').rowHeight = 25;
+      sheet.getRangeByName('A13:S13').rowHeight = 25;
       sheet.getRangeByName('A1:S66').columnWidth = 15;
       sheet.getRangeByName('A1:S66').cellStyle
         ..fontSize = 12
@@ -2568,6 +2626,7 @@ class AppState extends ChangeNotifier {
         ),
       );
       guardando = false;
+      resetApp(context);
       notifyListeners();
     }
   }
@@ -2630,7 +2689,7 @@ class AppState extends ChangeNotifier {
       ..bold = true
       ..backColor = '#FFC000';
 
-    sheet.getRangeByName('B8:B55').merge();
+    sheet.getRangeByName('B8:B65').merge();
     sheet.getRangeByName('B8').setText("5");
     sheet.getRangeByName('B8').cellStyle
       ..bold = true
@@ -2786,19 +2845,15 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G29').setText("Operativo");
     sheet.getRangeByName('G29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.aireadorController.text == "Operativo") {
-      sheet.getRangeByName('G29').cellStyle.backColor = '#93C47d';
-    }
-
     sheet.getRangeByName('H29').setText("No Op");
     sheet.getRangeByName('H29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.aireadorController.text == "No Operativo") {
-      sheet.getRangeByName('G29').cellStyle.backColor =  '#E06666';
+    if (hojaMuroPrincipal.aireadorController.text == "Operativo") {
+      sheet.getRangeByName('G30').setText("✔");
     }
-
-    sheet.getRangeByName('G30:H30').merge();
-    sheet.getRangeByName('G30').setText(hojaMuroPrincipal.aireadorController.text);
+    if (hojaMuroPrincipal.aireadorController.text == "No Operativo") {
+      sheet.getRangeByName('H30').setText("✔");
+    }
 
     sheet.getRangeByName('I28:J28').merge();
     sheet.getRangeByName('I28').setText("Extractor");
@@ -2807,19 +2862,15 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('I29').setText("Operativo");
     sheet.getRangeByName('I29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.extractorController.text == "Operativo") {
-      sheet.getRangeByName('I29').cellStyle.backColor = '#93C47D';
-    }
-
     sheet.getRangeByName('J29').setText("No Op");
     sheet.getRangeByName('J29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.extractorController.text == "No Operativo") {
-      sheet.getRangeByName('J29').cellStyle.backColor =  '#E06666';
+    if (hojaMuroPrincipal.extractorController.text == "Operativo") {
+      sheet.getRangeByName('I30').setText("✔");
     }
-
-    sheet.getRangeByName('I30:J30').merge();
-    sheet.getRangeByName('I30').setText(hojaMuroPrincipal.extractorController.text);
+    if (hojaMuroPrincipal.extractorController.text == "No Operativo") {
+      sheet.getRangeByName('J30').setText("✔");
+    }
 
     sheet.getRangeByName('K28:L28').merge();
     sheet.getRangeByName('K28').setText("Campana");
@@ -2828,41 +2879,32 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('K29').setText("Operativo");
     sheet.getRangeByName('K29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.campanaController.text == "Operativo") {
-      sheet.getRangeByName('K29').cellStyle.backColor = '#93C47D';
-    }
-
     sheet.getRangeByName('L29').setText("No Op");
     sheet.getRangeByName('L29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.campanaController.text == "No Operativo") {
-      sheet.getRangeByName('L29').cellStyle.backColor =  '#E06666';
+    if (hojaMuroPrincipal.campanaController.text == "Operativo") {
+      sheet.getRangeByName('K30').setText("✔");
     }
-
-    sheet.getRangeByName('K30:L30').merge();
-    sheet.getRangeByName('K30').setText(hojaMuroPrincipal.campanaController.text);
+    if (hojaMuroPrincipal.campanaController.text == "No Operativo") {
+      sheet.getRangeByName('L30').setText("✔");
+    }
 
     sheet.getRangeByName('M28:N28').merge();
     sheet.getRangeByName('M28').setText("Celosía puerta");
     sheet.getRangeByName('M28').cellStyle.bold = true;
 
-
     sheet.getRangeByName('M29').setText("Operativo");
     sheet.getRangeByName('M29').cellStyle.bold = true;
-
-    if (hojaMuroPrincipal.celosiapueController.text == "Operativo") {
-      sheet.getRangeByName('M29').cellStyle.backColor = '#93C47D';
-    }
 
     sheet.getRangeByName('N29').setText("No Op");
     sheet.getRangeByName('N29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.celosiapueController.text == "No Operativo") {
-      sheet.getRangeByName('N29').cellStyle.backColor =  '#E06666';
+    if (hojaMuroPrincipal.celosiapueController.text == "Operativo") {
+      sheet.getRangeByName('M30').setText("✔");
     }
-
-    sheet.getRangeByName('M30:N30').merge();
-    sheet.getRangeByName('M30').setText(hojaMuroPrincipal.celosiapueController.text);
+    if (hojaMuroPrincipal.celosiapueController.text == "No Operativo") {
+      sheet.getRangeByName('N30').setText("✔");
+    }
 
     sheet.getRangeByName('O28:P28').merge();
     sheet.getRangeByName('O28:P28').setText("Rebaje puerta");
@@ -2871,19 +2913,15 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('O29').setText("Operativo");
     sheet.getRangeByName('O29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.rebajepueController.text == "Operativo") {
-      sheet.getRangeByName('O29').cellStyle.backColor = '#93C47D';
-    }
-
     sheet.getRangeByName('P29').setText("No Op");
     sheet.getRangeByName('P29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.rebajepueController.text == "No Operativo") {
-      sheet.getRangeByName('P29').cellStyle.backColor =  '#E06666';
+    if (hojaMuroPrincipal.rebajepueController.text == "Operativo") {
+      sheet.getRangeByName('O30').setText("✔");
     }
-
-    sheet.getRangeByName('O30:P30').merge();
-    sheet.getRangeByName('O30:P30').setText(hojaMuroPrincipal.rebajepueController.text);
+    if (hojaMuroPrincipal.rebajepueController.text == "No Operativo") {
+      sheet.getRangeByName('P30').setText("✔");
+    }
 
     sheet.getRangeByName('Q28:R28').merge();
     sheet.getRangeByName('Q28').setText("Otro");
@@ -2892,19 +2930,16 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('Q29').setText("Operativo");
     sheet.getRangeByName('Q29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.otroequipController.text == "Operativo") {
-      sheet.getRangeByName('Q29').cellStyle.backColor = '#93C47D';
-    }
-
     sheet.getRangeByName('R29').setText("No Op");
     sheet.getRangeByName('R29').cellStyle.bold = true;
 
+    if (hojaMuroPrincipal.otroequipController.text == "Operativo") {
+      sheet.getRangeByName('Q30').setText("✔");
+    }
     if (hojaMuroPrincipal.otroequipController.text == "No Operativo") {
-      sheet.getRangeByName('R29').cellStyle.backColor =  '#E06666';
+      sheet.getRangeByName('R30').setText("✔");
     }
 
-    sheet.getRangeByName('Q30:R30').merge();
-    sheet.getRangeByName('Q30').setText(hojaMuroPrincipal.otroequipController.text);
 
 
     // -------------------------------------------------------------------------
@@ -2941,13 +2976,16 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('C33').setText("Muro perimetral");
     sheet.getRangeByName('C33').cellStyle.bold = true;
 
-    sheet.getRangeByName('F33').setText(hojaMuroPrincipal.muroperimetralController.text);
-
     sheet.getRangeByName('C34:E34').merge();
     sheet.getRangeByName('C34').setText("Muro interior");
     sheet.getRangeByName('C34').cellStyle.bold = true;
 
-    sheet.getRangeByName('F34').setText(hojaMuroPrincipal.murointController.text);
+    if (hojaMuroPrincipal.tipomuroController.text == "Muro perimetral") {
+      sheet.getRangeByName('F33').setText("✔");
+    }
+    if (hojaMuroPrincipal.tipomuroController.text == "Muro interior") {
+      sheet.getRangeByName('F34').setText("✔");
+    }
 
     sheet.getRangeByName('G33:I34').merge();
     sheet.getRangeByName('G33').setText("Nivel de afectación");
@@ -2979,16 +3017,16 @@ class AppState extends ChangeNotifier {
 
     switch(hojaMuroPrincipal.nivelafecController.text) {
       case "Nulo":
-        sheet.getRangeByName('J34:K34').cellStyle.backColor = '#A2C4C9';
+        sheet.getRangeByName('J34').setText("✔");
         break;
       case "Bajo":
-        sheet.getRangeByName('L33:M33').cellStyle.backColor = '#93C47D';
+        sheet.getRangeByName('L34').setText("✔");
         break;
       case "Medio":
-        sheet.getRangeByName('N34:O34').cellStyle.backColor = '#FFD966';
+        sheet.getRangeByName('N34').setText("✔");
         break;
       case "Alto":
-        sheet.getRangeByName('P34:R34').cellStyle.backColor = '#E06666';
+        sheet.getRangeByName('P34').setText("✔");
         break;
     }
 
@@ -3012,134 +3050,256 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('M37').setText("Daño físico mecánico");
     sheet.getRangeByName('M37').cellStyle.bold = true;
 
-    sheet.getRangeByName('G38:J38').merge();
-    sheet.getRangeByName('G38').setText("SI ó No");
+    sheet.getRangeByName('G38:H38').merge();
+    sheet.getRangeByName('G38').setText("SI");
     sheet.getRangeByName('G38').cellStyle.bold = true;
+
+    sheet.getRangeByName('I38:J38').merge();
+    sheet.getRangeByName('I38').setText("No");
+    sheet.getRangeByName('I38').cellStyle.bold = true;
 
     sheet.getRangeByName('K38:L38').merge();
     sheet.getRangeByName('K38').setText("Superficie afectada");
     sheet.getRangeByName('K38').cellStyle.bold = true;
 
-    sheet.getRangeByName('M38:P38').merge();
-    sheet.getRangeByName('M38').setText("SI ó No");
+    sheet.getRangeByName('M38:N38').merge();
+    sheet.getRangeByName('M38').setText("Si");
     sheet.getRangeByName('M38').cellStyle.bold = true;
+
+    sheet.getRangeByName('O38:P38').merge();
+    sheet.getRangeByName('O38').setText("No");
+    sheet.getRangeByName('O38').cellStyle.bold = true;
 
     sheet.getRangeByName('Q38:R38').merge();
     sheet.getRangeByName('Q38').setText("Superficie afectada");
     sheet.getRangeByName('Q38').cellStyle.bold = true;
 
+
+    //-- Encuentro esquina muro
     sheet.getRangeByName('C39:F39').merge();
     sheet.getRangeByName('C39').setText("Encuentro esquina muro");
     sheet.getRangeByName('C39').cellStyle.bold = true;
 
-    sheet.getRangeByName('G39:J39').merge();
-    sheet.getRangeByName('G39').setText(hojaMuroPrincipal.mh_encEsqMurController.text);
+    sheet.getRangeByName('G39:H39').merge(); //Si
+    sheet.getRangeByName('I39:J39').merge(); // No
+
+    if (hojaMuroPrincipal.mh_encEsqMurController.text == "Si") {
+      sheet.getRangeByName('G39').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_encEsqMurController.text == "No") {
+      sheet.getRangeByName('I39').setText("✔");
+    }
 
     sheet.getRangeByName('K39:L39').merge();
     sheet.getRangeByName('K39').setText(hojaMuroPrincipal.mh_supencEsqMurController.text);
 
-    sheet.getRangeByName('M39:P39').merge();
-    sheet.getRangeByName('M39').setText(hojaMuroPrincipal.df_encEsqMurController.text);
+    sheet.getRangeByName('M39:N39').merge(); //Si
+    sheet.getRangeByName('O39:P39').merge(); // No
+
+    if (hojaMuroPrincipal.df_encEsqMurController.text == "Si") {
+      sheet.getRangeByName('M39').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_encEsqMurController.text == "No") {
+      sheet.getRangeByName('O39').setText("✔");
+    }
 
     sheet.getRangeByName('Q39:R39').merge();
     sheet.getRangeByName('Q39').setText(hojaMuroPrincipal.df_supencEsqMurController.text);
 
+
+    //-- Encuentro cielo muro
     sheet.getRangeByName('C40:F40').merge();
     sheet.getRangeByName('C40').setText("Encuentro cielo muro");
     sheet.getRangeByName('C40').cellStyle.bold = true;
 
-    sheet.getRangeByName('G40:J40').merge();
-    sheet.getRangeByName('G40').setText(hojaMuroPrincipal.mh_encCieMurController.text);
+    sheet.getRangeByName('G40:H40').merge(); //Si
+    sheet.getRangeByName('I40:J40').merge(); // No
+
+    if (hojaMuroPrincipal.mh_encCieMurController.text == "Si") {
+      sheet.getRangeByName('G40').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_encCieMurController.text == "No") {
+      sheet.getRangeByName('I40').setText("✔");
+    }
 
     sheet.getRangeByName('K40:L40').merge();
     sheet.getRangeByName('K40').setText(hojaMuroPrincipal.mh_supencCieMurController.text);
 
-    sheet.getRangeByName('M40:P40').merge();
-    sheet.getRangeByName('M40').setText(hojaMuroPrincipal.df_encCieMurController.text);
+    sheet.getRangeByName('M40:N40').merge(); //Si
+    sheet.getRangeByName('O40:P40').merge(); // No
+
+    if (hojaMuroPrincipal.df_encCieMurController.text == "Si") {
+      sheet.getRangeByName('M40').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_encCieMurController.text == "No") {
+      sheet.getRangeByName('O40').setText("✔");
+    }
 
     sheet.getRangeByName('Q40:R40').merge();
     sheet.getRangeByName('Q40').setText(hojaMuroPrincipal.df_supencCieMurController.text);
 
+
+    //-- Encuentro piso muro
     sheet.getRangeByName('C41:F41').merge();
     sheet.getRangeByName('C41').setText("Encuentro piso muro");
     sheet.getRangeByName('C41').cellStyle.bold = true;
 
-    sheet.getRangeByName('G41:J41').merge();
-    sheet.getRangeByName('G41').setText(hojaMuroPrincipal.mh_encPisMurController.text);
+    sheet.getRangeByName('G41:H41').merge(); //Si
+    sheet.getRangeByName('I41:J41').merge(); // No
+
+    if (hojaMuroPrincipal.mh_encPisMurController.text == "Si") {
+      sheet.getRangeByName('G41').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_encPisMurController.text == "No") {
+      sheet.getRangeByName('I41').setText("✔");
+    }
 
     sheet.getRangeByName('K41:L41').merge();
     sheet.getRangeByName('K41').setText(hojaMuroPrincipal.mh_supencPisMurController.text);
 
-    sheet.getRangeByName('M41:P41').merge();
-    sheet.getRangeByName('M41').setText(hojaMuroPrincipal.df_encPisMurController.text);
+    sheet.getRangeByName('M41:N41').merge(); //Si
+    sheet.getRangeByName('O41:P41').merge(); // No
+
+    if (hojaMuroPrincipal.df_encPisMurController.text == "Si") {
+      sheet.getRangeByName('M41').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_encPisMurController.text == "No") {
+      sheet.getRangeByName('O41').setText("✔");
+    }
 
     sheet.getRangeByName('Q41:R41').merge();
     sheet.getRangeByName('Q41').setText(hojaMuroPrincipal.df_supencPisMurController.text);
 
+
+    //-- Rasgo de ventana
     sheet.getRangeByName('C42:F42').merge();
     sheet.getRangeByName('C42').setText("Rasgo de ventana");
     sheet.getRangeByName('C42').cellStyle.bold = true;
 
-    sheet.getRangeByName('G42:J42').merge();
-    sheet.getRangeByName('G42').setText(hojaMuroPrincipal.mh_rasgventController.text);
+    sheet.getRangeByName('G42:H42').merge(); //Si
+    sheet.getRangeByName('I42:J42').merge(); // No
+
+    if (hojaMuroPrincipal.mh_rasgventController.text == "Si") {
+      sheet.getRangeByName('G42').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_rasgventController.text == "No") {
+      sheet.getRangeByName('I42').setText("✔");
+    }
 
     sheet.getRangeByName('K42:L42').merge();
     sheet.getRangeByName('K42').setText(hojaMuroPrincipal.mh_suprasgventController.text);
 
-    sheet.getRangeByName('M42:P42').merge();
-    sheet.getRangeByName('M42').setText(hojaMuroPrincipal.df_rasgventController.text);
+    sheet.getRangeByName('M42:N42').merge(); //Si
+    sheet.getRangeByName('O42:P42').merge(); // No
+
+    if (hojaMuroPrincipal.df_rasgventController.text == "Si") {
+      sheet.getRangeByName('M42').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_rasgventController.text == "No") {
+      sheet.getRangeByName('O42').setText("✔");
+    }
 
     sheet.getRangeByName('Q42:R42').merge();
     sheet.getRangeByName('Q42').setText(hojaMuroPrincipal.df_suprasgventController.text);
 
+
+    //-- Bajo ventana (antepecho)
     sheet.getRangeByName('C43:F43').merge();
     sheet.getRangeByName('C43').setText("Bajo ventana (antepecho)");
     sheet.getRangeByName('C43').cellStyle.bold = true;
 
-    sheet.getRangeByName('G43:J43').merge();
-    sheet.getRangeByName('G43').setText(hojaMuroPrincipal.mh_bajovenController.text);
+    sheet.getRangeByName('G43:H43').merge(); //Si
+    sheet.getRangeByName('I43:J43').merge(); // No
+
+    if (hojaMuroPrincipal.mh_bajovenController.text == "Si") {
+      sheet.getRangeByName('G43').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_bajovenController.text == "No") {
+      sheet.getRangeByName('I43').setText("✔");
+    }
 
     sheet.getRangeByName('K43:L43').merge();
     sheet.getRangeByName('K43').setText(hojaMuroPrincipal.mh_supbajovenController.text);
 
-    sheet.getRangeByName('M43:P43').merge();
-    sheet.getRangeByName('M43').setText(hojaMuroPrincipal.df_bajovenController.text);
+    sheet.getRangeByName('M43:N43').merge(); //Si
+    sheet.getRangeByName('O43:P43').merge(); // No
+
+    if (hojaMuroPrincipal.df_bajovenController.text == "Si") {
+      sheet.getRangeByName('M43').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_bajovenController.text == "No") {
+      sheet.getRangeByName('O43').setText("✔");
+    }
 
     sheet.getRangeByName('Q43:R43').merge();
     sheet.getRangeByName('Q43').setText(hojaMuroPrincipal.df_supbajovenController.text);
 
+
+    //-- Área central
     sheet.getRangeByName('C44:F44').merge();
     sheet.getRangeByName('C44').setText("Área central");
     sheet.getRangeByName('C44').cellStyle.bold = true;
 
-    sheet.getRangeByName('G44:J44').merge();
-    sheet.getRangeByName('G44').setText(hojaMuroPrincipal.mh_aCentralController.text);
+    sheet.getRangeByName('G44:H44').merge(); //Si
+    sheet.getRangeByName('I44:J44').merge(); // No
+
+    if (hojaMuroPrincipal.mh_aCentralController.text == "Si") {
+      sheet.getRangeByName('G44').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_aCentralController.text == "No") {
+      sheet.getRangeByName('I44').setText("✔");
+    }
 
     sheet.getRangeByName('K44:L44').merge();
     sheet.getRangeByName('K44').setText(hojaMuroPrincipal.mh_supaCentralController.text);
 
-    sheet.getRangeByName('M44:P44').merge();
-    sheet.getRangeByName('M44').setText(hojaMuroPrincipal.df_aCentralController.text);
+    sheet.getRangeByName('M44:N44').merge(); //Si
+    sheet.getRangeByName('O44:P44').merge(); // No
+
+    if (hojaMuroPrincipal.df_aCentralController.text == "Si") {
+      sheet.getRangeByName('M44').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_aCentralController.text == "No") {
+      sheet.getRangeByName('O44').setText("✔");
+    }
 
     sheet.getRangeByName('Q44:R44').merge();
     sheet.getRangeByName('Q44').setText(hojaMuroPrincipal.df_supaCentralController.text);
 
+
+    //-- Puntual localizada y/o extendida
     sheet.getRangeByName('C45:F45').merge();
     sheet.getRangeByName('C45').setText("Puntual localizada y/o extendida");
     sheet.getRangeByName('C45').cellStyle.bold = true;
 
-    sheet.getRangeByName('G45:J45').merge();
-    sheet.getRangeByName('G45').setText(hojaMuroPrincipal.mh_punLocController.text);
+    sheet.getRangeByName('G45:H45').merge(); //Si
+    sheet.getRangeByName('I45:J45').merge(); // No
+
+    if (hojaMuroPrincipal.mh_punLocController.text == "Si") {
+      sheet.getRangeByName('G45').setText("✔");
+    }
+    if (hojaMuroPrincipal.mh_punLocController.text == "No") {
+      sheet.getRangeByName('I45').setText("✔");
+    }
 
     sheet.getRangeByName('K45:L45').merge();
     sheet.getRangeByName('K45').setText(hojaMuroPrincipal.mh_suppunLocController.text);
 
-    sheet.getRangeByName('M45:P45').merge();
-    sheet.getRangeByName('M45').setText(hojaMuroPrincipal.df_punLocController.text);
+    sheet.getRangeByName('M45:N45').merge(); //Si
+    sheet.getRangeByName('O45:P45').merge(); // No
+
+    if (hojaMuroPrincipal.df_punLocController.text == "Si") {
+      sheet.getRangeByName('M45').setText("✔");
+    }
+    if (hojaMuroPrincipal.df_punLocController.text == "No") {
+      sheet.getRangeByName('O45').setText("✔");
+    }
 
     sheet.getRangeByName('Q45:R45').merge();
     sheet.getRangeByName('Q45').setText(hojaMuroPrincipal.df_suppunLocController.text);
 
+
+    //-- Total superficie afectada
     sheet.getRangeByName('C46:F46').merge();
     sheet.getRangeByName('C46').setText("Total superficie de muro afectada");
     sheet.getRangeByName('C46').cellStyle.bold = true;
@@ -3147,11 +3307,11 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G46:R46').merge();
     sheet.getRangeByName('G46').setText(hojaMuroPrincipal.totpalsupafecController.text);
 
-    sheet.getRangeByName('C48:R55').cellStyle
+    sheet.getRangeByName('C48:R65').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('C48:R55').merge();
+    sheet.getRangeByName('C48:R65').merge();
 
     // -------------------------------------------------------------------------
     // IMAGEN
@@ -3162,7 +3322,7 @@ class AppState extends ChangeNotifier {
         final Uint8List imageBytes = await hojaMuroPrincipal.imgpatolGuardada!.readAsBytes();
         final xlsio.Picture picture = sheet.pictures.addBase64(
           9, // fila
-          8, // columna
+          9, // columna
           base64Encode(imageBytes),
         );
         picture.height = 240;
@@ -3177,10 +3337,10 @@ class AppState extends ChangeNotifier {
         final Uint8List imageBytes = await hojaMuroPrincipal.imgelevGuardada!.readAsBytes();
         final xlsio.Picture picture = sheet.pictures.addBase64(
           48, // fila
-          8, // columna
+          9, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 160;
+        picture.height = 40;
         picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
@@ -3189,7 +3349,7 @@ class AppState extends ChangeNotifier {
 
     sheet.showGridlines = false;
     sheet.getRangeByName('A1:S24').rowHeight = 15;
-    sheet.getRangeByName('A25:S25').rowHeight = 25;
+    sheet.getRangeByName('A25:S25').rowHeight = 30;
     sheet.getRangeByName('A26:S56').rowHeight = 15;
     sheet.getRangeByName('A1:S56').columnWidth = 15;
     sheet.getRangeByName('A1:S56').cellStyle
@@ -4067,8 +4227,7 @@ class HojaMuroPrincipal {
   final TextEditingController muroejeController = TextEditingController();
   final TextEditingController supmuroController = TextEditingController();
   final TextEditingController supventanaController = TextEditingController();
-  final TextEditingController muroperimetralController = TextEditingController();
-  final TextEditingController murointController = TextEditingController();
+  final TextEditingController tipomuroController = TextEditingController();
   final TextEditingController nivelafecController = TextEditingController();
   final TextEditingController mh_encEsqMurController = TextEditingController();
   final TextEditingController mh_encCieMurController = TextEditingController();
@@ -4121,8 +4280,7 @@ class HojaMuroPrincipal {
     muroejeController.dispose();
     supmuroController.dispose();
     supventanaController.dispose();
-    muroperimetralController.dispose();
-    murointController.dispose();
+    tipomuroController.dispose();
     nivelafecController.dispose();
     mh_encEsqMurController.dispose();
     mh_encCieMurController.dispose();

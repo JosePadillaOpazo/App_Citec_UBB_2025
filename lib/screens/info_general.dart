@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 import 'package:image_picker/image_picker.dart';
@@ -74,7 +75,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             ],
           ),
 
-          const SizedBox(height: 15),
+          const SizedBox(height: 20),
 
           if (appState.imagen1GuardadaInfoGeneral != null) ...[
             Center(
@@ -86,7 +87,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               ),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 20),
 
             Center(
               child: ElevatedButton.icon(
@@ -110,11 +111,48 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 30),
 
           Text(
-            "Nombre del proyecto",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            "ℹ️ Informacion General del Proyecto",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
           ),
 
-          const SizedBox(height: 10),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "Nombre del proyecto",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+
+              Text(
+                " *",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.red),
+              ),
+
+              IconButton(
+                icon: Icon(Icons.info_rounded),
+                color: Colors.grey,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Campos obligatorios"),
+                        content: Text("El símbolo * indica los campos obligatorios."),
+                        actions: [
+                          ElevatedButton(
+                            child: Text("Aceptar"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+
 
           TextFormField(
             controller: appState.nombreProyectoController,
@@ -122,13 +160,23 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Nombre de Proyecto",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingrese un nombre de proyecto';
               }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
+              }
               return null;
             },
           ),
+
           const SizedBox(height: 20),
 
           Text(
@@ -136,7 +184,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
 
           TextFormField(
             controller: appState.tipologiaViviendaController,
@@ -144,22 +192,61 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Tipologia de Vivienda",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una tipologia de vivienda';
+                return 'Por favor ingrese un nombre de proyecto';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 20),
-
-          Text(
-            "Dirección:",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
           const SizedBox(height: 10),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                "Dirección",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+
+              Text(
+                " *",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.red),
+              ),
+
+              IconButton(
+                icon: Icon(Icons.info),
+                color: Colors.grey,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Campos obligatorios"),
+                        content: Text("La dirección es utilizada para nombrar el archivo al guardar."),
+                        actions: [
+                          ElevatedButton(
+                            child: Text("Aceptar"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
 
           TextFormField(
             controller: appState.direccionController,
@@ -167,15 +254,24 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Dirección",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una dirección';
+                return 'Por favor ingrese un nombre de proyecto';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,# ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Etapa:",
@@ -190,18 +286,27 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Etapa",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una etapa';
+                return 'Por favor ingrese un nombre de proyecto';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Superficie de Vivienda:",
+            "Superficie de Vivienda (m²)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -213,15 +318,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Superficie de Vivienda",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie de vivienda';
+                return 'Por favor ingrese una superficie';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Número de Pisos:",
@@ -236,15 +346,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Número de Pisos",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el número de pisos';
+                return 'Por favor ingrese una superficie';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Orientación Fachada",
@@ -253,21 +368,80 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 10),
 
-          TextFormField(
-            controller: appState.oriFachadaController,
+          DropdownButtonFormField<String>(
+            value: appState.oriFachadaController.text.isEmpty
+              ? null
+              : appState.oriFachadaController.text,
             decoration: const InputDecoration(
-              labelText: "Orientación Fachada",
+              labelText: "Orientación de fachada",
               border: OutlineInputBorder(),
             ),
+            items: const [
+              DropdownMenuItem(value: "Norte", child: Text("Norte")),
+              DropdownMenuItem(value: "Sur", child: Text("Sur")),
+              DropdownMenuItem(value: "Este", child: Text("Este")),
+              DropdownMenuItem(value: "Oeste", child: Text("Oeste")),
+              DropdownMenuItem(value: "Noreste", child: Text("Noreste")),
+              DropdownMenuItem(value: "Noroeste", child: Text("Noroeste")),
+              DropdownMenuItem(value: "Sureste", child: Text("Sureste")),
+              DropdownMenuItem(value: "Suroeste", child: Text("Suroeste")),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                appState.oriFachadaController.text = value;
+              }
+            },
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la orientación de la fachada';
+              if (appState.oriFachadaController.text.isEmpty) {
+                return "Seleccione una orientación";
               }
               return null;
             },
           ),
 
+          const SizedBox(height: 20),
+
+          Text(
+            "Informacion adicional de Orientación Fachada",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
           const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: appState.oriFachadaController,
+            builder: (context, value, _) {
+              final estaSeleccionado = value.text.isNotEmpty;
+
+              return TextFormField(
+                controller: appState.oriFachadainfoController,
+                enabled: estaSeleccionado,
+                enableInteractiveSelection: false,
+                decoration: const InputDecoration(
+                  labelText: "Ingrese información como grados, etc",
+                  border: OutlineInputBorder(),
+                ),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, °]'),
+                    ),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingrese la informacion pertinente';
+                    }
+                    if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, °]+$').hasMatch(value)) {
+                      return 'Solo se permiten letras, números y comas';
+                    }
+                    return null;
+                  }
+              );
+            },
+          ),
+
+
+
+          const SizedBox(height: 20),
 
           Text(
             "Orientación Acceso",
@@ -276,21 +450,78 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 10),
 
-          TextFormField(
-            controller: appState.oriAccesoController,
+          DropdownButtonFormField<String>(
+            value: appState.oriAccesoController.text.isEmpty
+                ? null
+                : appState.oriAccesoController.text,
             decoration: const InputDecoration(
-              labelText: "Orientación del Acceso",
+              labelText: "Orientación de acceso",
               border: OutlineInputBorder(),
             ),
+            items: const [
+              DropdownMenuItem(value: "Norte", child: Text("Norte")),
+              DropdownMenuItem(value: "Sur", child: Text("Sur")),
+              DropdownMenuItem(value: "Este", child: Text("Este")),
+              DropdownMenuItem(value: "Oeste", child: Text("Oeste")),
+              DropdownMenuItem(value: "Noreste", child: Text("Noreste")),
+              DropdownMenuItem(value: "Noroeste", child: Text("Noroeste")),
+              DropdownMenuItem(value: "Sureste", child: Text("Sureste")),
+              DropdownMenuItem(value: "Suroeste", child: Text("Suroeste")),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                appState.oriAccesoController.text = value;
+              }
+            },
             validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la orienación del acceso';
+              if (appState.oriAccesoController.text.isEmpty) {
+                return "Seleccione una orientación";
               }
               return null;
             },
           ),
 
+          const SizedBox(height: 20),
+
+          Text(
+            "Informacion adicional de Orientación Acceso",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
           const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: appState.oriAccesoController,
+            builder: (context, value, _) {
+              final estaSeleccionado = value.text.isNotEmpty;
+
+              return TextFormField(
+                controller: appState.oriAccesoinfoController,
+                enabled: estaSeleccionado,
+                enableInteractiveSelection: false,
+                decoration: const InputDecoration(
+                  labelText: "Ingrese información como grados, etc",
+                  border: OutlineInputBorder(),
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, °]'),
+                  ),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese la informacion pertinente';
+                  }
+                  if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, °]+$').hasMatch(value)) {
+                    return 'Solo se permiten letras, números y comas';
+                  }
+                  return null;
+                }
+              );
+            },
+          ),
+
+          const SizedBox(height: 20),
 
           Text(
             "Clima",
@@ -333,10 +564,10 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Temperatuta Exterior",
+            "Temperatuta Exterior: (°C)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -348,18 +579,23 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Temperatuta Exterior",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la temperatura exterior';
+                return 'Por favor ingrese la información requerida';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Humedad Exterior",
+            "Humedad Exterior: (%)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -371,18 +607,23 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Humedad Exterior",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el % de humedad exterior';
+                return 'Por favor ingrese la información requerida';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Temperatura Interior:",
+            "Temperatura Interior: (°C)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -394,18 +635,23 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Temperatura Interior",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese la temperatura interior';
+                return 'Por favor ingrese la información requerida';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Humedad Interior:",
+            "Humedad Interior: (%)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -417,15 +663,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Humedad Interior",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el % de humedad interior';
+                return 'Por favor ingrese la información requerida';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Recibido por:",
@@ -440,15 +691,24 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Recibido por",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese quien es la persona que lo recibió';
+                return 'Por favor ingrese la información requerida';
+              }
+              if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras y espacios';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Nombre de la persona que lo recibió",
@@ -463,15 +723,24 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Nombre de la persona que lo recibió",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el nombre de la persona que lo recibió';
+                return 'Por favor ingrese un nombre';
+              }
+              if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras y espacios';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Años de uso de la vivienda:",
@@ -486,15 +755,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Años de uso de la vivienda",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese los años de uso de la vivienda ';
+                return 'Por favor ingrese una cantidad de años';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Nombre Inspector:",
@@ -509,18 +783,27 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Nombre de Inspector",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el nombre del inspector';
+                return 'Por favor ingrese un nombre';
+              }
+              if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras y espacios';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Rut Inspector",
+            "Rut Inspector (ej: 12345678-9)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -529,18 +812,19 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.reciPorController,
             decoration: const InputDecoration(
-              labelText: "Rut Inspector",
+              labelText: "RUT Inspector",
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese el Rut del inspector';
-              }
-              return null;
-            },
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[0-9kK.\-]'),
+              ),
+            ],
+            validator: appState.validarRut,
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Reparaciones",
@@ -603,9 +887,18 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                       labelText: "Detalles de reparaciones",
                       border: OutlineInputBorder(),
                     ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese detalles de las reparaciones';
+                        return 'Por favor ingrese los detalles de Reparaciones';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -616,7 +909,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Ampliaciones",
@@ -680,9 +973,18 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                       labelText: "Detalles de Amplaciones",
                       border: OutlineInputBorder(),
                     ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                    ],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese detalles de las ampliaciones';
+                        return 'Por favor ingrese los detalles de Amplaciones';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
                       }
                       return null;
                     },
@@ -694,7 +996,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           ),
 
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Observación:",
@@ -709,15 +1011,31 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Observación",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una observacion';
+                return 'Por favor ingrese observación';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 40),
+
+          Text(
+            "🏠 Informacion de Ocupacion Vivienda",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 20),
 
           Text(
             "N° de recintos vivienda",
@@ -732,15 +1050,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "N° de recintos vivienda",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese un número de recintos';
+                return 'Por favor ingrese el N° de recintos vivienda';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Total número de habitantes:",
@@ -755,15 +1078,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Total número de habitantes",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese un total de habitantes';
+                return 'Por favor ingrese el Total número de habitantes';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Adultos:",
@@ -778,15 +1106,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Numero de Adultos",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese na cantidad de adultos';
+                return 'Por favor ingrese la cantidad de Adultos';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Niños en edad escolar:",
@@ -801,15 +1134,20 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Niños en edad escolar",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una cantidad de niños en edad escolar';
+                return 'Por favor ingrese la cantidad de Niños en edad escolar';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
             "Adultos mayores:",
@@ -824,18 +1162,23 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               labelText: "Adultos mayores",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*$')),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una cantidad de adultos mayores';
+                return 'Por favor ingrese la cantidad de Adultos Mayores';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Ocupacion dia completo:",
+            "Ocupación todo el día:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -844,21 +1187,30 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.ocupDiaCompController,
             decoration: const InputDecoration(
-              labelText: "Ocupacion dia completo",
+              labelText: "Ocupación todo el día",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una ocupacion de dia completo';
+                return 'Por favor ingrese la Ocupación todo el día';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Ocupacion intermitente:",
+            "Ocupación intermitente:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -867,21 +1219,30 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.ocupIntermitenteController,
             decoration: const InputDecoration(
-              labelText: "Ocupacion intermitente",
+              labelText: "Ocupación intermitente",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una ocupacion intermitente';
+                return 'Por favor ingrese la ocupacion intermitente';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Denegacion de ocupacion prevista:",
+            "Densidad ocupacional prevista:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -890,21 +1251,30 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.densOcupPrevController,
             decoration: const InputDecoration(
-              labelText: "Densidad de ocupacion prevista",
+              labelText: "Densidad ocupacional prevista",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una densidad de ocupacion prevista';
+                return 'Por favor ingrese la Densidad ocupacional prevista';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Densidad de ocupacion real:",
+            "Densidad ocupacional real:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -913,21 +1283,30 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.densOcupRealController,
             decoration: const InputDecoration(
-              labelText: "Densidad de ocupacion real",
+              labelText: "Densidad ocupacional real",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una densidad de ocupacion real';
+                return 'Por favor ingrese la Densidad ocupacional real';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           Text(
-            "Observaciones de ocupacion de vivienda:",
+            "Observaciones de ocupación de vivienda:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -936,18 +1315,34 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.obsOcupVivController,
             decoration: const InputDecoration(
-              labelText: "obsservaciones de ocupacion de vivienda",
+              labelText: "Observaciones de ocupación de vivienda",
               border: OutlineInputBorder(),
             ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]'),
+              ),
+            ],
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una observacion';
+                return 'Por favor ingrese obbservaciones de ser necesario';
+              }
+              if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ,:/ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras, números y comas';
               }
               return null;
             },
           ),
 
-          const SizedBox(height: 35),
+          const SizedBox(height: 40),
+
+          Text(
+            "📷 Identificación tipología de vivienda ",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 30),
 
 
           // -------------------------------------------------------------------
@@ -970,7 +1365,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                     setState(() {
                       appState.imagen2_Info_General = img;
                       appState.imagen2GuardadaInfoGeneral = null;
-                      print("Se tomo la foto 2 y se guardon en: " + appState.imagen1_Info_General!.path.toString());
+                      print("Se tomo la foto 2 y se guardon en: " + appState.imagen2_Info_General!.path.toString());
                       _pointsImg2.clear();
                     });
                   },
@@ -1095,6 +1490,340 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                   setState(() {
                     print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
                     _pointsImg2.clear();
+                  });
+                },
+                icon: Icon(Icons.delete),
+                label: Text("Eliminar dibujo"),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              ),
+            ),
+
+          ],
+
+
+
+
+
+
+
+
+
+
+          // -------------------------------------------------------------------
+          // SECCIÓN DE FOTO 3
+          // -------------------------------------------------------------------
+
+          Text(
+            "Fotografía 3:",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => appState.obtenerImagenInfoGeneral(
+                  fuente: ImageSource.camera,
+                  imgnum: 3,
+                  onImagenSeleccionada: (img) {
+                    setState(() {
+                      appState.imagen3_Info_General = img;
+                      appState.imagen3GuardadaInfoGeneral = null;
+                      print("Se tomo la foto 3 y se guardon en: " + appState.imagen3_Info_General!.path.toString());
+                      _pointsImg3.clear();
+                    });
+                  },
+                ),
+                icon: Icon(Icons.camera_alt),
+                label: Text("Tomar Foto"),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+
+
+
+          // -------------------------------------------------------------------
+          // SECCIÓN DIBUJO
+          // -------------------------------------------------------------------
+
+          if (appState.imagen3_Info_General != null && appState.imagen3GuardadaInfoGeneral == null) ...[
+            Text(
+              "Dibuja observaciones sobre la imagen:",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            Center(
+              child: RepaintBoundary(
+                key: canvasKey_InfoGeneral_3,
+                child: Container(
+                  width: 900,
+                  height: 800,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    image: DecorationImage(
+                      image: FileImage(appState.imagen3_Info_General!),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GestureDetector(
+                        onPanUpdate: (details) {
+                          setState(() {
+                            final RenderBox box = context.findRenderObject() as RenderBox;
+                            final localPosition = box.globalToLocal(details.globalPosition);
+                            if (localPosition.dx >= 0 &&
+                                localPosition.dx <= constraints.maxWidth &&
+                                localPosition.dy >= 0 &&
+                                localPosition.dy <= constraints.maxHeight) {
+                              _pointsImg3 = List.from(_pointsImg3)..add(localPosition);
+                            }
+                          });
+                        },
+                        onPanEnd: (_) => setState(() => _pointsImg3.add(null)),
+                        child: CustomPaint(
+                          painter: DibujoPainter(_pointsImg3),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.save),
+                label: Text("Guardar Dibujo"),
+                onPressed: () async {
+                  await appState.guardarDibujoInfoGeneral(
+                    canvasKey: canvasKey_InfoGeneral_3,
+                    imgnum: 3,
+                    nombreArchivo: "Imagen3_Info_General",
+                    onGuardado: (file) {
+                      setState(() {
+                        appState.imagen3GuardadaInfoGeneral = file;
+                        appState.cantFotos++;
+                        print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                        _pointsImg3.clear();
+                      });
+                    },
+                    context: context,
+                  );
+                },
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 20),
+
+
+          // -------------------------------------------------------------------
+          // SECCIÓN RESULTADO (IMAGEN GUARDADA)
+          // -------------------------------------------------------------------
+
+          if (appState.imagen3GuardadaInfoGeneral != null) ...[
+              Text(
+                "Imagen 3 guardada:",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+             ),
+
+            const SizedBox(height: 10),
+
+            Center(
+              child: Image.file(
+                appState.imagen3GuardadaInfoGeneral!,
+                width: 900,
+                height: 800,
+                fit: BoxFit.contain,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await appState.eliminarDibujoInfoGeneral(
+                    context: context,
+                    imgnum: 3,
+                  );
+                  setState(() {
+                    print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                    _pointsImg3.clear();
+                  });
+                },
+                icon: Icon(Icons.delete),
+                label: Text("Eliminar dibujo"),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              ),
+            ),
+          ],
+
+
+
+
+
+
+
+          // -------------------------------------------------------------------
+          // SECCIÓN DE FOTO 4
+          // -------------------------------------------------------------------
+
+
+          Text(
+            "Fotografía 4:",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => appState.obtenerImagenInfoGeneral(
+                  fuente: ImageSource.camera,
+                  imgnum: 4,
+                  onImagenSeleccionada: (img) {
+                    setState(() {
+                      appState.imagen4_Info_General = img;
+                      appState.imagen4GuardadaInfoGeneral = null;
+                      print("Se tomo la foto 4 y se guardon en: " + appState.imagen4_Info_General!.path.toString());
+                      _pointsImg4.clear();
+                    });
+                  },
+                ),
+                icon: Icon(Icons.camera_alt),
+                label: Text("Tomar Foto"),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+
+
+          // -------------------------------------------------------------------
+          // SECCIÓN DIBUJO
+          // -------------------------------------------------------------------
+
+          if (appState.imagen4_Info_General != null && appState.imagen4GuardadaInfoGeneral == null) ...[
+            Text(
+              "Dibuja observaciones sobre la imagen:",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            Center(
+              child: RepaintBoundary(
+                key: canvasKey_InfoGeneral_4,
+                child: Container(
+                  width: 900,
+                  height: 800,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    image: DecorationImage(
+                      image: FileImage(appState.imagen4_Info_General!),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GestureDetector(
+                        onPanUpdate: (details) {
+                          setState(() {
+                            final RenderBox box = context.findRenderObject() as RenderBox;
+                            final localPosition = box.globalToLocal(details.globalPosition);
+                            if (localPosition.dx >= 0 &&
+                                localPosition.dx <= constraints.maxWidth &&
+                                localPosition.dy >= 0 &&
+                                localPosition.dy <= constraints.maxHeight) {
+                              _pointsImg4 = List.from(_pointsImg4)..add(localPosition);
+                            }
+                          });
+                        },
+                        onPanEnd: (_) => setState(() => _pointsImg4.add(null)),
+                        child: CustomPaint(
+                          painter: DibujoPainter(_pointsImg4),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.save),
+                label: Text("Guardar Dibujo"),
+                onPressed: () async {
+                  await appState.guardarDibujoInfoGeneral(
+                    canvasKey: canvasKey_InfoGeneral_4,
+                    imgnum: 4,
+                    nombreArchivo: "Imagen4_Info_General",
+                    onGuardado: (file) {
+                      setState(() {
+                        appState.imagen4GuardadaInfoGeneral = file;
+                        appState.cantFotos++;
+                        print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                        _pointsImg4.clear();
+                      });
+                    },
+                    context: context,
+                  );
+                },
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 20),
+
+
+          // -------------------------------------------------------------------
+          // SECCIÓN RESULTADO (IMAGEN GUARDADA)
+          // -------------------------------------------------------------------
+
+          if (appState.imagen4GuardadaInfoGeneral != null) ...[
+            Text(
+              "Imagen 4 guardada:",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            Center(
+              child: Image.file(
+                appState.imagen4GuardadaInfoGeneral!,
+                width: 900,
+                height: 800,
+                fit: BoxFit.contain,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await appState.eliminarDibujoInfoGeneral(
+                    context: context,
+                    imgnum: 4,
+                  );
+                  setState(() {
+                    print("HAY UN TOTAL DE " + appState.cantFotos.toString() + " FOTOS");
+                    _pointsImg4.clear();
                   });
                 },
                 icon: Icon(Icons.delete),

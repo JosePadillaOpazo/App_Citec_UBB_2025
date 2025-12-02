@@ -294,7 +294,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         selected: appState.pantallaActual == 1,
                         onTap: () {
                           setState(() => appState.pantallaActual = 1);
-                          appState.muro_eje_p_r1 = true;
+                          //appState.muro_eje_p_r1 = true;
                           appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 1");
                           Navigator.pop(context);
                         },
@@ -316,7 +316,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                           : Icon(Icons.edit_off, color: Colors.grey),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_murob_nombreController.text), //--> Muros B (Muro Eje B - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_murob_nombreController.text), //--> Muros B (Muro Eje B - Reciento 1)
                         selected: appState.pantallaActual == 3,
                         onTap: () {
                           setState(() => appState.pantallaActual = 3);
@@ -329,7 +329,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_muroc_nombreController.text), //--> Muros C (Muro Eje C - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_muroc_nombreController.text), //--> Muros C (Muro Eje C - Reciento 1)
                         selected: appState.pantallaActual == 4,
                         onTap: () {
                           setState(() => appState.pantallaActual = 4);
@@ -342,7 +342,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_murod_nombreController.text), //--> Muros D (Muro Eje D - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_murod_nombreController.text), //--> Muros D (Muro Eje D - Reciento 1)
                         selected: appState.pantallaActual == 5,
                         onTap: () {
                           setState(() => appState.pantallaActual = 5);
@@ -354,7 +354,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_muroe_nombreController.text), //--> Muros E (Muro Eje E - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_muroe_nombreController.text), //--> Muros E (Muro Eje E - Reciento 1)
                         selected: appState.pantallaActual == 6,
                         onTap: () {
                           setState(() => appState.pantallaActual = 6);
@@ -366,7 +366,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_murof_nombreController.text), //--> Muros F (Muro Eje F - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_murof_nombreController.text), //--> Muros F (Muro Eje F - Reciento 1)
                         selected: appState.pantallaActual == 7,
                         onTap: () {
                           setState(() => appState.pantallaActual = 7);
@@ -378,7 +378,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_murog_nombreController.text), //--> Muros G (Muro Eje G - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_murog_nombreController.text), //--> Muros G (Muro Eje G - Reciento 1)
                         selected: appState.pantallaActual == 8,
                         onTap: () {
                           setState(() => appState.pantallaActual = 8);
@@ -390,7 +390,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey, size: 24.0),
                       ),
                       ListTile(
-                        title: Text("- "+appState.r1_pisocielo_nombreController.text), //--> Piso Cielo (Piso Cielo - Reciento 1)
+                        title: Text("- Muro Eje "+appState.r1_pisocielo_nombreController.text), //--> Piso Cielo (Piso Cielo - Reciento 1)
                         selected: appState.pantallaActual == 9,
                         onTap: () {
                           setState(() => appState.pantallaActual = 9);
