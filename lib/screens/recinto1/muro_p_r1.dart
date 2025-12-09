@@ -12,10 +12,8 @@ class Muro_Principal_R1 extends StatefulWidget {
 }
 
 class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
-  GlobalKey canvaskeyImg1_Murop_R1 = GlobalKey();
   GlobalKey canvaskeyImg2_Murop_R1 = GlobalKey();
 
-  List<Offset?> _pointsImg1_PR1 = [];
   List<Offset?> _pointsImg2_PR1 = [];
 
 
@@ -40,7 +38,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 
-                /*IconButton(
+                IconButton(
                   onPressed:() async {
                     final nuevoNombre = await appState.EditarNombre(
                       context,
@@ -52,7 +50,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                     }
                   },
                   icon: Icon(Icons.edit, color: Colors.blueAccent),
-                )*/
+                )
               ]
             )
           ),
@@ -80,6 +78,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
 
           TextFormField(
             controller: appState.r1_murop_nombreController,
+            enabled: false,
             decoration: const InputDecoration(
               labelText: "Asignar Eje al Muro",
               border: OutlineInputBorder(),
@@ -95,12 +94,17 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingrese la información requerida';
               }
+              if (appState.r1_murop_nombreController != null) {
+                hojaActual.muroejeController.text = appState.r1_murop_nombreController.text;
+              }
               if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
                 return 'Solo se permiten letras y espacios';
               }
               return null;
             },
           ),
+
+
 
           const SizedBox(height: 10),
 
@@ -1502,176 +1506,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
             },
           ),
 
-          const SizedBox(height: 10),
 
-
-
-
-
-
-
-
-
-
-
-
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN DE FOTO PATOLOGIA
-          // -------------------------------------------------------------------
-
-          Text(
-            "Plano",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Row(
-            children: [
-              ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPrincipal(
-                  fuente: ImageSource.camera,
-                  hoja: hojaActual,
-                  imgnum: 1,
-                  onImagenSeleccionada: (img) {
-                    setState(() {
-                      hojaActual.imgpatol = img;
-                      hojaActual.imgpatolGuardada = null;
-                      _pointsImg1_PR1.clear();
-                    });
-                  },
-                ),
-                icon: Icon(Icons.camera_alt),
-                label: Text("Tomar Foto"),
-              ),
-              // const SizedBox(width: 10),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN DIBUJO
-          // -------------------------------------------------------------------
-
-          if (hojaActual.imgpatol != null && hojaActual.imgpatolGuardada == null) ...[
-            Text(
-              "Dibuja observaciones sobre la imagen:",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 10),
-
-            Center(
-              child: RepaintBoundary(
-                key: canvaskeyImg1_Murop_R1,
-                child: Container(
-                  width: 900,
-                  height: 800,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    image: DecorationImage(
-                      image: FileImage(hojaActual.imgpatol!),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return GestureDetector(
-                        onPanUpdate: (details) {
-                          setState(() {
-                            final RenderBox box = context.findRenderObject() as RenderBox;
-                            final localPosition = box.globalToLocal(details.globalPosition);
-                            if (localPosition.dx >= 0 &&
-                                localPosition.dx <= constraints.maxWidth &&
-                                localPosition.dy >= 0 &&
-                                localPosition.dy <= constraints.maxHeight) {
-                              _pointsImg1_PR1 = List.from(_pointsImg1_PR1)..add(localPosition);
-                            }
-                          });
-                        },
-                        onPanEnd: (_) => setState(() => _pointsImg1_PR1.add(null)),
-                        child: CustomPaint(
-                          painter: DibujoPainter(_pointsImg1_PR1),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            Center(
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.save),
-                label: Text("Guardar Dibujo"),
-                onPressed: () async {
-                  await appState.guardarDibujoHojaPrincipal(
-                    canvasKey: canvaskeyImg1_Murop_R1,
-                    hoja: hojaActual,
-                    imgnum: 1,
-                    onGuardado: (file) {
-                      setState(() {
-                        hojaActual.imgpatolGuardada= file;
-                        _pointsImg1_PR1.clear();
-                      });
-                    },
-                    context: context,
-                  );
-                },
-              ),
-            ),
-          ],
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN RESULTADO (IMAGEN GUARDADA)
-          // -------------------------------------------------------------------
-
-          if (hojaActual.imgpatolGuardada != null) ...[
-            Text(
-              "Imagen guardada:",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 10),
-
-            Center(
-              child: Image.file(
-                hojaActual.imgpatolGuardada!,
-                width: 900,
-                height: 800,
-                fit: BoxFit.contain,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  await appState.eliminarDibujoHojaPrincipal(
-                    context: context,
-                    hoja: hojaActual,
-                    imgnum: 1,
-                  );
-                  setState(() {
-                    _pointsImg1_PR1.clear();
-                  });
-                },
-                icon: Icon(Icons.delete),
-                label: Text("Eliminar dibujo"),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              ),
-            ),
-
-          ],
 
           const SizedBox(height: 20),
 

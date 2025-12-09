@@ -50,21 +50,27 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           // -------------------------------------------------------------------
 
           Text(
-            "Superficie Piso",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            "Superficie Piso: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
 
           TextFormField(
             controller: hojaActual.supPisoController,
             decoration: const InputDecoration(
-              labelText: "Asignar Eje al Muro",
+              labelText: "Superficie en m²",
               border: OutlineInputBorder(),
             ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
+            ],
+            enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una asignacion para el muro';
+                return 'Por favor ingrese una superficie';
               }
               return null;
             },
@@ -82,7 +88,10 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.nivelafecPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.nivelafecPisoController.text = "Nulo";
+              }
+              final seleccion = hojaActual.nivelafecPisoController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
@@ -150,53 +159,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_perimetroPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_perimetroPisoController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_perimetroPisoController.text = "No";
+              }
+              final seleccion = hojaActual.mh_perimetroPisoController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_perimetroPisoController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_perimetroPisoController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supperimetroPisoController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supperimetroPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -212,53 +245,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_aCentralPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_aCentralPisoController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_aCentralPisoController.text = "No";
+              }
+              final seleccion = hojaActual.mh_aCentralPisoController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_aCentralPisoController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_aCentralPisoController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supaCentralPisoController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supaCentralPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -274,53 +331,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_punlocPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_punlocPisoController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_punlocPisoController.text = "No";
+              }
+              final seleccion = hojaActual.mh_punlocPisoController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_punlocPisoController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_punlocPisoController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supPunlocPisoController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supPunlocPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -343,53 +424,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_perimetroPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_perimetroPisoController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_perimetroPisoController.text = "No";
+              }
+              final seleccion = hojaActual.df_perimetroPisoController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_perimetroPisoController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_perimetroPisoController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supperimetroPisoController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supperimetroPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -405,53 +510,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_aCentralPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_aCentralPisoController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_aCentralPisoController.text = "No";
+              }
+              final seleccion = hojaActual.df_aCentralPisoController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_aCentralPisoController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_aCentralPisoController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supaCentralPisoController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supaCentralPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -467,61 +596,85 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_punlocPisoController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_punlocPisoController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_punlocPisoController.text = "No";
+              }
+              final seleccion = hojaActual.df_punlocPisoController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_punlocPisoController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_punlocPisoController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supPunlocPisoController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supPunlocPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
           const SizedBox(height: 20),
 
           Text(
-            "▪️Total superficie de piso afectada",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            "▪️Total superficie de piso afectada: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -725,11 +878,11 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           const SizedBox(height: 20),
 
           Text(
-            "Superficie Cielo",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            "Superficie Cielo: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
 
           TextFormField(
             controller: hojaActual.supCieloController,
@@ -762,7 +915,10 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.nivelafecCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
+              if (value.text.isEmpty) {
+                hojaActual.nivelafecCieloController.text = "Nulo";
+              }
+              final seleccion = hojaActual.nivelafecCieloController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
@@ -830,53 +986,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_perimetroCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_perimetroCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_perimetroCieloController.text = "No";
+              }
+              final seleccion = hojaActual.mh_perimetroCieloController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_perimetroCieloController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_perimetroCieloController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supperimetroCieloController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supperimetroCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -892,53 +1072,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_aCentralCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_aCentralCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_aCentralCieloController.text = "No";
+              }
+              final seleccion = hojaActual.mh_aCentralCieloController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_aCentralCieloController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_aCentralCieloController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supaCentralCieloController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supaCentralCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -954,53 +1158,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.mh_punlocCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.mh_punlocCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.mh_punlocCieloController.text = "No";
+              }
+              final seleccion = hojaActual.mh_punlocCieloController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_punlocCieloController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_punlocCieloController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supPunlocCieloController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.mh_supPunlocCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -1023,53 +1251,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_perimetroCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_perimetroCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_perimetroCieloController.text = "No";
+              }
+              final seleccion = hojaActual.df_perimetroCieloController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_perimetroCieloController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_perimetroCieloController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supperimetroCieloController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supperimetroCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -1085,53 +1337,77 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_aCentralCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_aCentralCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_aCentralCieloController.text = "No";
+              }
+              final seleccion = hojaActual.df_aCentralCieloController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_aCentralCieloController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_aCentralCieloController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supaCentralCieloController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supaCentralCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
@@ -1147,61 +1423,85 @@ class _Piso_Cielo_R1State extends State<Piso_Cielo_R1> {
           ValueListenableBuilder(
             valueListenable: hojaActual.df_punlocCieloController,
             builder: (context, TextEditingValue value, _) {
-              final seleccion = value.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Si', label: Text('Sí')),
-                  ButtonSegment(value: 'No', label: Text('No')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.df_punlocCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return seleccion == 'No' ? Colors.red : Colors.green;
+              if (value.text.isEmpty) {
+                hojaActual.df_punlocCieloController.text = "No";
+              }
+              final seleccion = hojaActual.df_punlocCieloController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_punlocCieloController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_punlocCieloController.clear();
                       }
-                      return Colors.grey.shade300;
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supPunlocCieloController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
                     },
                   ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
+
+                ],
               );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.df_supPunlocCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
             },
           ),
 
           const SizedBox(height: 20),
 
           Text(
-            "▪️Total superficie de cielo afectada",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            "▪️Total superficie de cielo afectada: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),

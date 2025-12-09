@@ -825,7 +825,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: appState.reciPorController,
+            controller: appState.rutInspectorController,
             decoration: const InputDecoration(
               labelText: "RUT Inspector",
               border: OutlineInputBorder(),

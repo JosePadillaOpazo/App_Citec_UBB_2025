@@ -290,7 +290,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                     childrenPadding: const EdgeInsets.only(left: 30),
                     children: [
                       ListTile(
-                        title: Text("- Informacion " + appState.recinto1_nombreController.text), //--> Informacion de Recinto 1
+                        title: Text("- Información " + appState.recinto1_nombreController.text), //--> Informacion de Recinto 1
                         selected: appState.pantallaActual == 1,
                         onTap: () {
                           setState(() => appState.pantallaActual = 1);

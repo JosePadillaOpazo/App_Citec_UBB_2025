@@ -352,14 +352,14 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                         label: Text('Parafina/gas móvil (húmeda)'),
                       ),
                       ButtonSegment(
-                        value: 'Otro',
-                        label: Text('Otro'),
+                        value: 'Otro ¿cuál?',
+                        label: Text('Otro ¿cuál?'),
                       )
                     ],
                     selected: {value.text},
                     onSelectionChanged: (Set<String> newSelection) {
                       hojaActual.sistcalefController.text = newSelection.first;
-                      if (newSelection.first != 'Otro') {
+                      if (newSelection.first != 'Otro ¿cuál?') {
                         hojaActual.otrocalefController.clear();
                       }
                     },
@@ -376,7 +376,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
 
                   TextFormField(
                     controller: hojaActual.otrocalefController,
-                    enabled: value.text == 'Otro',
+                    enabled: value.text == 'Otro ¿cuál?',
                     decoration: const InputDecoration(
                       labelText: "Detalle",
                       border: OutlineInputBorder(),
