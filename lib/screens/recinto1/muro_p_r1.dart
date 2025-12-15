@@ -94,9 +94,6 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingrese la información requerida';
               }
-              if (appState.r1_murop_nombreController != null) {
-                hojaActual.muroejeController.text = appState.r1_murop_nombreController.text;
-              }
               if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
                 return 'Solo se permiten letras y espacios';
               }

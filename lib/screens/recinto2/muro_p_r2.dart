@@ -4,24 +4,23 @@ import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import 'package:image_picker/image_picker.dart';
 
-class Piso_Cielo_R1 extends StatefulWidget {
-  const Piso_Cielo_R1({super.key});
+class Muro_Principal_R2 extends StatefulWidget {
+  const Muro_Principal_R2({super.key});
 
   @override
-  State<Piso_Cielo_R1> createState() => _Piso_Cielo_R1();
+  State<Muro_Principal_R2> createState() => _Muro_Principal_R2();
 }
 
-class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
-  GlobalKey canvaskeyPiso_R1 = GlobalKey();
-  GlobalKey canvaskeyCielo_R1 = GlobalKey();
+class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
+  GlobalKey canvaskeyImg2_Murop_R2 = GlobalKey();
 
-  List<Offset?> _pointsPiso = [];
-  List<Offset?> _pointsCielo = [];
+  List<Offset?> _pointsImg2_PR2 = [];
+
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final hojaActual = appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 1"); //---------------------------------------------------------------------> Editar al copiar la hoja
+    final hojaActual = appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 2");
 
 
     return SingleChildScrollView(
@@ -35,9 +34,23 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Piso",//----------------------------------------------------------------------------------> Editar al copiar la hoja
+                  "Muro Principal Eje " + appState.r2_murop_nombreController.text,
                   style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
+
+                IconButton(
+                  onPressed:() async {
+                    final nuevoNombre = await appState.EditarNombre(
+                      context,
+                      appState.r2_murop_nombreController.text,
+                    );
+
+                    if (nuevoNombre != null && nuevoNombre.isNotEmpty) {
+                      appState.actualizarNombreMuro(1,nuevoNombre);
+                    }
+                  },
+                  icon: Icon(Icons.edit, color: Colors.blueAccent),
+                )
               ]
             )
           ),
@@ -46,18 +59,61 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
-          // INFORMACION DEL PISO
+          // INFORMACION DEL MURO
           // -------------------------------------------------------------------
 
           Text(
-            "Superficie Piso: (m²)",
+            "🧱  Informacion del Muro",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 20),
+
+          Text(
+            "Muro Eje:",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.supPisoController,
+            controller: appState.r2_murop_nombreController,
+            enabled: false,
+            decoration: const InputDecoration(
+              labelText: "Asignar Eje al Muro",
+              border: OutlineInputBorder(),
+            ),
+            enableInteractiveSelection: false,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚñÑ ]'),
+              ),
+              PegarDisabled(),
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese la información requerida';
+              }
+              if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
+                return 'Solo se permiten letras y espacios';
+              }
+              return null;
+            },
+          ),
+
+
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Superficie muro: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.supmuroController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -79,19 +135,78 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Nivel de afectacion",
+            "Superficie ventana: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          TextFormField(
+            controller: hojaActual.supventanaController,
+            decoration: const InputDecoration(
+              labelText: "Superficie en m²",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+              PegarDisabled(),
+            ],
+            enableInteractiveSelection: false,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor ingrese una superficie';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Tipo de Muro",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.nivelafecPisoController,
+            valueListenable: hojaActual.tipomuroController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.nivelafecPisoController.text = "Nulo";
+                hojaActual.tipomuroController.text = "Muro perimetral";
               }
-              final seleccion = hojaActual.nivelafecPisoController.text;
+              final seleccion = hojaActual.tipomuroController.text;
+              return SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(value: 'Muro perimetral', label: Text('Muro perimetral')),
+                  ButtonSegment(value: 'Muro interior', label: Text('Muro interior')),
+                ],
+                selected: {seleccion},
+                onSelectionChanged: (Set<String> newSelection) {
+                  hojaActual.tipomuroController.text = newSelection.first;
+                },
+
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Nivel de afectación",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.nivelafecController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.nivelafecController.text = "Nulo";
+              }
+              final seleccion = hojaActual.nivelafecController.text;
               return SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
@@ -101,7 +216,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.nivelafecPisoController.text = newSelection.first;
+                  hojaActual.nivelafecController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -135,832 +250,6 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
 
           const SizedBox(height: 40),
 
-          Text(
-            "🎯  Ubicacion de Patologia Detectada",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 20),
-
-          Text(
-            "▪️Manchas de humedad / moho",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Perímetro",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.mh_perimetroPisoController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.mh_perimetroPisoController.text = "No";
-              }
-              final seleccion = hojaActual.mh_perimetroPisoController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.mh_perimetroPisoController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.mh_perimetroPisoController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.mh_supperimetroPisoController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Área central",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.mh_aCentralPisoController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.mh_aCentralPisoController.text = "No";
-              }
-              final seleccion = hojaActual.mh_aCentralPisoController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.mh_aCentralPisoController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.mh_aCentralPisoController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.mh_supaCentralPisoController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Puntual localizada y/o extendida",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.mh_punlocPisoController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.mh_punlocPisoController.text = "No";
-              }
-              final seleccion = hojaActual.mh_punlocPisoController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.mh_punlocPisoController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.mh_punlocPisoController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.mh_supPunlocPisoController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Perímetro",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_perimetroPisoController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.df_perimetroPisoController.text = "No";
-              }
-              final seleccion = hojaActual.df_perimetroPisoController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.df_perimetroPisoController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.df_perimetroPisoController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.df_supperimetroPisoController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Área central",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_aCentralPisoController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.df_aCentralPisoController.text = "No";
-              }
-              final seleccion = hojaActual.df_aCentralPisoController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.df_aCentralPisoController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.df_aCentralPisoController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.df_supaCentralPisoController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Puntual localizada y/o extendida",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_punlocPisoController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.df_punlocPisoController.text = "No";
-              }
-              final seleccion = hojaActual.df_punlocPisoController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.df_punlocPisoController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.df_punlocPisoController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.df_supPunlocPisoController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 20),
-
-          Text(
-            "▪️Total superficie de piso afectada: (m²)",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.totpalsupafecPisoController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN DE FOTO PISO
-          // -------------------------------------------------------------------
-
-          Text(
-            "Respaldo Visual",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Row(
-            children: [
-              ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPisoCielo(
-                  fuente: ImageSource.camera,
-                  hoja: hojaActual,
-                  imgnum: 1,
-                  onImagenSeleccionada: (img) {
-                    setState(() {
-                      hojaActual.imgpiso = img;
-                      hojaActual.imgPisoGuardada = null;
-                      _pointsPiso.clear();
-                      canvaskeyPiso_R1 = GlobalKey();
-                    });
-                  },
-
-                ),
-                icon: const Icon(Icons.camera_alt),
-                label: const Text("Tomar Foto"),
-              ),
-              //const SizedBox(width: 10),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN DIBUJO
-          // -------------------------------------------------------------------
-
-          if (hojaActual.imgpiso != null && hojaActual.imgPisoGuardada == null) ...[
-            Text(
-              "Dibuja observaciones sobre la imagen:",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 10),
-
-            Center(
-              child: RepaintBoundary(
-                key: canvaskeyPiso_R1, //---------------------------------------------------------------------------> Editar al copiar la hoja
-                child: Container(
-                  width: 900,
-                  height: 800,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    image: DecorationImage(
-                      image: FileImage(hojaActual.imgpiso!),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return GestureDetector(
-                        onPanUpdate: (details) {
-                          setState(() {
-                            final RenderBox box = context.findRenderObject() as RenderBox;
-                            final localPosition = box.globalToLocal(details.globalPosition);
-                            if (localPosition.dx >= 0 &&
-                                localPosition.dx <= constraints.maxWidth &&
-                                localPosition.dy >= 0 &&
-                                localPosition.dy <= constraints.maxHeight) {
-                              _pointsPiso = List.from(_pointsPiso)..add(localPosition);
-                            }
-                          });
-                        },
-                        onPanEnd: (_) => setState(() => _pointsPiso.add(null)),
-                        child: CustomPaint(
-                          painter: DibujoPainter(_pointsPiso),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            Center(
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.save),
-                label: Text("Guardar Dibujo"),
-                onPressed: () async {
-                  await appState.guardarDibujoHojaPisoCielo(
-                    canvasKey: canvaskeyPiso_R1, //---------------------------------------------------------------------> Editar al copiar la hoja
-                    hoja: hojaActual,
-                    imgnum: 1,
-                    onGuardado: (file) {
-                      setState(() {
-                        hojaActual.imgPisoGuardada= file;
-                        _pointsPiso.clear();
-                      });
-                    },
-                    context: context,
-                  );
-                },
-              ),
-            ),
-          ],
-
-          const SizedBox(height: 20),
-
-          // -------------------------------------------------------------------
-          // SECCIÓN RESULTADO (IMAGEN GUARDADA)
-          // -------------------------------------------------------------------
-
-          if (hojaActual.imgPisoGuardada != null) ...[
-            Text(
-              "Imagen guardada:",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 10),
-
-            Center(
-              child: Image.file(
-                hojaActual.imgPisoGuardada!,
-                width: 900,
-                height: 800,
-                fit: BoxFit.contain,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  await appState.eliminarDibujoHojaPisoCielo(
-                    context: context,
-                    hoja: hojaActual,
-                    imgnum: 1,
-                  );
-                  setState(() {
-                    _pointsPiso.clear();
-                  });
-                },
-                icon: Icon(Icons.delete),
-                label: Text("Eliminar dibujo"),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              ),
-            ),
-          ],
-
-         //---------------------------------------------------------------------
-         // INFORMACION DEL CIELO
-         // --------------------------------------------------------------------
-
-          const SizedBox(height: 50),
-
-          Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Cielo",//----------------------------------------------------------------------------------> Editar al copiar la hoja
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
-                ),
-              ]
-            )
-          ),
-
-
-          const SizedBox(height: 20),
-
-          Text(
-            "Superficie Cielo: (m²)",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          TextFormField(
-            controller: hojaActual.supCieloController,
-            decoration: const InputDecoration(
-              labelText: "Superficie en m²",
-              border: OutlineInputBorder(),
-            ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
-            ],
-            enableInteractiveSelection: false,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
-              }
-              return null;
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Nivel de afectacion",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.nivelafecCieloController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.nivelafecCieloController.text = "Nulo";
-              }
-              final seleccion = hojaActual.nivelafecCieloController.text;
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'Nulo', label: Text('Nulo')),
-                  ButtonSegment(value: 'Bajo', label: Text('Bajo')),
-                  ButtonSegment(value: 'Medio', label: Text('Medio')),
-                  ButtonSegment(value: 'Alto', label: Text('Alto')),
-                ],
-                selected: {seleccion},
-                onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.nivelafecCieloController.text = newSelection.first;
-                },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) {
-                      if (states.contains(WidgetState.selected)) {
-                        switch (seleccion) {
-                          case 'Nulo':
-                            return Colors.greenAccent;
-                          case 'Bajo':
-                            return Colors.green;
-                          case 'Medio':
-                            return Colors.amber;
-                          case 'Alto':
-                            return Colors.red;
-                          default:
-                            return Colors.grey;
-                        }
-                      }
-                      return Colors.grey.shade300;
-                    },
-                  ),
-                  foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                        (states) => states.contains(WidgetState.selected)
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 40),
 
           Text(
             "🎯  Ubicacion de Patologia Detectada",
@@ -977,19 +266,19 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           Text(
-            "Perímetro",
+            "Encuentro esquina muro",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.mh_perimetroCieloController,
+            valueListenable: hojaActual.mh_encEsqMurController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.mh_perimetroCieloController.text = "No";
+                hojaActual.mh_encEsqMurController.text = "No";
               }
-              final seleccion = hojaActual.mh_perimetroCieloController.text;
+              final seleccion = hojaActual.mh_encEsqMurController.text;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1000,9 +289,9 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                     ],
                     selected: {seleccion},
                     onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.mh_perimetroCieloController.text = newSelection.first;
+                      hojaActual.mh_encEsqMurController.text = newSelection.first;
                       if (newSelection.first != 'Si') {
-                        hojaActual.mh_perimetroCieloController.clear();
+                        hojaActual.mh_supencEsqMurController.clear();
                       }
                     },
                     style: ButtonStyle(
@@ -1031,7 +320,351 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: hojaActual.mh_supperimetroCieloController,
+                    controller: hojaActual.mh_supencEsqMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro cielo muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_encCieMurController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.mh_encCieMurController.text = "No";
+              }
+              final seleccion = hojaActual.mh_encCieMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_encCieMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supencCieMurController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supencCieMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro piso muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_encPisMurController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.mh_encPisMurController.text = "No";
+              }
+              final seleccion = hojaActual.mh_encPisMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_encPisMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supencPisMurController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supencPisMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Rasgo de ventana",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_rasgventController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.mh_rasgventController.text = "No";
+              }
+              final seleccion = hojaActual.mh_rasgventController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_rasgventController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_suprasgventController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_suprasgventController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Bajo ventana (antepecho)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.mh_bajovenController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.mh_bajovenController.text = "No";
+              }
+              final seleccion = hojaActual.mh_bajovenController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.mh_bajovenController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.mh_supbajovenController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.mh_supbajovenController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
                       labelText: "Información",
@@ -1070,12 +703,12 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.mh_aCentralCieloController,
+            valueListenable: hojaActual.mh_aCentralController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.mh_aCentralCieloController.text = "No";
+                hojaActual.mh_aCentralController.text = "No";
               }
-              final seleccion = hojaActual.mh_aCentralCieloController.text;
+              final seleccion = hojaActual.mh_aCentralController.text;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1086,9 +719,9 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                     ],
                     selected: {seleccion},
                     onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.mh_aCentralCieloController.text = newSelection.first;
+                      hojaActual.mh_aCentralController.text = newSelection.first;
                       if (newSelection.first != 'Si') {
-                        hojaActual.mh_aCentralCieloController.clear();
+                        hojaActual.mh_supaCentralController.clear();
                       }
                     },
                     style: ButtonStyle(
@@ -1117,7 +750,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: hojaActual.mh_supaCentralCieloController,
+                    controller: hojaActual.mh_supaCentralController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
                       labelText: "Información",
@@ -1156,12 +789,12 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.mh_punlocCieloController,
+            valueListenable: hojaActual.mh_punLocController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.mh_punlocCieloController.text = "No";
+                hojaActual.mh_punLocController.text = "No";
               }
-              final seleccion = hojaActual.mh_punlocCieloController.text;
+              final seleccion = hojaActual.mh_punLocController.text;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1172,9 +805,9 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                     ],
                     selected: {seleccion},
                     onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.mh_punlocCieloController.text = newSelection.first;
+                      hojaActual.mh_punLocController.text = newSelection.first;
                       if (newSelection.first != 'Si') {
-                        hojaActual.mh_punlocCieloController.clear();
+                        hojaActual.mh_suppunLocController.clear();
                       }
                     },
                     style: ButtonStyle(
@@ -1203,272 +836,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: hojaActual.mh_supPunlocCieloController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Perímetro",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_perimetroCieloController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.df_perimetroCieloController.text = "No";
-              }
-              final seleccion = hojaActual.df_perimetroCieloController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.df_perimetroCieloController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.df_perimetroCieloController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.df_supperimetroCieloController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Área central",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_aCentralCieloController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.df_aCentralCieloController.text = "No";
-              }
-              final seleccion = hojaActual.df_aCentralCieloController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.df_aCentralCieloController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.df_aCentralCieloController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.df_supaCentralCieloController,
-                    enabled: seleccion == 'Si',
-                    decoration: const InputDecoration(
-                      labelText: "Información",
-                      border: OutlineInputBorder(),
-                    ),
-                    enableInteractiveSelection: false,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
-                      ),
-                      PegarDisabled(),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información requerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
-                      }
-                      return null;
-                    },
-                  ),
-
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          Text(
-            "Puntual localizada y/o extendida",
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 10),
-
-          ValueListenableBuilder(
-            valueListenable: hojaActual.df_punlocCieloController,
-            builder: (context, TextEditingValue value, _) {
-              if (value.text.isEmpty) {
-                hojaActual.df_punlocCieloController.text = "No";
-              }
-              final seleccion = hojaActual.df_punlocCieloController.text;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(value: 'Si', label: Text('Sí')),
-                      ButtonSegment(value: 'No', label: Text('No')),
-                    ],
-                    selected: {seleccion},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.df_punlocCieloController.text = newSelection.first;
-                      if (newSelection.first != 'Si') {
-                        hojaActual.df_punlocCieloController.clear();
-                      }
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return seleccion == 'No' ? Colors.red : Colors.green;
-                          }
-                          return Colors.grey.shade300;
-                        },
-                      ),
-                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
-                            (states) => states.contains(WidgetState.selected)
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "¿Cuántas y de qué tipo?",
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  TextFormField(
-                    controller: hojaActual.df_supPunlocCieloController,
+                    controller: hojaActual.mh_suppunLocController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
                       labelText: "Información",
@@ -1499,15 +867,625 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
 
           const SizedBox(height: 20),
 
+
           Text(
-            "▪️Total superficie de cielo afectada: (m²)",
+            "▪️Daño físico mecánico",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro esquina muro",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_encEsqMurController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_encEsqMurController.text = "No";
+              }
+              final seleccion = hojaActual.df_encEsqMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_encEsqMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supencEsqMurController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supencEsqMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro cielo muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_encCieMurController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_encCieMurController.text = "No";
+              }
+              final seleccion = hojaActual.df_encCieMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_encCieMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supencCieMurController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supencCieMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Encuentro piso muro",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_encPisMurController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_encPisMurController.text = "No";
+              }
+              final seleccion = hojaActual.df_encPisMurController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_encPisMurController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supencPisMurController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supencPisMurController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Rasgo de ventana",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_rasgventController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_rasgventController.text = "No";
+              }
+              final seleccion = hojaActual.df_rasgventController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_rasgventController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_suprasgventController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_suprasgventController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Bajo ventana (antepecho)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_bajovenController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_bajovenController.text = "No";
+              }
+              final seleccion = hojaActual.df_bajovenController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_bajovenController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supbajovenController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supbajovenController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Área central",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_aCentralController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_aCentralController.text = "No";
+              }
+              final seleccion = hojaActual.df_aCentralController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_aCentralController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_supaCentralController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_supaCentralController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          Text(
+            "Puntual localizada y/o extendida",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
+          ValueListenableBuilder(
+            valueListenable: hojaActual.df_punLocController,
+            builder: (context, TextEditingValue value, _) {
+              if (value.text.isEmpty) {
+                hojaActual.df_punLocController.text = "No";
+              }
+              final seleccion = hojaActual.df_punLocController.text;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SegmentedButton<String>(
+                    segments: const [
+                      ButtonSegment(value: 'Si', label: Text('Sí')),
+                      ButtonSegment(value: 'No', label: Text('No')),
+                    ],
+                    selected: {seleccion},
+                    onSelectionChanged: (Set<String> newSelection) {
+                      hojaActual.df_punLocController.text = newSelection.first;
+                      if (newSelection.first != 'Si') {
+                        hojaActual.df_suppunLocController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return seleccion == 'No' ? Colors.red : Colors.green;
+                          }
+                          return Colors.grey.shade300;
+                        },
+                      ),
+                      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+                            (states) => states.contains(WidgetState.selected)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  Text(
+                    "¿Cuántas y de qué tipo?",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  TextFormField(
+                    controller: hojaActual.df_suppunLocController,
+                    enabled: seleccion == 'Si',
+                    decoration: const InputDecoration(
+                      labelText: "Información",
+                      border: OutlineInputBorder(),
+                    ),
+                    enableInteractiveSelection: false,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]'),
+                      ),
+                      PegarDisabled(),
+                    ],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese la información requerida';
+                      }
+                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
+                        return 'Solo se permiten letras, números y comas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            "▪️Total superficie de muro afectada: (m²)",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 10),
+
           TextFormField(
-            controller: hojaActual.totpalsupafecCieloController,
+            controller: hojaActual.totpalsupafecController,
             decoration: const InputDecoration(
               labelText: "Superficie en m²",
               border: OutlineInputBorder(),
@@ -1525,14 +1503,16 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
             },
           ),
 
+
+
           const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
-          // SECCIÓN DE FOTO CIELO
+          // SECCIÓN DE FOTO ELEVACIONES
           // -------------------------------------------------------------------
 
           Text(
-            "Respaldo Visual",
+            "Respaldo Visual Elevaciones",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
 
@@ -1541,51 +1521,47 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPisoCielo(
+                onPressed: () => appState.obtenerImagenHojaPrincipal(
                   fuente: ImageSource.camera,
                   hoja: hojaActual,
                   imgnum: 2,
                   onImagenSeleccionada: (img) {
                     setState(() {
-                      hojaActual.imgcielo = img;
-                      hojaActual.imgCieloGuardada = null;
-                      _pointsCielo.clear();
-                      canvaskeyCielo_R1 = GlobalKey();
+                      hojaActual.imgelev = img;
+                      hojaActual.imgelevGuardada = null;
+                      _pointsImg2_PR2.clear();
                     });
                   },
-
                 ),
                 icon: Icon(Icons.camera_alt),
                 label: Text("Tomar Foto"),
               ),
-              //const SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
           ),
 
           const SizedBox(height: 20),
 
           // -------------------------------------------------------------------
-          // SECCIÓN DIBUJO
+          // SECCIÓN DIBUJO IMAGEN 2
           // -------------------------------------------------------------------
-
-          if (hojaActual.imgcielo != null && hojaActual.imgCieloGuardada == null) ...[
+          if (hojaActual.imgelev != null && hojaActual.imgelevGuardada == null) ...[
             Text(
               "Dibuja observaciones sobre la imagen:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
 
             Center(
               child: RepaintBoundary(
-                key: canvaskeyCielo_R1, //---------------------------------------------------------------------------> Editar al copiar la hoja
+                key: canvaskeyImg2_Murop_R2,
                 child: Container(
                   width: 900,
                   height: 800,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
-                      image: FileImage(hojaActual.imgcielo!),
+                      image: FileImage(hojaActual.imgelev!),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -1600,13 +1576,13 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                                 localPosition.dx <= constraints.maxWidth &&
                                 localPosition.dy >= 0 &&
                                 localPosition.dy <= constraints.maxHeight) {
-                              _pointsCielo = List.from(_pointsCielo)..add(localPosition);
+                              _pointsImg2_PR2 = List.from(_pointsImg2_PR2)..add(localPosition);
                             }
                           });
                         },
-                        onPanEnd: (_) => setState(() => _pointsCielo.add(null)),
+                        onPanEnd: (_) => setState(() => _pointsImg2_PR2.add(null)),
                         child: CustomPaint(
-                          painter: DibujoPainter(_pointsCielo),
+                          painter: DibujoPainter(_pointsImg2_PR2),
                         ),
                       );
                     },
@@ -1622,17 +1598,16 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                 icon: Icon(Icons.save),
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
-                  await appState.guardarDibujoHojaPisoCielo(
-                    canvasKey: canvaskeyCielo_R1, //---------------------------------------------------------------------> Editar al copiar la hoja
+                  await appState.guardarDibujoHojaPrincipal(
+                    canvasKey: canvaskeyImg2_Murop_R2,
                     hoja: hojaActual,
                     imgnum: 2,
                     onGuardado: (file) {
                       setState(() {
-                        hojaActual.imgCieloGuardada= file;
-                        _pointsCielo.clear();
+                        hojaActual.imgelevGuardada= file;
+                        _pointsImg2_PR2.clear();
                       });
                     },
-
                     context: context,
                   );
                 },
@@ -1645,8 +1620,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
           // -------------------------------------------------------------------
           // SECCIÓN RESULTADO (IMAGEN GUARDADA)
           // -------------------------------------------------------------------
-
-          if (hojaActual.imgCieloGuardada != null) ...[
+          if (hojaActual.imgelevGuardada != null) ...[
             Text(
               "Imagen guardada:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -1656,7 +1630,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
 
             Center(
               child: Image.file(
-                hojaActual.imgCieloGuardada!,
+                hojaActual.imgelevGuardada!,
                 width: 900,
                 height: 800,
                 fit: BoxFit.contain,
@@ -1668,13 +1642,13 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await appState.eliminarDibujoHojaPisoCielo(
+                  await appState.eliminarDibujoHojaPrincipal(
                     context: context,
                     hoja: hojaActual,
                     imgnum: 2,
                   );
                   setState(() {
-                    _pointsCielo.clear();
+                    _pointsImg2_PR2.clear();
                   });
                 },
                 icon: Icon(Icons.delete),
@@ -1684,7 +1658,6 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
             ),
 
           ],
-
 
 
         ],

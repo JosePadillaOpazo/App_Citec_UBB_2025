@@ -38,6 +38,7 @@ class AppState extends ChangeNotifier {
   // ---------------------------------------------------------------------------
 
   //-->Recinto 1
+  bool muro_eje_p_info_r1 = false;
   bool muro_eje_p_r1 = false;
   bool muro_eje_b_r1 = false;
   bool muro_eje_c_r1 = false;
@@ -49,6 +50,7 @@ class AppState extends ChangeNotifier {
   bool piso_cielo_r1 = false;
 
   //-->Recinto 2
+  bool muro_eje_p_info_r2 = false;
   bool muro_eje_p_r2 = false;
   bool muro_eje_b_r2 = false;
   bool muro_eje_c_r2 = false;
@@ -60,6 +62,7 @@ class AppState extends ChangeNotifier {
   bool piso_cielo_r2 = false;
 
   //-->Recinto 3
+  bool muro_eje_p_info_r3 = false;
   bool muro_eje_p_r3 = false;
   bool muro_eje_b_r3 = false;
   bool muro_eje_c_r3 = false;
@@ -71,6 +74,7 @@ class AppState extends ChangeNotifier {
   bool piso_cielo_r3 = false;
 
   //-->Recinto 4
+  bool muro_eje_p_info_r4 = false;
   bool muro_eje_p_r4 = false;
   bool muro_eje_b_r4 = false;
   bool muro_eje_c_r4 = false;
@@ -82,6 +86,7 @@ class AppState extends ChangeNotifier {
   bool piso_cielo_r4 = false;
 
   //-->Recinto 5
+  bool muro_eje_p_info_r5 = false;
   bool muro_eje_p_r5 = false;
   bool muro_eje_b_r5 = false;
   bool muro_eje_c_r5 = false;
@@ -159,53 +164,53 @@ class AppState extends ChangeNotifier {
   late TextEditingController recinto5_nombreController = TextEditingController(text: "Recinto 5");
 
   //-->Nombres de Muros Recinto 1 (tambien se utilizan para nombrar las hojas del excel)
-  late TextEditingController r1_murop_nombreController = TextEditingController(text: "XX");
-  late TextEditingController r1_murob_nombreController = TextEditingController(text: "XX");
-  late TextEditingController r1_muroc_nombreController = TextEditingController(text: "XX");
-  late TextEditingController r1_murod_nombreController = TextEditingController(text: "XX");
-  late TextEditingController r1_muroe_nombreController = TextEditingController(text: "XX");
-  late TextEditingController r1_murof_nombreController = TextEditingController(text: "XX");
-  late TextEditingController r1_murog_nombreController = TextEditingController(text: "XX");
+  late TextEditingController r1_murop_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r1_murob_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r1_muroc_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r1_murod_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r1_muroe_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r1_murof_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r1_murog_nombreController = TextEditingController(text: "(__)");
   late TextEditingController r1_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
   //-->Nombres de Muros Recinto 2 (tambien se utilizan para nombrar las hojas del excel)
-  late TextEditingController r2_murop_nombreController = TextEditingController(text: "Muro Eje A");
-  late TextEditingController r2_murob_nombreController = TextEditingController(text: "Muro Eje B");
-  late TextEditingController r2_muroc_nombreController = TextEditingController(text: "Muro Eje C");
-  late TextEditingController r2_murod_nombreController = TextEditingController(text: "Muro Eje D");
-  late TextEditingController r2_muroe_nombreController = TextEditingController(text: "Muro Eje E");
-  late TextEditingController r2_murof_nombreController = TextEditingController(text: "Muro Eje F");
-  late TextEditingController r2_murog_nombreController = TextEditingController(text: "Muro Eje G");
+  late TextEditingController r2_murop_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r2_murob_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r2_muroc_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r2_murod_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r2_muroe_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r2_murof_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r2_murog_nombreController = TextEditingController(text: "(__)");
   late TextEditingController r2_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
   //-->Nombres de Muros Recinto 3 (tambien se utilizan para nombrar las hojas del excel)
-  late TextEditingController r3_murop_nombreController = TextEditingController(text: "Muro Eje A");
-  late TextEditingController r3_murob_nombreController = TextEditingController(text: "Muro Eje B");
-  late TextEditingController r3_muroc_nombreController = TextEditingController(text: "Muro Eje C");
-  late TextEditingController r3_murod_nombreController = TextEditingController(text: "Muro Eje D");
-  late TextEditingController r3_muroe_nombreController = TextEditingController(text: "Muro Eje E");
-  late TextEditingController r3_murof_nombreController = TextEditingController(text: "Muro Eje F");
-  late TextEditingController r3_murog_nombreController = TextEditingController(text: "Muro Eje G");
+  late TextEditingController r3_murop_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r3_murob_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r3_muroc_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r3_murod_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r3_muroe_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r3_murof_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r3_murog_nombreController = TextEditingController(text: "(__)");
   late TextEditingController r3_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 //-->Nombres de Muros Recinto 4 (tambien se utilizan para nombrar las hojas del excel)
-  late TextEditingController r4_murop_nombreController = TextEditingController(text: "Muro Eje A");
-  late TextEditingController r4_murob_nombreController = TextEditingController(text: "Muro Eje B");
-  late TextEditingController r4_muroc_nombreController = TextEditingController(text: "Muro Eje C");
-  late TextEditingController r4_murod_nombreController = TextEditingController(text: "Muro Eje D");
-  late TextEditingController r4_muroe_nombreController = TextEditingController(text: "Muro Eje E");
-  late TextEditingController r4_murof_nombreController = TextEditingController(text: "Muro Eje F");
-  late TextEditingController r4_murog_nombreController = TextEditingController(text: "Muro Eje G");
+  late TextEditingController r4_murop_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r4_murob_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r4_muroc_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r4_murod_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r4_muroe_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r4_murof_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r4_murog_nombreController = TextEditingController(text: "(__)");
   late TextEditingController r4_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 //-->Nombres de Muros Recinto 5 (tambien se utilizan para nombrar las hojas del excel)
-  late TextEditingController r5_murop_nombreController = TextEditingController(text: "Muro Eje A");
-  late TextEditingController r5_murob_nombreController = TextEditingController(text: "Muro Eje B");
-  late TextEditingController r5_muroc_nombreController = TextEditingController(text: "Muro Eje C");
-  late TextEditingController r5_murod_nombreController = TextEditingController(text: "Muro Eje D");
-  late TextEditingController r5_muroe_nombreController = TextEditingController(text: "Muro Eje E");
-  late TextEditingController r5_murof_nombreController = TextEditingController(text: "Muro Eje F");
-  late TextEditingController r5_murog_nombreController = TextEditingController(text: "Muro Eje G");
+  late TextEditingController r5_murop_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r5_murob_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r5_muroc_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r5_murod_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r5_muroe_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r5_murof_nombreController = TextEditingController(text: "(__)");
+  late TextEditingController r5_murog_nombreController = TextEditingController(text: "(__)");
   late TextEditingController r5_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 
@@ -215,7 +220,7 @@ class AppState extends ChangeNotifier {
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
   void resetApp(BuildContext context) {
     // ---------------------------------------------------------------------------
-    // LIMPIAR CONTROLES DE TEXTO
+    // LIMPIAR CONTROLADORES DE TEXTO
     // ---------------------------------------------------------------------------
     List<TextEditingController> controllers = [
       // Formularios generales
@@ -380,6 +385,7 @@ class AppState extends ChangeNotifier {
     // REINICIAR FLAGS
     // ---------------------------------------------------------------------------
     List<bool Function()> setters = [
+          () => muro_eje_p_info_r1 = false,
           () => muro_eje_p_r1 = false,
           () => muro_eje_b_r1 = false,
           () => muro_eje_c_r1 = false,
@@ -390,6 +396,7 @@ class AppState extends ChangeNotifier {
           () => muro_eje_h_r1 = false,
           () => piso_cielo_r1 = false,
 
+          () => muro_eje_p_info_r2 = false,
           () => muro_eje_p_r2 = false,
           () => muro_eje_b_r2 = false,
           () => muro_eje_c_r2 = false,
@@ -400,6 +407,7 @@ class AppState extends ChangeNotifier {
           () => muro_eje_h_r2 = false,
           () => piso_cielo_r2 = false,
 
+          () => muro_eje_p_info_r3 = false,
           () => muro_eje_p_r3 = false,
           () => muro_eje_b_r3 = false,
           () => muro_eje_c_r3 = false,
@@ -410,6 +418,7 @@ class AppState extends ChangeNotifier {
           () => muro_eje_h_r3 = false,
           () => piso_cielo_r3 = false,
 
+          () => muro_eje_p_info_r4 = false,
           () => muro_eje_p_r4 = false,
           () => muro_eje_b_r4 = false,
           () => muro_eje_c_r4 = false,
@@ -420,6 +429,7 @@ class AppState extends ChangeNotifier {
           () => muro_eje_h_r4 = false,
           () => piso_cielo_r4 = false,
 
+          () => muro_eje_p_info_r5 = false,
           () => muro_eje_p_r5 = false,
           () => muro_eje_b_r5 = false,
           () => muro_eje_c_r5 = false,
@@ -1889,6 +1899,7 @@ class AppState extends ChangeNotifier {
       //--> Seleccionar carpeta
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
       if (selectedDirectory == null) {
+        pantallaActual = 0;
         guardando = false;
         notifyListeners();
         return;
@@ -2301,8 +2312,8 @@ class AppState extends ChangeNotifier {
           }
 
           //--> Info General 1 imagen
-          if (imagenAguardar != null && imagenAguardar!.existsSync()) {
-            final Uint8List imageBytes = await imagenAguardar!.readAsBytes();
+          if (imagenAguardar != null && imagenAguardar.existsSync()) {
+            final Uint8List imageBytes = await imagenAguardar.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
               6, // columna
@@ -2344,8 +2355,8 @@ class AppState extends ChangeNotifier {
           }
 
           //--> Info General 2 imagenes
-          if (imagen1Aguardar != null && imagen1Aguardar!.existsSync()) {
-            final Uint8List imageBytes = await imagen1Aguardar!.readAsBytes();
+          if (imagen1Aguardar != null && imagen1Aguardar.existsSync()) {
+            final Uint8List imageBytes = await imagen1Aguardar.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
               5, // columna
@@ -2355,8 +2366,8 @@ class AppState extends ChangeNotifier {
             picture.width = 450;
           }
 
-          if (imagen2Aguardar != null && imagen2Aguardar!.existsSync()) {
-            final Uint8List imageBytes = await imagen2Aguardar!.readAsBytes();
+          if (imagen2Aguardar != null && imagen2Aguardar.existsSync()) {
+            final Uint8List imageBytes = await imagen2Aguardar.readAsBytes();
             final xlsio.Picture picture = sheet.pictures.addBase64(
               43, // fila
               13, // columna
@@ -2494,6 +2505,7 @@ class AppState extends ChangeNotifier {
       //-------------SECCION DE GUARDADO SEGUN HOJA UTILIZADA-------------------
       //------------------------------------------------------------------------
 
+      //-- Recinto 1
       if (muro_eje_p_r1 == true) {
         final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 1");
         if (indexHojaPrincipal == null) {
@@ -2502,95 +2514,524 @@ class AppState extends ChangeNotifier {
           await crearHojaMuroPrincipalExcel(
             workbook: workbook,
             hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-            nombreHoja: recinto1_nombreController.text +" - muro pricipal - "+ r1_murop_nombreController.text,
+            nombreHoja: "MP - ${r1_murop_nombreController.text}",
+            muroEje: r1_murop_nombreController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
           //--HOJA Muro Eje B - Recinto 1
-            if (muro_eje_b_r1 == true) {
-              final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje B - Recinto 1");
-              if (indexHojaMuro == null) {
-              } else {
-                await crearHojaMuroExcel(
-                  workbook: workbook,
-                  hojaMuro: hojasM[indexHojaMuro],
-                  nombreHoja: r1_murob_nombreController.text,
-                );
-              }
+          if (muro_eje_b_r1 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje B - Recinto 1");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r1_murob_nombreController.text}",
+                muroEje: r1_murob_nombreController.text,
+              );
             }
-          //--HOJA Muro Eje C - Recinto 1
-            if (muro_eje_c_r1 == true) {
-              final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje C - Recinto 1");
-              if (indexHojaMuro == null) {
-              } else {
-                await crearHojaMuroExcel(
-                  workbook: workbook,
-                  hojaMuro: hojasM[indexHojaMuro],
-                  nombreHoja: r1_muroc_nombreController.text,
-                );
-              }
+          }
+        //--HOJA Muro Eje C - Recinto 1
+          if (muro_eje_c_r1 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje C - Recinto 1");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r1_muroc_nombreController.text}",
+                muroEje: r1_muroc_nombreController.text,
+              );
             }
-          //--HOJA Muro Eje D - Recinto 1
-            if (muro_eje_d_r1 == true) {
-              final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje D - Recinto 1");
-              if (indexHojaMuro == null) {
-              } else {
-                await crearHojaMuroExcel(
-                  workbook: workbook,
-                  hojaMuro: hojasM[indexHojaMuro],
-                  nombreHoja: r1_murod_nombreController.text,
-                );
-              }
+          }
+        //--HOJA Muro Eje D - Recinto 1
+          if (muro_eje_d_r1 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje D - Recinto 1");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r1_murod_nombreController.text}",
+                muroEje: r1_murod_nombreController.text,
+              );
             }
-          //--HOJA Muro Eje E - Recinto 1
-            if (muro_eje_e_r1 == true) {
-              final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje E - Recinto 1");
-              if (indexHojaMuro == null) {
-              } else {
-                await crearHojaMuroExcel(
-                  workbook: workbook,
-                  hojaMuro: hojasM[indexHojaMuro],
-                  nombreHoja: r1_muroe_nombreController.text,
-                );
-              }
+          }
+        //--HOJA Muro Eje E - Recinto 1
+          if (muro_eje_e_r1 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje E - Recinto 1");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r1_muroe_nombreController.text}",
+                muroEje: r1_muroe_nombreController.text,
+              );
             }
+          }
+        //--HOJA Muro Eje F - Recinto 1
+          if (muro_eje_f_r1 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje F - Recinto 1");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r1_murof_nombreController.text}",
+                muroEje: r1_murof_nombreController.text,
+              );
+            }
+          }
+        //--HOJA Muro Eje G - Recinto 1
+          if (muro_eje_g_r1 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje G - Recinto 1");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r1_murog_nombreController.text}",
+                muroEje: r1_murog_nombreController.text,
+              );
+            }
+          }
+        //--HOJA Piso Cielo - Recinto 1
+          if (piso_cielo_r1 == true) {
+            final indexHojaPisoCielo = buscarIndexHojaPisoCielo(context, "Piso Cielo - Recinto 1");
+            if (indexHojaPisoCielo == null) {
+            } else {
+              await crearHojaPisoCieloExcel(
+                workbook: workbook,
+                hojaPisoCielo: hojasPC[indexHojaPisoCielo],
+                nombreHoja: "ME - ${r1_pisocielo_nombreController.text}",
+              );
+            }
+          }
+        }
+      }
+
+      //--Recinto 2
+      if (muro_eje_p_r2 == true) {
+        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 2");
+        if (indexHojaPrincipal == null) {
+
+        } else {
+          await crearHojaMuroPrincipalExcel(
+            workbook: workbook,
+            hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+            nombreHoja: "MP - ${r2_murop_nombreController.text}",
+            muroEje: r2_murop_nombreController.text,
+          );
+          //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
+          //--HOJA Muro Eje B - Recinto 2
+          if (muro_eje_b_r2 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje B - Recinto 2");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r2_murob_nombreController.text}",
+                muroEje: r2_murob_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje C - Recinto 2
+          if (muro_eje_c_r2 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje C - Recinto 2");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r2_muroc_nombreController.text}",
+                muroEje: r2_muroc_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje D - Recinto 2
+          if (muro_eje_d_r2 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje D - Recinto 2");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r2_murod_nombreController.text}",
+                muroEje: r2_murod_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje E - Recinto 2
+          if (muro_eje_e_r2 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje E - Recinto 2");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r2_muroe_nombreController.text}",
+                muroEje: r2_muroe_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje F - Recinto 2
+          if (muro_eje_f_r2 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje F - Recinto 2");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r2_murof_nombreController.text}",
+                muroEje: r2_murof_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje G - Recinto 2
+          if (muro_eje_g_r2 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje G - Recinto 2");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r2_murog_nombreController.text}",
+                muroEje: r2_murog_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Piso Cielo - Recinto 2
+          if (piso_cielo_r2 == true) {
+            final indexHojaPisoCielo = buscarIndexHojaPisoCielo(context, "Piso Cielo - Recinto 2");
+            if (indexHojaPisoCielo == null) {
+            } else {
+              await crearHojaPisoCieloExcel(
+                workbook: workbook,
+                hojaPisoCielo: hojasPC[indexHojaPisoCielo],
+                nombreHoja: "ME - ${r2_pisocielo_nombreController.text}",
+              );
+            }
+          }
+        }
+      }
+
+      //-- Recinto 3
+      if (muro_eje_p_r3 == true) {
+        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 3");
+        if (indexHojaPrincipal == null) {
+
+        } else {
+          await crearHojaMuroPrincipalExcel(
+              workbook: workbook,
+              hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+              nombreHoja: "MP - ${r3_murop_nombreController.text}",
+              muroEje: r3_murop_nombreController.text
+          );
+          //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
+          //--HOJA Muro Eje B - Recinto 3
+          if (muro_eje_b_r3 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje B - Recinto 3");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r3_murob_nombreController.text}",
+                muroEje: r3_murob_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje C - Recinto 3
+          if (muro_eje_c_r3 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje C - Recinto 3");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r3_muroc_nombreController.text}",
+                muroEje: r3_muroc_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje D - Recinto 3
+          if (muro_eje_d_r3 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje D - Recinto 3");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r3_murod_nombreController.text}",
+                muroEje: r3_murod_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje E - Recinto 3
+          if (muro_eje_e_r3 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje E - Recinto 3");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r3_muroe_nombreController.text}",
+                muroEje: r3_muroe_nombreController.text,
+              );
+            }
+          }
           //--HOJA Muro Eje F - Recinto 1
-            if (muro_eje_f_r1 == true) {
-              final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje F - Recinto 1");
-              if (indexHojaMuro == null) {
-              } else {
-                await crearHojaMuroExcel(
-                  workbook: workbook,
-                  hojaMuro: hojasM[indexHojaMuro],
-                  nombreHoja: r1_murof_nombreController.text,
-                );
-              }
+          if (muro_eje_f_r3 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje F - Recinto 3");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r3_murof_nombreController.text}",
+                muroEje: r3_murof_nombreController.text,
+              );
             }
-          //--HOJA Muro Eje G - Recinto 1
-            if (muro_eje_g_r1 == true) {
-              final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje G - Recinto 1");
-              if (indexHojaMuro == null) {
-              } else {
-                await crearHojaMuroExcel(
-                  workbook: workbook,
-                  hojaMuro: hojasM[indexHojaMuro],
-                  nombreHoja: r1_murog_nombreController.text,
-                );
-              }
+          }
+          //--HOJA Muro Eje G - Recinto 3
+          if (muro_eje_g_r3 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje G - Recinto 3");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r3_murog_nombreController.text}",
+                muroEje: r3_murog_nombreController.text,
+              );
             }
-          //--HOJA Piso Cielo - Recinto 1
-            if (piso_cielo_r1 == true) {
-              final indexHojaPisoCielo = buscarIndexHojaPisoCielo(context, "Piso Cielo - Recinto 1");
-              if (indexHojaPisoCielo == null) {
-              } else {
-                await crearHojaPisoCieloExcel(
-                  workbook: workbook,
-                  hojaPisoCielo: hojasPC[indexHojaPisoCielo],
-                  nombreHoja: r1_pisocielo_nombreController.text,
-                );
-              }
+          }
+          //--HOJA Piso Cielo - Recinto 3
+          if (piso_cielo_r3 == true) {
+            final indexHojaPisoCielo = buscarIndexHojaPisoCielo(context, "Piso Cielo - Recinto 3");
+            if (indexHojaPisoCielo == null) {
+            } else {
+              await crearHojaPisoCieloExcel(
+                workbook: workbook,
+                hojaPisoCielo: hojasPC[indexHojaPisoCielo],
+                nombreHoja: "ME - ${r3_pisocielo_nombreController.text}",
+              );
             }
+          }
+        }
+      }
 
+      //-- Recinto 4
+      if (muro_eje_p_r4 == true) {
+        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 4");
+        if (indexHojaPrincipal == null) {
 
+        } else {
+          await crearHojaMuroPrincipalExcel(
+              workbook: workbook,
+              hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+              nombreHoja: "MP - ${r4_murop_nombreController.text}",
+              muroEje: r4_murop_nombreController.text
+          );
+          //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
+          //--HOJA Muro Eje B - Recinto 4
+          if (muro_eje_b_r4 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje B - Recinto 4");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r4_murob_nombreController.text}",
+                muroEje: r4_murob_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje C - Recinto 3
+          if (muro_eje_c_r4 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje C - Recinto 4");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r4_muroc_nombreController.text}",
+                muroEje: r4_muroc_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje D - Recinto 4
+          if (muro_eje_d_r4 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje D - Recinto 4");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r4_murod_nombreController.text}",
+                muroEje: r4_murod_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje E - Recinto 4
+          if (muro_eje_e_r4 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje E - Recinto 4");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r4_muroe_nombreController.text}",
+                muroEje: r4_muroe_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje F - Recinto 4
+          if (muro_eje_f_r4 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje F - Recinto 4");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r4_murof_nombreController.text}",
+                muroEje: r4_murof_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje G - Recinto 4
+          if (muro_eje_g_r4 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje G - Recinto 4");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r4_murog_nombreController.text}",
+                muroEje: r4_murog_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Piso Cielo - Recinto 4
+          if (piso_cielo_r4 == true) {
+            final indexHojaPisoCielo = buscarIndexHojaPisoCielo(context, "Piso Cielo - Recinto 4");
+            if (indexHojaPisoCielo == null) {
+            } else {
+              await crearHojaPisoCieloExcel(
+                workbook: workbook,
+                hojaPisoCielo: hojasPC[indexHojaPisoCielo],
+                nombreHoja: "ME - ${r4_pisocielo_nombreController.text}",
+              );
+            }
+          }
+        }
+      }
+
+      //-- Recinto 5
+      if (muro_eje_p_r5 == true) {
+        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 5");
+        if (indexHojaPrincipal == null) {
+
+        } else {
+          await crearHojaMuroPrincipalExcel(
+              workbook: workbook,
+              hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+              nombreHoja: "MP - ${r5_murop_nombreController.text}",
+              muroEje: r5_murop_nombreController.text
+          );
+          //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
+          //--HOJA Muro Eje B - Recinto 5
+          if (muro_eje_b_r5 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje B - Recinto 5");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r5_murob_nombreController.text}",
+                muroEje: r5_murob_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje C - Recinto 5
+          if (muro_eje_c_r5 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje C - Recinto 5");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r5_muroc_nombreController.text}",
+                muroEje: r5_muroc_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje D - Recinto 5
+          if (muro_eje_d_r5 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje D - Recinto 5");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r5_murod_nombreController.text}",
+                muroEje: r5_murod_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje E - Recinto 5
+          if (muro_eje_e_r5 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje E - Recinto 5");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r5_muroe_nombreController.text}",
+                muroEje: r5_muroe_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje F - Recinto 5
+          if (muro_eje_f_r5 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje F - Recinto 5");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r5_murof_nombreController.text}",
+                muroEje: r5_murof_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Muro Eje G - Recinto 5
+          if (muro_eje_g_r5 == true) {
+            final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje G - Recinto 5");
+            if (indexHojaMuro == null) {
+            } else {
+              await crearHojaMuroExcel(
+                workbook: workbook,
+                hojaMuro: hojasM[indexHojaMuro],
+                nombreHoja: "ME - ${r5_murog_nombreController.text}",
+                muroEje: r5_murog_nombreController.text,
+              );
+            }
+          }
+          //--HOJA Piso Cielo - Recinto 5
+          if (piso_cielo_r5 == true) {
+            final indexHojaPisoCielo = buscarIndexHojaPisoCielo(context, "Piso Cielo - Recinto 5");
+            if (indexHojaPisoCielo == null) {
+            } else {
+              await crearHojaPisoCieloExcel(
+                workbook: workbook,
+                hojaPisoCielo: hojasPC[indexHojaPisoCielo],
+                nombreHoja: "ME - ${r5_pisocielo_nombreController.text}",
+              );
+            }
+          }
         }
       }
 
@@ -2615,6 +3056,9 @@ class AppState extends ChangeNotifier {
         SnackBar(content: Text("❌ Error al guardar: $e")),
       );
     } finally {
+      guardando = false;
+      resetApp(context);
+      notifyListeners();
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 500),
@@ -2627,9 +3071,6 @@ class AppState extends ChangeNotifier {
           },
         ),
       );
-      guardando = false;
-      resetApp(context);
-      notifyListeners();
     }
   }
 
@@ -2642,6 +3083,7 @@ class AppState extends ChangeNotifier {
     required xlsio.Workbook workbook,
     required HojaMuroPrincipal hojaMuroPrincipal,
     required String nombreHoja,
+    required String muroEje,
   }) async {
 
     final sheet = workbook.worksheets.addWithName(nombreHoja);
@@ -2962,7 +3404,7 @@ class AppState extends ChangeNotifier {
       ..bold = true
       ..backColor = '#FFE699';
 
-    sheet.getRangeByName('F32').setText(hojaMuroPrincipal.muroejeController.text);
+    sheet.getRangeByName('F32').setText(muroEje);
     sheet.getRangeByName('F32').cellStyle.backColor = '#FFE699';
 
     sheet.getRangeByName('G32:I32').merge();
@@ -3374,6 +3816,7 @@ class AppState extends ChangeNotifier {
     required xlsio.Workbook workbook,
     required HojaMuro hojaMuro,
     required String nombreHoja,
+    required String muroEje,
 
   }) async {
     final sheet = workbook.worksheets.addWithName(nombreHoja);
@@ -3420,7 +3863,7 @@ class AppState extends ChangeNotifier {
       ..bold = true
       ..backColor = '#FFC000';
 
-    sheet.getRangeByName('B7:B44').merge();
+    sheet.getRangeByName('B7:B55').merge();
     sheet.getRangeByName('B7').setText("5");
     sheet.getRangeByName('B7').cellStyle
       ..bold = true
@@ -3442,7 +3885,7 @@ class AppState extends ChangeNotifier {
       ..bold = true
       ..backColor = '#FFE699';
 
-    sheet.getRangeByName('F21').setText(hojaMuro.muroejeController.text);
+    sheet.getRangeByName('F21').setText(muroEje);
     sheet.getRangeByName('F21').cellStyle.backColor = '#FFE699';
 
     sheet.getRangeByName('G21:I21').merge();
@@ -3829,7 +4272,7 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 360;
+        picture.height = 380;
         picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
@@ -4466,7 +4909,6 @@ class HojaMuroPrincipal {
   final TextEditingController celosiapueController = TextEditingController();
   final TextEditingController rebajepueController = TextEditingController();
   final TextEditingController otroequipController = TextEditingController();
-  final TextEditingController muroejeController = TextEditingController();
   final TextEditingController supmuroController = TextEditingController();
   final TextEditingController supventanaController = TextEditingController();
   final TextEditingController tipomuroController = TextEditingController();
@@ -4519,7 +4961,6 @@ class HojaMuroPrincipal {
     celosiapueController.dispose();
     rebajepueController.dispose();
     otroequipController.dispose();
-    muroejeController.dispose();
     supmuroController.dispose();
     supventanaController.dispose();
     tipomuroController.dispose();
@@ -4565,7 +5006,6 @@ class HojaMuro {
   File? imgelev;
   File? imgelevGuardada;
 
-  final TextEditingController muroejeController = TextEditingController();
   final TextEditingController supmuroController = TextEditingController();
   final TextEditingController supventanaController = TextEditingController();
   final TextEditingController tipoMuroController = TextEditingController();
@@ -4603,7 +5043,6 @@ class HojaMuro {
   HojaMuro({required this.nombre});
 
   void dispose() {
-    muroejeController.dispose();
     supmuroController.dispose();
     supventanaController.dispose();
     tipoMuroController.dispose();

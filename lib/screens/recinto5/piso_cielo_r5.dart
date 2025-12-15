@@ -4,24 +4,23 @@ import 'package:provider/provider.dart';
 import '../../providers/app_state.dart';
 import 'package:image_picker/image_picker.dart';
 
-class Piso_Cielo_R1 extends StatefulWidget {
-  const Piso_Cielo_R1({super.key});
+class Piso_Cielo_R5 extends StatefulWidget {
+  const Piso_Cielo_R5({super.key});
 
   @override
-  State<Piso_Cielo_R1> createState() => _Piso_Cielo_R1();
+  State<Piso_Cielo_R5> createState() => _Piso_Cielo_R5();
 }
 
-class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
-  GlobalKey canvaskeyPiso_R1 = GlobalKey();
-  GlobalKey canvaskeyCielo_R1 = GlobalKey();
+class _Piso_Cielo_R5 extends State<Piso_Cielo_R5> {
+  GlobalKey canvaskeyPiso_R5 = GlobalKey();
+  GlobalKey canvaskeyCielo_R5 = GlobalKey();
 
   List<Offset?> _pointsPiso = [];
   List<Offset?> _pointsCielo = [];
-
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final hojaActual = appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 1"); //---------------------------------------------------------------------> Editar al copiar la hoja
+    final hojaActual = appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 5"); //---------------------------------------------------------------------> Editar al copiar la hoja
 
 
     return SingleChildScrollView(
@@ -723,7 +722,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                       hojaActual.imgpiso = img;
                       hojaActual.imgPisoGuardada = null;
                       _pointsPiso.clear();
-                      canvaskeyPiso_R1 = GlobalKey();
+                      canvaskeyPiso_R5 = GlobalKey();
                     });
                   },
 
@@ -751,7 +750,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
 
             Center(
               child: RepaintBoundary(
-                key: canvaskeyPiso_R1, //---------------------------------------------------------------------------> Editar al copiar la hoja
+                key: canvaskeyPiso_R5, //---------------------------------------------------------------------------> Editar al copiar la hoja
                 child: Container(
                   width: 900,
                   height: 800,
@@ -796,7 +795,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
                   await appState.guardarDibujoHojaPisoCielo(
-                    canvasKey: canvaskeyPiso_R1, //---------------------------------------------------------------------> Editar al copiar la hoja
+                    canvasKey: canvaskeyPiso_R5, //---------------------------------------------------------------------> Editar al copiar la hoja
                     hoja: hojaActual,
                     imgnum: 1,
                     onGuardado: (file) {
@@ -1550,7 +1549,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                       hojaActual.imgcielo = img;
                       hojaActual.imgCieloGuardada = null;
                       _pointsCielo.clear();
-                      canvaskeyCielo_R1 = GlobalKey();
+                      canvaskeyCielo_R5 = GlobalKey();
                     });
                   },
 
@@ -1578,7 +1577,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
 
             Center(
               child: RepaintBoundary(
-                key: canvaskeyCielo_R1, //---------------------------------------------------------------------------> Editar al copiar la hoja
+                key: canvaskeyCielo_R5, //---------------------------------------------------------------------------> Editar al copiar la hoja
                 child: Container(
                   width: 900,
                   height: 800,
@@ -1623,7 +1622,7 @@ class _Piso_Cielo_R1 extends State<Piso_Cielo_R1> {
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
                   await appState.guardarDibujoHojaPisoCielo(
-                    canvasKey: canvaskeyCielo_R1, //---------------------------------------------------------------------> Editar al copiar la hoja
+                    canvasKey: canvaskeyCielo_R5, //---------------------------------------------------------------------> Editar al copiar la hoja
                     hoja: hojaActual,
                     imgnum: 2,
                     onGuardado: (file) {

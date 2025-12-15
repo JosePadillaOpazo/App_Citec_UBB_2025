@@ -1,0 +1,9 @@
+export '../screens/recinto3/info_recinto_3.dart';
+export '../screens/recinto3/muro_p_r3.dart';
+export '../screens/recinto3/muro_eje_b_r3.dart';
+export '../screens/recinto3/muro_eje_c_r3.dart';
+export '../screens/recinto3/muro_eje_d_r3.dart';
+export '../screens/recinto3/muro_eje_e_r3.dart';
+export '../screens/recinto3/muro_eje_f_r3.dart';
+export '../screens/recinto3/muro_eje_g_r3.dart';
+export '../screens/recinto3/piso_cielo_r3.dart';

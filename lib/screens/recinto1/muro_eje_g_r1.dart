@@ -95,9 +95,6 @@ class _Muro_Eje_G_R1State extends State<Muro_Eje_G_R1> {
               if (value == null || value.isEmpty) {
                 return 'Por favor ingrese la información requerida';
               }
-              if (appState.r1_murog_nombreController != null) {//--------------------------------------------------cambiar al copiar pantalla
-                hojaActual.muroejeController.text = appState.r1_murog_nombreController.text;//--------------------------------------------------cambiar al copiar pantalla
-              }
               if (!RegExp(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$').hasMatch(value)) {
                 return 'Solo se permiten letras y espacios';
               }
