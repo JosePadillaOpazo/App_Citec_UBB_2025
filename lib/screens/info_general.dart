@@ -38,7 +38,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               child: const Text(
                 "Información General",
                 style: TextStyle(
-                  fontSize: 35,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.underline,
                 ),
@@ -112,7 +112,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           Text(
             "ℹ️ Informacion General del Proyecto",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
 
@@ -538,37 +538,61 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           const SizedBox(height: 10),
 
-          ValueListenableBuilder(
-            valueListenable: appState.climaController,
-            builder: (context, TextEditingValue value, _) {
-              return SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(
-                      value: 'Soleado',
-                      label: Text('Soleado'),
-                      icon: Icon(Icons.sunny)
-                  ),
-                  ButtonSegment(
-                      value: 'Parcialmente Nublado',
-                      label: Text('Parcialmente Nublado'),
-                      icon: Icon(Icons.cloud_queue)
-                  ),
-                  ButtonSegment(
-                      value: 'Nublado',
-                      label: Text('Nublado'),
-                      icon: Icon(Icons.cloud)
-                  ),
-                  ButtonSegment(
-                      value: 'Lluvioso',
-                      label: Text('Lluvioso'),
-                      icon: Icon(Icons.cloudy_snowing)
-                  ),
-                ],
-                selected: {value.text},
-                onSelectionChanged: (Set<String> newSelection) {
-                  appState.climaController.text = newSelection.first;
-                },
-              );
+          DropdownButtonFormField<String>(
+            value: appState.climaController.text.isEmpty
+              ? null
+                : appState.climaController.text,
+            decoration: const InputDecoration(
+              labelText: "Clima",
+              border: OutlineInputBorder(),
+            ),
+            items: const [
+              DropdownMenuItem(
+                value: 'Soleado',
+                child: Row(
+                  children: [
+                    Icon(Icons.sunny, size: 20),
+                    SizedBox(width: 8),
+                    Text('Soleado'),
+                  ],
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Parcialmente Nublado',
+                child: Row(
+                  children: [
+                    Icon(Icons.cloud_queue, size: 20),
+                    SizedBox(width: 8),
+                    Text('Parcialmente Nublado'),
+                  ],
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Nublado',
+                child: Row(
+                  children: [
+                    Icon(Icons.cloud, size: 20),
+                    SizedBox(width: 8),
+                    Text('Nublado'),
+                  ],
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'Lluvioso',
+                child: Row(
+                  children: [
+                    Icon(Icons.cloudy_snowing, size: 20),
+                    SizedBox(width: 8),
+                    Text('Lluvioso'),
+                  ],
+                ),
+              ),
+            ],
+
+            onChanged: (value) {
+              if (value != null) {
+                appState.climaController.text = value;
+              }
             },
           ),
 
@@ -1050,8 +1074,8 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 40),
 
           Text(
-            "🏠 Informacion de Ocupacion Vivienda",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            "🏠 Información Ocupación de Vivienda",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -1368,7 +1392,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           Text(
             "📷 Identificación tipología de vivienda ",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 30),

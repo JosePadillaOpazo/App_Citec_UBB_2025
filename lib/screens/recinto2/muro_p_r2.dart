@@ -35,7 +35,7 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
               children: [
                 Text(
                   "Muro Principal Eje " + appState.r2_murop_nombreController.text,
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 
                 IconButton(
@@ -46,7 +46,7 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
                     );
 
                     if (nuevoNombre != null && nuevoNombre.isNotEmpty) {
-                      appState.actualizarNombreMuro(1,nuevoNombre);
+                      appState.actualizarNombreMuro(9,nuevoNombre);
                     }
                   },
                   icon: Icon(Icons.edit, color: Colors.blueAccent),
@@ -64,7 +64,7 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
 
           Text(
             "🧱  Informacion del Muro",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -253,14 +253,14 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
 
           Text(
             "🎯  Ubicacion de Patologia Detectada",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
 
           Text(
             "▪️Manchas de humedad / moho",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -870,7 +870,7 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
 
           Text(
             "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1478,8 +1478,8 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
           const SizedBox(height: 20),
 
           const Text(
-            "▪️Total superficie de muro afectada: (m²)",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            "Total superficie de muro afectada: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1513,7 +1513,7 @@ class _Muro_Principal_R2 extends State<Muro_Principal_R2> {
 
           Text(
             "Respaldo Visual Elevaciones",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),

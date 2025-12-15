@@ -35,7 +35,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
               children: [
                 Text(
                   "Piso",//----------------------------------------------------------------------------------> Editar al copiar la hoja
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
               ]
             )
@@ -136,14 +136,14 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
 
           Text(
             "🎯  Ubicacion de Patologia Detectada",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
 
           Text(
             "▪️Manchas de humedad / moho",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -408,7 +408,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
 
           Text(
             "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -672,7 +672,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
           const SizedBox(height: 20),
 
           Text(
-            "▪️Total superficie de piso afectada: (m²)",
+            "Total superficie de piso afectada: (m²)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -705,7 +705,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
 
           Text(
             "Respaldo Visual",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -867,7 +867,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
               children: [
                 Text(
                   "Cielo",//----------------------------------------------------------------------------------> Editar al copiar la hoja
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
               ]
             )
@@ -963,14 +963,14 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
 
           Text(
             "🎯  Ubicacion de Patologia Detectada",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
 
           Text(
             "▪️Manchas de humedad / moho",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1235,7 +1235,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
 
           Text(
             "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1499,7 +1499,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
           const SizedBox(height: 20),
 
           Text(
-            "▪️Total superficie de cielo afectada: (m²)",
+            "Total superficie de cielo afectada: (m²)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -1532,7 +1532,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
 
           Text(
             "Respaldo Visual",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),

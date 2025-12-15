@@ -1024,13 +1024,27 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         ),
       ),
 
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(opacity: animation, child: child);
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isTablet = constraints.maxWidth >= 600;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isTablet ? 1000 : double.infinity,
+              ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: pantallas[appState.pantallaActual],
+              ),
+            ),
+          );
         },
-        child: pantallas[appState.pantallaActual],
       ),
+
     );
   }
 

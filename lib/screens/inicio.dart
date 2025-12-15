@@ -9,61 +9,92 @@ class Inicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.read<AppState>();
+
     return Scaffold(
       backgroundColor: Colors.blueAccent,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/logo_citec.png',
-                width: 400,
-                height: 300,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isTablet = constraints.maxWidth >= 600;
+
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
               ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 900,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(isTablet ? 32 : 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        /// LOGO
+                        Image.asset(
+                          'assets/logo_citec.png',
+                          width: isTablet
+                              ? 400
+                              : constraints.maxWidth * 0.7,
+                          height: isTablet
+                              ? 300
+                              : constraints.maxWidth * 0.5,
+                          fit: BoxFit.contain,
+                        ),
 
-              const SizedBox(height: 40),
+                        SizedBox(height: isTablet ? 48 : 32),
 
-              ElevatedButton(
-                onPressed: () {
-                  appState.HoraInicio();
-                  Navigator.of(context).pushReplacement(
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 500),
-                      pageBuilder: (context, animation, secondaryAnimation) => const PantallaPrincipal(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
+                        /// BOTÓN
+                        SizedBox(
+                          width: isTablet ? 320 : double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              appState.HoraInicio();
+                              Navigator.of(context).pushReplacement(
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                  const Duration(milliseconds: 500),
+                                  pageBuilder: (_, __, ___) =>
+                                  const PantallaPrincipal(),
+                                  transitionsBuilder:
+                                      (_, animation, __, child) =>
+                                      FadeTransition(
+                                        opacity: animation,
+                                        child: child,
+                                      ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                vertical: isTablet ? 18 : 14,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              backgroundColor: Colors.green,
+                            ),
+                            child: Text(
+                              'Inicio de Inspección',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isTablet ? 20 : 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor: Colors.green,
-                ),
-                child: Text(
-                  'Inicio de Inspección',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
+
   }
 }

@@ -34,7 +34,7 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
               children: [
                 Text(
                   "Información de " + appState.recinto4_nombreController.text,
-                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 
               ]
@@ -46,7 +46,7 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
 
           Text(
             "🛠️  Patologias y Modificaciones",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -315,7 +315,7 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
 
           Text(
             "♨️  Calefacción",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -330,40 +330,65 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
           ValueListenableBuilder(
             valueListenable: hojaActual.sistcalefController,
             builder: (context, TextEditingValue value, _) {
+              final seleccion = value.text.isEmpty ? null : value.text;
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SegmentedButton<String>(
-                    segments: const [
-                      ButtonSegment(
+                  DropdownButtonFormField<String>(
+                    isExpanded: true, // 🔑 CLAVE
+                    value: seleccion,
+                    decoration: const InputDecoration(
+                      labelText: 'Sistema de calefacción',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
                         value: 'Eléctrico (seca)',
-                        label: Text('Eléctrico (seca)'),
+                        child: Text(
+                          'Eléctrico (seca)',
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                        ),
                       ),
-                      ButtonSegment(
+                      DropdownMenuItem(
                         value: 'Gas / parafina con evacuacipon exterior (seca)',
-                        label: Text('Gas / parafina con evacuacipon exterior (seca)'),
+                        child: Text(
+                          'Gas / parafina con evacuacipon exterior (seca)',
+                          softWrap: true,
+                        ),
                       ),
-                      ButtonSegment(
+                      DropdownMenuItem(
                         value: 'Biomasa con evacuación exterior (seca)',
-                        label: Text('Biomasa con evacuación exterior (seca)'),
+                        child: Text(
+                          'Biomasa con evacuación exterior (seca)',
+                          softWrap: true,
+                        ),
                       ),
-                      ButtonSegment(
+                      DropdownMenuItem(
                         value: 'Parafina/gas móvil (húmeda)',
-                        label: Text('Parafina/gas móvil (húmeda)'),
+                        child: Text(
+                          'Parafina/gas móvil (húmeda)',
+                          softWrap: true,
+                        ),
                       ),
-                      ButtonSegment(
+                      DropdownMenuItem(
                         value: 'Otro ¿cuál?',
-                        label: Text('Otro ¿cuál?'),
-                      )
+                        child: Text(
+                          'Otro ¿cuál?',
+                          softWrap: true,
+                        ),
+                      ),
                     ],
-                    selected: {value.text},
-                    onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.sistcalefController.text = newSelection.first;
-                      if (newSelection.first != 'Otro ¿cuál?') {
+                    onChanged: (newValue) {
+                      if (newValue == null) return;
+                      hojaActual.sistcalefController.text = newValue;
+                      if (newValue != 'Otro ¿cuál?') {
                         hojaActual.otrocalefController.clear();
                       }
                     },
                   ),
+
 
                   const SizedBox(height: 10),
 
@@ -388,18 +413,14 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
                       ),
                       PegarDisabled(),
                     ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Por favor ingrese la información reuqerida';
-                      }
-                      if (!RegExp(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ, ]+$').hasMatch(value)) {
-                        return 'Solo se permiten letras, números y comas';
+                    validator: (campo) {
+                      if (value.text == 'Otro ¿cuál?' &&
+                          (campo == null || campo.isEmpty)) {
+                        return 'Por favor ingrese la información requerida';
                       }
                       return null;
                     },
                   ),
-
-
                 ],
               );
             },
@@ -439,7 +460,7 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
 
           Text(
             "𖣘 Sistema de ventilación",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -714,7 +735,7 @@ class _Info_Recinto_4 extends State<Info_Recinto_4> {
 
           Text(
             "Plano",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),

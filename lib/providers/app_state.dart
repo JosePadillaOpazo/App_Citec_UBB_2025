@@ -1274,9 +1274,9 @@ class AppState extends ChangeNotifier {
       case 7:
         r1_murog_nombreController.text = nuevoNombre;
         break;
-      case 8:
+     /* case 8:
         r1_pisocielo_nombreController.text = nuevoNombre;
-        break;
+        break;*/
       case 9:
         r2_murop_nombreController.text = nuevoNombre;
         break;
@@ -1298,9 +1298,9 @@ class AppState extends ChangeNotifier {
       case 15:
         r2_murog_nombreController.text = nuevoNombre;
         break;
-      case 16:
+      /*case 16:
         r2_pisocielo_nombreController.text = nuevoNombre;
-        break;
+        break;*/
       case 17:
         r3_murop_nombreController.text = nuevoNombre;
         break;
@@ -1322,9 +1322,9 @@ class AppState extends ChangeNotifier {
       case 23:
         r3_murog_nombreController.text = nuevoNombre;
         break;
-      case 24:
+      /*case 24:
         r3_pisocielo_nombreController.text = nuevoNombre;
-        break;
+        break;*/
       case 25:
         r4_murop_nombreController.text = nuevoNombre;
         break;
@@ -1346,9 +1346,9 @@ class AppState extends ChangeNotifier {
       case 31:
         r4_murog_nombreController.text = nuevoNombre;
         break;
-      case 32:
+      /*case 32:
         r4_pisocielo_nombreController.text = nuevoNombre;
-        break;
+        break;*/
       case 33:
         r5_murop_nombreController.text = nuevoNombre;
         break;
@@ -1370,9 +1370,9 @@ class AppState extends ChangeNotifier {
       case 39:
         r5_murog_nombreController.text = nuevoNombre;
         break;
-      case 40:
+      /*case 40:
         r5_pisocielo_nombreController.text = nuevoNombre;
-        break;
+        break;*/
     }
     notifyListeners();
   }
@@ -2514,7 +2514,7 @@ class AppState extends ChangeNotifier {
           await crearHojaMuroPrincipalExcel(
             workbook: workbook,
             hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-            nombreHoja: "MP - ${r1_murop_nombreController.text}",
+            nombreHoja: "MP${r1_murop_nombreController.text} - R1",
             muroEje: r1_murop_nombreController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
@@ -2526,7 +2526,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r1_murob_nombreController.text}",
+                nombreHoja: "ME${r1_murob_nombreController.text} - R1",
                 muroEje: r1_murob_nombreController.text,
               );
             }
@@ -2539,7 +2539,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r1_muroc_nombreController.text}",
+                nombreHoja: "ME${r1_muroc_nombreController.text} - R1",
                 muroEje: r1_muroc_nombreController.text,
               );
             }
@@ -2552,7 +2552,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r1_murod_nombreController.text}",
+                nombreHoja: "ME${r1_murod_nombreController.text} - R1",
                 muroEje: r1_murod_nombreController.text,
               );
             }
@@ -2565,7 +2565,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r1_muroe_nombreController.text}",
+                nombreHoja: "ME${r1_muroe_nombreController.text} - R1",
                 muroEje: r1_muroe_nombreController.text,
               );
             }
@@ -2578,7 +2578,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r1_murof_nombreController.text}",
+                nombreHoja: "ME${r1_murof_nombreController.text} - R1",
                 muroEje: r1_murof_nombreController.text,
               );
             }
@@ -2591,7 +2591,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r1_murog_nombreController.text}",
+                nombreHoja: "ME${r1_murog_nombreController.text} - R1",
                 muroEje: r1_murog_nombreController.text,
               );
             }
@@ -2604,7 +2604,7 @@ class AppState extends ChangeNotifier {
               await crearHojaPisoCieloExcel(
                 workbook: workbook,
                 hojaPisoCielo: hojasPC[indexHojaPisoCielo],
-                nombreHoja: "ME - ${r1_pisocielo_nombreController.text}",
+                nombreHoja: "${r1_pisocielo_nombreController.text} - R1",
               );
             }
           }
@@ -2620,7 +2620,7 @@ class AppState extends ChangeNotifier {
           await crearHojaMuroPrincipalExcel(
             workbook: workbook,
             hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-            nombreHoja: "MP - ${r2_murop_nombreController.text}",
+            nombreHoja: "MP${r2_murop_nombreController.text} - R2",
             muroEje: r2_murop_nombreController.text,
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
@@ -2632,7 +2632,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r2_murob_nombreController.text}",
+                nombreHoja: "ME${r2_murob_nombreController.text} - R2",
                 muroEje: r2_murob_nombreController.text,
               );
             }
@@ -2645,7 +2645,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r2_muroc_nombreController.text}",
+                nombreHoja: "ME${r2_muroc_nombreController.text} - R2",
                 muroEje: r2_muroc_nombreController.text,
               );
             }
@@ -2658,7 +2658,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r2_murod_nombreController.text}",
+                nombreHoja: "ME${r2_murod_nombreController.text} - R2",
                 muroEje: r2_murod_nombreController.text,
               );
             }
@@ -2671,7 +2671,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r2_muroe_nombreController.text}",
+                nombreHoja: "ME${r2_muroe_nombreController.text} - R2",
                 muroEje: r2_muroe_nombreController.text,
               );
             }
@@ -2684,7 +2684,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r2_murof_nombreController.text}",
+                nombreHoja: "ME${r2_murof_nombreController.text} - R2",
                 muroEje: r2_murof_nombreController.text,
               );
             }
@@ -2697,7 +2697,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r2_murog_nombreController.text}",
+                nombreHoja: "ME${r2_murog_nombreController.text} - R2",
                 muroEje: r2_murog_nombreController.text,
               );
             }
@@ -2710,7 +2710,7 @@ class AppState extends ChangeNotifier {
               await crearHojaPisoCieloExcel(
                 workbook: workbook,
                 hojaPisoCielo: hojasPC[indexHojaPisoCielo],
-                nombreHoja: "ME - ${r2_pisocielo_nombreController.text}",
+                nombreHoja: "${r2_pisocielo_nombreController.text} - R2",
               );
             }
           }
@@ -2726,7 +2726,7 @@ class AppState extends ChangeNotifier {
           await crearHojaMuroPrincipalExcel(
               workbook: workbook,
               hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-              nombreHoja: "MP - ${r3_murop_nombreController.text}",
+              nombreHoja: "MP${r3_murop_nombreController.text} - R3",
               muroEje: r3_murop_nombreController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
@@ -2738,7 +2738,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r3_murob_nombreController.text}",
+                nombreHoja: "ME${r3_murob_nombreController.text} - R3",
                 muroEje: r3_murob_nombreController.text,
               );
             }
@@ -2751,7 +2751,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r3_muroc_nombreController.text}",
+                nombreHoja: "ME${r3_muroc_nombreController.text} - R3",
                 muroEje: r3_muroc_nombreController.text,
               );
             }
@@ -2764,7 +2764,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r3_murod_nombreController.text}",
+                nombreHoja: "ME${r3_murod_nombreController.text} - R3",
                 muroEje: r3_murod_nombreController.text,
               );
             }
@@ -2777,7 +2777,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r3_muroe_nombreController.text}",
+                nombreHoja: "ME${r3_muroe_nombreController.text} - R3",
                 muroEje: r3_muroe_nombreController.text,
               );
             }
@@ -2790,7 +2790,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r3_murof_nombreController.text}",
+                nombreHoja: "ME${r3_murof_nombreController.text} - R3",
                 muroEje: r3_murof_nombreController.text,
               );
             }
@@ -2803,7 +2803,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r3_murog_nombreController.text}",
+                nombreHoja: "ME${r3_murog_nombreController.text} - R3",
                 muroEje: r3_murog_nombreController.text,
               );
             }
@@ -2816,7 +2816,7 @@ class AppState extends ChangeNotifier {
               await crearHojaPisoCieloExcel(
                 workbook: workbook,
                 hojaPisoCielo: hojasPC[indexHojaPisoCielo],
-                nombreHoja: "ME - ${r3_pisocielo_nombreController.text}",
+                nombreHoja: "${r3_pisocielo_nombreController.text} - R3",
               );
             }
           }
@@ -2832,7 +2832,7 @@ class AppState extends ChangeNotifier {
           await crearHojaMuroPrincipalExcel(
               workbook: workbook,
               hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-              nombreHoja: "MP - ${r4_murop_nombreController.text}",
+              nombreHoja: "MP${r4_murop_nombreController.text} - R4",
               muroEje: r4_murop_nombreController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
@@ -2844,7 +2844,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r4_murob_nombreController.text}",
+                nombreHoja: "ME${r4_murob_nombreController.text} - R4",
                 muroEje: r4_murob_nombreController.text,
               );
             }
@@ -2857,7 +2857,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r4_muroc_nombreController.text}",
+                nombreHoja: "ME${r4_muroc_nombreController.text} - R4",
                 muroEje: r4_muroc_nombreController.text,
               );
             }
@@ -2870,7 +2870,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r4_murod_nombreController.text}",
+                nombreHoja: "ME${r4_murod_nombreController.text} - R4",
                 muroEje: r4_murod_nombreController.text,
               );
             }
@@ -2883,7 +2883,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r4_muroe_nombreController.text}",
+                nombreHoja: "ME${r4_muroe_nombreController.text} - R4",
                 muroEje: r4_muroe_nombreController.text,
               );
             }
@@ -2896,7 +2896,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r4_murof_nombreController.text}",
+                nombreHoja: "ME${r4_murof_nombreController.text} - R4",
                 muroEje: r4_murof_nombreController.text,
               );
             }
@@ -2909,7 +2909,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r4_murog_nombreController.text}",
+                nombreHoja: "ME${r4_murog_nombreController.text} - R4",
                 muroEje: r4_murog_nombreController.text,
               );
             }
@@ -2922,7 +2922,7 @@ class AppState extends ChangeNotifier {
               await crearHojaPisoCieloExcel(
                 workbook: workbook,
                 hojaPisoCielo: hojasPC[indexHojaPisoCielo],
-                nombreHoja: "ME - ${r4_pisocielo_nombreController.text}",
+                nombreHoja: "${r4_pisocielo_nombreController.text} - R4",
               );
             }
           }
@@ -2938,7 +2938,7 @@ class AppState extends ChangeNotifier {
           await crearHojaMuroPrincipalExcel(
               workbook: workbook,
               hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-              nombreHoja: "MP - ${r5_murop_nombreController.text}",
+              nombreHoja: "MP${r5_murop_nombreController.text} - R5",
               muroEje: r5_murop_nombreController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
@@ -2950,7 +2950,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r5_murob_nombreController.text}",
+                nombreHoja: "ME${r5_murob_nombreController.text} - R5",
                 muroEje: r5_murob_nombreController.text,
               );
             }
@@ -2963,7 +2963,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r5_muroc_nombreController.text}",
+                nombreHoja: "ME${r5_muroc_nombreController.text} - R5",
                 muroEje: r5_muroc_nombreController.text,
               );
             }
@@ -2976,7 +2976,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r5_murod_nombreController.text}",
+                nombreHoja: "ME${r5_murod_nombreController.text} - R5",
                 muroEje: r5_murod_nombreController.text,
               );
             }
@@ -2989,7 +2989,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r5_muroe_nombreController.text}",
+                nombreHoja: "ME${r5_muroe_nombreController.text} - R5",
                 muroEje: r5_muroe_nombreController.text,
               );
             }
@@ -3002,7 +3002,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r5_murof_nombreController.text}",
+                nombreHoja: "ME${r5_murof_nombreController.text} - R5",
                 muroEje: r5_murof_nombreController.text,
               );
             }
@@ -3015,7 +3015,7 @@ class AppState extends ChangeNotifier {
               await crearHojaMuroExcel(
                 workbook: workbook,
                 hojaMuro: hojasM[indexHojaMuro],
-                nombreHoja: "ME - ${r5_murog_nombreController.text}",
+                nombreHoja: "ME${r5_murog_nombreController.text} - R5",
                 muroEje: r5_murog_nombreController.text,
               );
             }
@@ -3028,7 +3028,7 @@ class AppState extends ChangeNotifier {
               await crearHojaPisoCieloExcel(
                 workbook: workbook,
                 hojaPisoCielo: hojasPC[indexHojaPisoCielo],
-                nombreHoja: "ME - ${r5_pisocielo_nombreController.text}",
+                nombreHoja: "${r5_pisocielo_nombreController.text} - R5",
               );
             }
           }

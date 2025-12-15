@@ -36,7 +36,7 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
                   children: [
                     Text(
                       "Muro Eje " + appState.r4_murof_nombreController.text,  //---------------------------------------------------cambiar al  copiar pantalla
-                      style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                     ),
 
                     IconButton(
@@ -65,7 +65,7 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
 
           Text(
             "🧱  Informacion del Muro",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
@@ -252,14 +252,14 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
 
           Text(
             "🎯  Ubicacion de Patologia Detectada",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 20),
 
           Text(
             "▪️Manchas de humedad / moho",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -869,7 +869,7 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
 
           Text(
             "▪️Daño físico mecánico",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1477,8 +1477,8 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
           const SizedBox(height: 20),
 
           const Text(
-            "▪️Total superficie de muro afectada: (m²)",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            "Total superficie de muro afectada: (m²)",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1509,7 +1509,7 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
 
           Text(
             "Plano",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
@@ -1666,7 +1666,7 @@ class _Muro_Eje_F_R4 extends State<Muro_Eje_F_R4> {
 
           Text(
             "Respaldo Visual Elevaciones",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
