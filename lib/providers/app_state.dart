@@ -1909,6 +1909,11 @@ class AppState extends ChangeNotifier {
       // Crear Workbook y agregar la hoja Informacion General
       //------------------------------------------------------------------------
 
+      final ByteData imageData =
+      await rootBundle.load('assets/logo_citec.jpg');
+
+      final Uint8List imageBytes = imageData.buffer.asUint8List();
+
       final xlsio.Workbook workbook = xlsio.Workbook();
       final xlsio.Worksheet sheet = workbook.worksheets[0];
       sheet.name = 'Información General';
@@ -1920,8 +1925,20 @@ class AppState extends ChangeNotifier {
         ..borders.all.color = '#000000';
 
       sheet.getRangeByName('B3:E5').merge();
-      sheet.getRangeByName('B3').setText("Logo Citec");
-      sheet.getRangeByName('B3').cellStyle.bold = true;
+      // Insertar imagen en la hoja
+      final xlsio.Picture picture = sheet.pictures.addStream(
+        3, // fila inicial (1-based)
+        2, // columna inicial (B = 2)
+        imageBytes,
+      );
+
+      // Opcional: ajustar tamaño
+      picture.height = 80;
+      picture.width = 150;
+
+      // Opcional: que quede dentro del rango B3:E5
+      picture.lastRow = 6;
+      picture.lastColumn = 6;
 
       sheet.getRangeByName('F3:N5').merge();
       sheet.getRangeByName('F3').setText(
@@ -3092,16 +3109,32 @@ class AppState extends ChangeNotifier {
     // ENCABEZADO
     // -------------------------------------------------------------------------
 
+    sheet.getRangeByName('B3:E5').merge();
+    final ByteData imageData =
+    await rootBundle.load('assets/logo_citec.jpg');
+
+    final Uint8List imageBytes = imageData.buffer.asUint8List();
+
+    //--> Bordes Celdas Encabezado
     sheet.getRangeByName('B3:R5').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
     sheet.getRangeByName('B3:E5').merge();
-    sheet.getRangeByName('B3').setText("Logo Citec");
-    sheet.getRangeByName('B3').cellStyle
-      ..bold = true
-      ..hAlign = xlsio.HAlignType.center
-      ..vAlign = xlsio.VAlignType.center;
+    // Insertar imagen en la hoja
+    final xlsio.Picture picture = sheet.pictures.addStream(
+      3, // fila inicial (1-based)
+      2, // columna inicial (B = 2)
+      imageBytes,
+    );
+
+    // Opcional: ajustar tamaño
+    picture.height = 80;
+    picture.width = 150;
+
+    // Opcional: que quede dentro del rango B3:E5
+    picture.lastRow = 6;
+    picture.lastColumn = 6;
 
     sheet.getRangeByName('F3:N5').merge();
     sheet.getRangeByName('F3').setText(
@@ -3830,8 +3863,31 @@ class AppState extends ChangeNotifier {
       ..borders.all.color = '#000000';
 
     sheet.getRangeByName('B2:E4').merge();
-    sheet.getRangeByName('B2').setText("Logo Citec");
-    sheet.getRangeByName('B2').cellStyle.bold = true;
+    final ByteData imageData =
+    await rootBundle.load('assets/logo_citec.jpg');
+
+    final Uint8List imageBytes = imageData.buffer.asUint8List();
+
+    //--> Bordes Celdas Encabezado
+    sheet.getRangeByName('B2:E4').cellStyle
+      ..borders.all.lineStyle = xlsio.LineStyle.thin
+      ..borders.all.color = '#000000';
+
+    sheet.getRangeByName('B2:E4').merge();
+    // Insertar imagen en la hoja
+    final xlsio.Picture picture = sheet.pictures.addStream(
+      2, // fila inicial (1-based)
+      2, // columna inicial (B = 2)
+      imageBytes,
+    );
+
+    // Opcional: ajustar tamaño
+    picture.height = 80;
+    picture.width = 150;
+
+    // Opcional: que quede dentro del rango B3:E5
+    picture.lastRow = 5;
+    picture.lastColumn = 6;
 
     sheet.getRangeByName('F2:N4').merge();
     sheet.getRangeByName('F2').setText(
@@ -4305,8 +4361,31 @@ class AppState extends ChangeNotifier {
       ..borders.all.color = '#000000';
 
     sheet.getRangeByName('B2:E4').merge();
-    sheet.getRangeByName('B2').setText("Logo Citec");
-    sheet.getRangeByName('B2').cellStyle.bold = true;
+    final ByteData imageData =
+    await rootBundle.load('assets/logo_citec.jpg');
+
+    final Uint8List imageBytes = imageData.buffer.asUint8List();
+
+    //--> Bordes Celdas Encabezado
+    sheet.getRangeByName('B2:E4').cellStyle
+      ..borders.all.lineStyle = xlsio.LineStyle.thin
+      ..borders.all.color = '#000000';
+
+    sheet.getRangeByName('B2:E4').merge();
+    // Insertar imagen en la hoja
+    final xlsio.Picture picture = sheet.pictures.addStream(
+      2, // fila inicial (1-based)
+      2, // columna inicial (B = 2)
+      imageBytes,
+    );
+
+    // Opcional: ajustar tamaño
+    picture.height = 80;
+    picture.width = 150;
+
+    // Opcional: que quede dentro del rango B3:E5
+    picture.lastRow = 5;
+    picture.lastColumn = 6;
 
     sheet.getRangeByName('F2:N4').merge();
     sheet.getRangeByName('F2').setText(

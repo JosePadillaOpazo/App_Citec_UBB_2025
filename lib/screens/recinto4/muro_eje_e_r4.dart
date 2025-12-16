@@ -64,7 +64,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
           // -------------------------------------------------------------------
 
           Text(
-            "🧱  Informacion del Muro",
+            "🧱  Información del Muro",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -177,6 +177,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
               }
               final seleccion = hojaActual.tipoMuroController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Muro perimetral', label: Text('Muro perimetral')),
                   ButtonSegment(value: 'Muro interior', label: Text('Muro interior')),
@@ -207,6 +208,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
               }
               final seleccion = hojaActual.nivelafecController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
                   ButtonSegment(value: 'Bajo', label: Text('Bajo')),
@@ -251,7 +253,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
 
 
           Text(
-            "🎯  Ubicacion de Patologia Detectada",
+            "🎯  Ubicación de Patología Detectada",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -282,6 +284,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -368,6 +371,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -454,6 +458,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -540,6 +545,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -626,6 +632,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -712,6 +719,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -798,6 +806,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -892,6 +901,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -978,6 +988,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1064,6 +1075,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1150,6 +1162,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1236,6 +1249,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1322,6 +1336,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1408,6 +1423,7 @@ class _Muro_Eje_E_R4 extends State<Muro_Eje_E_R4> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),

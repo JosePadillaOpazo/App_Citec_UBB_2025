@@ -78,7 +78,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
           const SizedBox(height: 10),
 
           Text(
-            "Nivel de afectacion",
+            "Nivel de afectación",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -92,6 +92,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
               }
               final seleccion = hojaActual.nivelafecPisoController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
                   ButtonSegment(value: 'Bajo', label: Text('Bajo')),
@@ -135,7 +136,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
           const SizedBox(height: 40),
 
           Text(
-            "🎯  Ubicacion de Patologia Detectada",
+            "🎯  Ubicación de Patología Detectada",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -166,6 +167,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -252,6 +254,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -338,6 +341,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -431,6 +435,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -517,6 +522,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -603,6 +609,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -905,7 +912,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
           const SizedBox(height: 10),
 
           Text(
-            "Nivel de afectacion",
+            "Nivel de afectación",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -919,6 +926,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
               }
               final seleccion = hojaActual.nivelafecCieloController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
                   ButtonSegment(value: 'Bajo', label: Text('Bajo')),
@@ -962,7 +970,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
           const SizedBox(height: 40),
 
           Text(
-            "🎯  Ubicacion de Patologia Detectada",
+            "🎯  Ubicación de Patología Detectada",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -993,6 +1001,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1079,6 +1088,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1165,6 +1175,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1258,6 +1269,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1344,6 +1356,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1430,6 +1443,7 @@ class _Piso_Cielo_R2State extends State<Piso_Cielo_R2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),

@@ -35,7 +35,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               children: [
                 Text(
                   "Muro Principal Eje " + appState.r1_murop_nombreController.text,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
+                  style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 
                 IconButton(
@@ -63,7 +63,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
           // -------------------------------------------------------------------
 
           Text(
-            "🧱  Informacion del Muro",
+            "🧱  Información del Muro",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -178,6 +178,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               }
               final seleccion = hojaActual.tipomuroController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Muro perimetral', label: Text('Muro perimetral')),
                   ButtonSegment(value: 'Muro interior', label: Text('Muro interior')),
@@ -208,6 +209,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
               }
               final seleccion = hojaActual.nivelafecController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Nulo', label: Text('Nulo')),
                   ButtonSegment(value: 'Bajo', label: Text('Bajo')),
@@ -252,7 +254,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
 
 
           Text(
-            "🎯  Ubicacion de Patologia Detectada",
+            "🎯  Ubicación de Patología Detectada",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -283,6 +285,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -369,6 +372,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -455,6 +459,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -541,6 +546,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -627,6 +633,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -713,6 +720,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -799,6 +807,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -893,6 +902,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -979,6 +989,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1065,6 +1076,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1151,6 +1163,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1237,6 +1250,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1323,6 +1337,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -1409,6 +1424,7 @@ class _Muro_Principal_R1 extends State<Muro_Principal_R1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),

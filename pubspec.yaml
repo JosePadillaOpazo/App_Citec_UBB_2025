@@ -70,6 +70,7 @@ flutter:
   uses-material-design: true
   assets:
    - assets/logo_citec.png
+   - assets/logo_citec.jpg
    - assets/ubbicon.png
 
 flutter_icons:

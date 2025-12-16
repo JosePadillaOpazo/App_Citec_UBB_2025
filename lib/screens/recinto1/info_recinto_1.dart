@@ -66,6 +66,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.patvisibleController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Si', label: Text('Sí')),
                   ButtonSegment(value: 'No', label: Text('No')),
@@ -113,6 +114,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -197,6 +199,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.olorhumController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Si', label: Text('Sí')),
                   ButtonSegment(value: 'No', label: Text('No')),
@@ -244,6 +247,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -275,7 +279,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                   const SizedBox(height: 10),
 
                   Text(
-                    "¿Cual?",
+                    "¿Cuál?",
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
 
@@ -352,9 +356,9 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                         ),
                       ),
                       DropdownMenuItem(
-                        value: 'Gas / parafina con evacuacipon exterior (seca)',
+                        value: 'Gas / parafina con evacuación exterior (seca)',
                         child: Text(
-                          'Gas / parafina con evacuacipon exterior (seca)',
+                          'Gas / parafina con evacuación exterior (seca)',
                           softWrap: true,
                         ),
                       ),
@@ -451,7 +455,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
             enableInteractiveSelection: false,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Por favor ingrese una superficie';
+                return 'Por favor ingrese la información requerida';
               }
               return null;
             },
@@ -481,6 +485,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.aireadorController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -525,6 +530,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.extractorController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -569,6 +575,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.campanaController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -613,6 +620,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.celosiapueController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -657,6 +665,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.rebajepueController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -701,6 +710,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
               }
               final seleccion = hojaActual.otroequipController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),

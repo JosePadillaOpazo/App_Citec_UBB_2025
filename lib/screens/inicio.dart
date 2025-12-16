@@ -31,7 +31,7 @@ class Inicio extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        /// LOGO
+
                         Image.asset(
                           'assets/logo_citec.png',
                           width: isTablet

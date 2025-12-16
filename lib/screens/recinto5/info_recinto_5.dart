@@ -45,7 +45,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
           const SizedBox(height: 40),
 
           Text(
-            "🛠️  Patologias y Modificaciones",
+            "🛠️  Patologías y Modificaciones",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -66,6 +66,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.patvisibleController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Si', label: Text('Sí')),
                   ButtonSegment(value: 'No', label: Text('No')),
@@ -113,6 +114,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -197,6 +199,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.olorhumController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Si', label: Text('Sí')),
                   ButtonSegment(value: 'No', label: Text('No')),
@@ -244,6 +247,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -480,6 +484,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.aireadorController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -524,6 +529,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.extractorController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -568,6 +574,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.campanaController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -612,6 +619,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.celosiapueController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -656,6 +664,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.rebajepueController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),
@@ -700,6 +709,7 @@ class _Info_Recinto_5 extends State<Info_Recinto_5> {
               }
               final seleccion = hojaActual.otroequipController.text;
               return SegmentedButton<String>(
+                showSelectedIcon: false,
                 segments: const [
                   ButtonSegment(value: 'Operativo', label: Text('Operativo')),
                   ButtonSegment(value: 'No Operativo', label: Text('No Operativo')),

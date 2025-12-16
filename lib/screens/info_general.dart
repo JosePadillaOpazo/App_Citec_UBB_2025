@@ -12,12 +12,10 @@ class InformacionGeneral extends StatefulWidget {
 }
 
 class _InformacionGeneralState extends State<InformacionGeneral> {
-  final GlobalKey canvasKey_InfoGeneral_1 = GlobalKey();
   final GlobalKey canvasKey_InfoGeneral_2 = GlobalKey();
   final GlobalKey canvasKey_InfoGeneral_3 = GlobalKey();
   final GlobalKey canvasKey_InfoGeneral_4 = GlobalKey();
 
-  List<Offset?> _pointsImg1 = [];
   List<Offset?> _pointsImg2 = [];
   List<Offset?> _pointsImg3 = [];
   List<Offset?> _pointsImg4 = [];
@@ -38,7 +36,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
               child: const Text(
                 "Información General",
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 25,
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.underline,
                 ),
@@ -111,7 +109,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 30),
 
           Text(
-            "ℹ️ Informacion General del Proyecto",
+            "ℹ️ Información General del Proyecto",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
 
@@ -190,7 +188,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.tipologiaViviendaController,
             decoration: const InputDecoration(
-              labelText: "Tipologia de Vivienda",
+              labelText: "Tipología de Vivienda",
               border: OutlineInputBorder(),
             ),
             enableInteractiveSelection: false,
@@ -408,7 +406,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 20),
 
           Text(
-            "Informacion adicional de Orientación Fachada",
+            "Información adicional de Orientación Fachada",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -491,7 +489,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 20),
 
           Text(
-            "Informacion adicional de Orientación Acceso",
+            "Información adicional de Orientación Acceso",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -599,7 +597,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           const SizedBox(height: 20),
 
           Text(
-            "Temperatuta Exterior: (°C)",
+            "Temperatura Exterior: (°C)",
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
 
@@ -608,7 +606,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
           TextFormField(
             controller: appState.tempExteriorController,
             decoration: const InputDecoration(
-              labelText: "Temperatuta Exterior",
+              labelText: "Temperatura Exterior",
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.number,
@@ -884,6 +882,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
@@ -970,6 +969,7 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SegmentedButton<String>(
+                    showSelectedIcon: false,
                     segments: const [
                       ButtonSegment(value: 'Si', label: Text('Sí')),
                       ButtonSegment(value: 'No', label: Text('No')),
