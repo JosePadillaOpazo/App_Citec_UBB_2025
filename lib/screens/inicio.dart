@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../db_local/db_local.dart';
 import 'principal.dart';
+import 'db_viwer.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 
@@ -51,18 +53,22 @@ class Inicio extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               appState.HoraInicio();
+                              appState.iniciarNuevaInspeccion();
                               Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
-                                  transitionDuration:
-                                  const Duration(milliseconds: 500),
-                                  pageBuilder: (_, __, ___) =>
-                                  const PantallaPrincipal(),
-                                  transitionsBuilder:
-                                      (_, animation, __, child) =>
-                                      FadeTransition(
-                                        opacity: animation,
-                                        child: child,
-                                      ),
+                                  transitionDuration: const Duration(milliseconds: 400),
+                                  pageBuilder: (_, __, ___) => const PantallaPrincipal(),
+                                  transitionsBuilder: (_, animation, __, child) {
+                                    const begin = Offset(1.0, 0.0);
+                                    const end = Offset.zero;
+                                    final tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: Curves.easeInOut));
+
+                                    return SlideTransition(
+                                      position: animation.drive(tween),
+                                      child: child,
+                                    );
+                                  },
                                 ),
                               );
                             },
@@ -85,6 +91,76 @@ class Inicio extends StatelessWidget {
                             ),
                           ),
                         ),
+
+                        const SizedBox(height: 20),
+
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              PageRouteBuilder(
+                                transitionDuration: const Duration(milliseconds: 400),
+                                pageBuilder: (_, __, ___) => const DB_Viewer(),
+                                transitionsBuilder: (_, animation, __, child) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  final tween = Tween(begin: begin, end: end)
+                                      .chain(CurveTween(curve: Curves.easeInOut));
+
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: Text("Ver Base de Datos"),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.delete_forever),
+                          label: const Text("Borrar Base de Datos"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          onPressed: () async {
+                            final confirmar = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('⚠️ Confirmar'),
+                                content: const Text(
+                                  'Esto eliminará TODA la base de datos local.\n\n¿Deseas continuar?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text('Eliminar'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmar == true) {
+                              await LocalDatabase.borrarBaseDeDatos();
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('🗑️ Base de datos eliminada correctamente'),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+
                       ],
                     ),
                   ),

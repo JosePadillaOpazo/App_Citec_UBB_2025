@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ import 'package:flutter/rendering.dart' show RenderRepaintBoundary;
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 import 'package:file_picker/file_picker.dart';
 import '../screens/inicio.dart';
+import '../db_local/db_local.dart';
+
 
 class AppState extends ChangeNotifier {
 
@@ -27,6 +30,7 @@ class AppState extends ChangeNotifier {
   int cantFotos = 0;
   String? rutaGuardada;
   bool guardando = false;
+  String? inspeccionUuid;
 
   //--> Fechas / horas
   String horaInicio = "00:00";
@@ -121,6 +125,8 @@ class AppState extends ChangeNotifier {
   //-->Hoja Información general
   final TextEditingController nombreProyectoController = TextEditingController();
   final TextEditingController tipologiaViviendaController = TextEditingController();
+  final TextEditingController regionController = TextEditingController();
+  final TextEditingController comunasController = TextEditingController();
   final TextEditingController direccionController = TextEditingController();
   final TextEditingController etapaController = TextEditingController();
   final TextEditingController supViviendaController = TextEditingController();
@@ -139,6 +145,7 @@ class AppState extends ChangeNotifier {
   final TextEditingController nombreInspectorController = TextEditingController();
   final TextEditingController usoViviendaController = TextEditingController();
   final TextEditingController rutInspectorController = TextEditingController();
+  final TextEditingController digVerifController = TextEditingController();
   final TextEditingController reparacionesController = TextEditingController();
   final TextEditingController detalleReparacionesController = TextEditingController();
   final TextEditingController ampliacionesController = TextEditingController();
@@ -146,7 +153,7 @@ class AppState extends ChangeNotifier {
   final TextEditingController obsInfoGeneralController = TextEditingController();
   final TextEditingController numRecintosController = TextEditingController();
   final TextEditingController totalHabitantesController = TextEditingController();
-  final TextEditingController nnumAdultosController = TextEditingController();
+  final TextEditingController numAdultosController = TextEditingController();
   final TextEditingController numMenoresController = TextEditingController();
   final TextEditingController numAdulMayoresController = TextEditingController();
   final TextEditingController ocupDiaCompController = TextEditingController();
@@ -214,10 +221,133 @@ class AppState extends ChangeNotifier {
   late TextEditingController r5_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
 
 
-
   //--------------------------------------------------------------------------------------------------------------------------------------------------------
   //                                                                            Funciones
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<void> guardar(context) async {
+    await guardarInspeccion();
+    await guardarExcel(context);
+  }
+
+  Future<void> guardarInspeccion() async {
+    if (inspeccionUuid == null) {
+      debugPrint('❌ No hay inspección activa');
+      return;
+    }
+
+    //Inspeccion
+    final inspeccionData = {
+      'uuid': inspeccionUuid,
+      'n_ficha': nFichaController.text,
+      'fecha': fechaFormateada,
+      'hora_ingreso': horaInicio,
+      'hora_salida': horaFin,
+      'recibido_por': reciPorController.text,
+      'nombre_receptor': nombreReciController.text,
+      'nombre_inspector': nombreInspectorController.text,
+      'rut_inspector': rutInspectorController.text + "-" + digVerifController.text,
+      'clima': climaController.text,
+      'estado': 'en_progreso',
+      'sync_status': 0,
+    };
+
+    final int inspeccion_id = await LocalDatabase.insertarInspeccion(inspeccionData);
+
+    //Proyecto
+    final proyectoData = {
+      'inspeccion_id': inspeccion_id,
+      'region': regionController.text ,
+      'comuna': comunasController.text,
+      'etapa': etapaController.text,
+    };
+
+    final int proyecto_id = await LocalDatabase.insertarProyecto(proyectoData);
+
+    //Vivienda
+    int reparaciones_VF = 0;
+
+    if (reparacionesController.text == "Si"){
+      reparaciones_VF = 1;
+    }
+
+    int ampliaciones_VF = 0;
+
+    if (ampliacionesController.text == "Si"){
+      ampliaciones_VF = 1;
+    }
+
+    final viviendaData = {
+      // 🔗 Relación
+      'proyecto_id': proyecto_id,
+
+      // 🏠 Datos generales
+      'tipologia_vivienda': tipologiaViviendaController.text,
+      'direccion': direccionController.text,
+      'superficie': double.tryParse(supViviendaController.text),
+      'n_pisos': int.tryParse(nPisosController.text),
+      'orientacion_fachada': oriFachadaController.text + ", " + oriFachadainfoController.text,
+      'orientacion_acceso': oriAccesoController.text + ", " + oriAccesoinfoController.text,
+
+      // 🌡️ Condiciones ambientales
+      'temp_exterior': int.tryParse(tempExteriorController.text),
+      'hum_exterior': int.tryParse(humExteriorController.text),
+      'temp_interior': int.tryParse(tempInteriorController.text),
+      'hum_interior': int.tryParse(humInteriorController.text),
+
+      // ⏳ Antigüedad
+      'a_de_uso': int.tryParse(usoViviendaController.text),
+
+      // 🔧 Reparaciones
+      'reparaciones': reparaciones_VF,
+
+      'detalle_reparaciones': detalleReparacionesController.text,
+
+      // 🏗️ Ampliaciones
+      'ampliaciones': ampliaciones_VF,
+      'detalle_ampliaciones': detalleAmpliacionesController.text,
+
+      // 📝 Observaciones generales
+      'observaciones': obsInfoGeneralController.text,
+
+      // 👨‍👩‍👧‍👦 Ocupación
+      'n_recintos': int.tryParse(numRecintosController.text),
+      'total_habitantes': int.tryParse(totalHabitantesController.text),
+      'num_adultos': int.tryParse(numAdultosController.text),
+      'num_menores': int.tryParse(numMenoresController.text),
+      'num_adul_mayores': int.tryParse(numAdulMayoresController.text),
+      'ocup_dia_comp': int.tryParse(ocupDiaCompController.text),
+      'ocup_intermitente': int.tryParse(ocupIntermitenteController.text),
+
+      // 📊 Densidades (calculadas previamente)
+      'dens_ocup_prev': densOcupPrevController.text,
+      'dens_ocup_real': densOcupRealController.text,
+
+      // 📝 Observaciones de ocupación
+      'observaciones_ocupacion': obsOcupVivController.text,
+    };
+
+    final int vivienda_id = await LocalDatabase.insertarVivienda(viviendaData);
+
+
+    debugPrint('✅ Inspección guardada');
+  }
+
+
+
+
+  void iniciarNuevaInspeccion() {
+    inspeccionUuid = const Uuid().v4();
+  }
+
+  Future<void> initApp() async {
+    final db = await LocalDatabase.database;
+    final tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    );
+
+    debugPrint('📋 TABLAS EN BD: $tables');
+  }
+
   void resetApp(BuildContext context) {
     // ---------------------------------------------------------------------------
     // LIMPIAR CONTROLADORES DE TEXTO
@@ -229,6 +359,8 @@ class AppState extends ChangeNotifier {
       // Información general
       nombreProyectoController,
       tipologiaViviendaController,
+      regionController,
+      comunasController,
       direccionController,
       etapaController,
       supViviendaController,
@@ -245,6 +377,7 @@ class AppState extends ChangeNotifier {
       nombreInspectorController,
       usoViviendaController,
       rutInspectorController,
+      digVerifController,
       reparacionesController,
       detalleReparacionesController,
       ampliacionesController,
@@ -252,7 +385,7 @@ class AppState extends ChangeNotifier {
       obsInfoGeneralController,
       numRecintosController,
       totalHabitantesController,
-      nnumAdultosController,
+      numAdultosController,
       numMenoresController,
       numAdulMayoresController,
       ocupDiaCompController,
@@ -331,53 +464,53 @@ class AppState extends ChangeNotifier {
     recinto5_nombreController.text = "Recinto 5";
 
     // Recinto 1
-    r1_murop_nombreController.text = "Muro Eje A";
-    r1_murob_nombreController.text = "Muro Eje B";
-    r1_muroc_nombreController.text = "Muro Eje C";
-    r1_murod_nombreController.text = "Muro Eje D";
-    r1_muroe_nombreController.text = "Muro Eje E";
-    r1_murof_nombreController.text = "Muro Eje F";
-    r1_murog_nombreController.text = "Muro Eje G";
+    r1_murop_nombreController.text = "(__)";
+    r1_murob_nombreController.text = "(__)";
+    r1_muroc_nombreController.text = "(__)";
+    r1_murod_nombreController.text = "(__)";
+    r1_muroe_nombreController.text = "(__)";
+    r1_murof_nombreController.text = "(__)";
+    r1_murog_nombreController.text = "(__)";
     r1_pisocielo_nombreController.text = "Piso Cielo";
 
     // Recinto 2
-    r2_murop_nombreController.text = "Muro Eje A";
-    r2_murob_nombreController.text = "Muro Eje B";
-    r2_muroc_nombreController.text = "Muro Eje C";
-    r2_murod_nombreController.text = "Muro Eje D";
-    r2_muroe_nombreController.text = "Muro Eje E";
-    r2_murof_nombreController.text = "Muro Eje F";
-    r2_murog_nombreController.text = "Muro Eje G";
+    r2_murop_nombreController.text = "(__)";
+    r2_murob_nombreController.text = "(__)";
+    r2_muroc_nombreController.text = "(__)";
+    r2_murod_nombreController.text = "(__)";
+    r2_muroe_nombreController.text = "(__)";
+    r2_murof_nombreController.text = "(__)";
+    r2_murog_nombreController.text = "(__)";
     r2_pisocielo_nombreController.text = "Piso Cielo";
 
     // Recinto 3
-    r3_murop_nombreController.text = "Muro Eje A";
-    r3_murob_nombreController.text = "Muro Eje B";
-    r3_muroc_nombreController.text = "Muro Eje C";
-    r3_murod_nombreController.text = "Muro Eje D";
-    r3_muroe_nombreController.text = "Muro Eje E";
-    r3_murof_nombreController.text = "Muro Eje F";
-    r3_murog_nombreController.text = "Muro Eje G";
+    r3_murop_nombreController.text = "(__)";
+    r3_murob_nombreController.text = "(__)";
+    r3_muroc_nombreController.text = "(__)";
+    r3_murod_nombreController.text = "(__)";
+    r3_muroe_nombreController.text = "(__)";
+    r3_murof_nombreController.text = "(__)";
+    r3_murog_nombreController.text = "(__)";
     r3_pisocielo_nombreController.text = "Piso Cielo";
 
     // Recinto 4
-    r4_murop_nombreController.text = "Muro Eje A";
-    r4_murob_nombreController.text = "Muro Eje B";
-    r4_muroc_nombreController.text = "Muro Eje C";
-    r4_murod_nombreController.text = "Muro Eje D";
-    r4_muroe_nombreController.text = "Muro Eje E";
-    r4_murof_nombreController.text = "Muro Eje F";
-    r4_murog_nombreController.text = "Muro Eje G";
+    r4_murop_nombreController.text = "(__)";
+    r4_murob_nombreController.text = "(__)";
+    r4_muroc_nombreController.text = "(__)";
+    r4_murod_nombreController.text = "(__)";
+    r4_muroe_nombreController.text = "(__)";
+    r4_murof_nombreController.text = "(__)";
+    r4_murog_nombreController.text = "(__)";
     r4_pisocielo_nombreController.text = "Piso Cielo";
 
     // Recinto 5
-    r5_murop_nombreController.text = "Muro Eje A";
-    r5_murob_nombreController.text = "Muro Eje B";
-    r5_muroc_nombreController.text = "Muro Eje C";
-    r5_murod_nombreController.text = "Muro Eje D";
-    r5_muroe_nombreController.text = "Muro Eje E";
-    r5_murof_nombreController.text = "Muro Eje F";
-    r5_murog_nombreController.text = "Muro Eje G";
+    r5_murop_nombreController.text = "(__)";
+    r5_murob_nombreController.text = "(__)";
+    r5_muroc_nombreController.text = "(__)";
+    r5_murod_nombreController.text = "(__)";
+    r5_muroe_nombreController.text = "(__)";
+    r5_murof_nombreController.text = "(__)";
+    r5_murog_nombreController.text = "(__)";
     r5_pisocielo_nombreController.text = "Piso Cielo";
 
 
@@ -488,60 +621,6 @@ class AppState extends ChangeNotifier {
       ),
     );
   }
-
-  // ---------------------------------------------------------------------------
-  // VALIDAR RUT
-  // ---------------------------------------------------------------------------
-
-  String? validarRut(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Por favor ingrese el RUT';
-    }
-
-    // Quitar puntos y guiones
-    String rut = value.replaceAll(RegExp(r'[^0-9kK]'), '').toUpperCase();
-
-    // Debe tener mínimo 2 caracteres (cuerpo + dígito)
-    if (rut.length < 2) {
-      return 'RUT incompleto';
-    }
-
-    // Separar cuerpo y dígito verificador
-    final cuerpo = rut.substring(0, rut.length - 1);
-    final dvIngresado = rut.substring(rut.length - 1);
-
-    // Validar que el cuerpo sea numérico
-    if (!RegExp(r'^\d+$').hasMatch(cuerpo)) {
-      return 'Formato de RUT no válido';
-    }
-
-    // Calcular dígito verificador correcto
-    int suma = 0;
-    int multiplo = 2;
-
-    for (int i = cuerpo.length - 1; i >= 0; i--) {
-      suma += int.parse(cuerpo[i]) * multiplo;
-      multiplo = multiplo == 7 ? 2 : multiplo + 1;
-    }
-
-    int dvCalculadoNum = 11 - (suma % 11);
-    String dvCalculado;
-
-    if (dvCalculadoNum == 11) {
-      dvCalculado = '0';
-    } else if (dvCalculadoNum == 10) {
-      dvCalculado = 'K';
-    } else {
-      dvCalculado = dvCalculadoNum.toString();
-    }
-
-    if (dvIngresado != dvCalculado) {
-      return 'RUT inválido (dígito verificador incorrecto)';
-    }
-
-    return null; // RUT válido
-  }
-
 
 
   // ---------------------------------------------------------------------------
@@ -1920,14 +1999,14 @@ class AppState extends ChangeNotifier {
 
 
       //--> Bordes Celdas Encabezado
-      sheet.getRangeByName('B3:R5').cellStyle
+      sheet.getRangeByName('B2:R5').cellStyle
         ..borders.all.lineStyle = xlsio.LineStyle.thin
         ..borders.all.color = '#000000';
 
-      sheet.getRangeByName('B3:E5').merge();
+      sheet.getRangeByName('B2:E5').merge();
       // Insertar imagen en la hoja
       final xlsio.Picture picture = sheet.pictures.addStream(
-        3, // fila inicial (1-based)
+        2, // fila inicial (1-based)
         2, // columna inicial (B = 2)
         imageBytes,
       );
@@ -1940,22 +2019,18 @@ class AppState extends ChangeNotifier {
       picture.lastRow = 6;
       picture.lastColumn = 6;
 
-      sheet.getRangeByName('F3:N5').merge();
-      sheet.getRangeByName('F3').setText(
+      sheet.getRangeByName('F2:N5').merge();
+      sheet.getRangeByName('F2').setText(
         "PROTOCOLO\nINSPECCIÓN VISUAL DE VIVIENDAS - ACONDICIONAMIENTO AMBIENTAL",);
       sheet.getRangeByName('F3').cellStyle.bold = true;
 
-      sheet.getRangeByName('O3:P3').merge();
-      sheet.getRangeByName('O4:P4').merge();
-      sheet.getRangeByName('O5:P5').merge();
-      sheet.getRangeByName('O4').setText("Unidad");
-      sheet.getRangeByName('O4').cellStyle.bold = true;
+      sheet.getRangeByName('O2:P5').merge();
+      sheet.getRangeByName('O2').setText("Unidad");
+      sheet.getRangeByName('O2').cellStyle.bold = true;
 
-      sheet.getRangeByName('Q3:R3').merge();
-      sheet.getRangeByName('Q4:R4').merge();
-      sheet.getRangeByName('Q5:R5').merge();
-      sheet.getRangeByName('Q4').setText("Citec Ubb");
-      sheet.getRangeByName('Q4').cellStyle.bold = true;
+      sheet.getRangeByName('Q2:R5').merge();
+      sheet.getRangeByName('Q2').setText("Citec Ubb");
+      sheet.getRangeByName('Q2').cellStyle.bold = true;
 
 
       //--> Bordes de celdas Item 1
@@ -2026,7 +2101,7 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('C11').cellStyle.bold = true;
 
       sheet.getRangeByName('F11:L11').merge();
-      sheet.getRangeByName('F11').setText(direccionController.text);
+      sheet.getRangeByName('F11').setText(direccionController.text + ", " + comunasController.text + ", " + regionController.text);
 
       sheet.getRangeByName('M11:O11').merge();
       sheet.getRangeByName('M11').setText("Etapa");
@@ -2131,7 +2206,7 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('M21').cellStyle.bold = true;
 
       sheet.getRangeByName('N21:R22').merge();
-      sheet.getRangeByName('N21').setText(rutInspectorController.text);
+      sheet.getRangeByName('N21').setText(rutInspectorController.text + " - " + digVerifController.text);
 
       sheet.getRangeByName('C23:E24').merge();
       sheet.getRangeByName('C23').setText("Reparaciones");
@@ -2230,7 +2305,7 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('I34').cellStyle.bold = true;
 
       sheet.getRangeByName('I35:K35').merge();
-      sheet.getRangeByName('I35').setText(nnumAdultosController.text);
+      sheet.getRangeByName('I35').setText(numAdultosController.text);
 
       sheet.getRangeByName('L34:N34').merge();
       sheet.getRangeByName('L34').setText("Niños en edad escolar");
@@ -3109,21 +3184,21 @@ class AppState extends ChangeNotifier {
     // ENCABEZADO
     // -------------------------------------------------------------------------
 
-    sheet.getRangeByName('B3:E5').merge();
+    sheet.getRangeByName('B2:E5').merge();
     final ByteData imageData =
     await rootBundle.load('assets/logo_citec.jpg');
 
     final Uint8List imageBytes = imageData.buffer.asUint8List();
 
     //--> Bordes Celdas Encabezado
-    sheet.getRangeByName('B3:R5').cellStyle
+    sheet.getRangeByName('B2:R5').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B3:E5').merge();
+    sheet.getRangeByName('B2:E5').merge();
     // Insertar imagen en la hoja
     final xlsio.Picture picture = sheet.pictures.addStream(
-      3, // fila inicial (1-based)
+      2, // fila inicial (1-based)
       2, // columna inicial (B = 2)
       imageBytes,
     );
@@ -3136,22 +3211,18 @@ class AppState extends ChangeNotifier {
     picture.lastRow = 6;
     picture.lastColumn = 6;
 
-    sheet.getRangeByName('F3:N5').merge();
-    sheet.getRangeByName('F3').setText(
+    sheet.getRangeByName('F2:N5').merge();
+    sheet.getRangeByName('F2').setText(
         "PROTOCOLO\nINSPECCIÓN VISUAL DE VIVIENDAS - ACONDICIONAMIENTO AMBIENTAL");
-    sheet.getRangeByName('F3').cellStyle.bold = true;
+    sheet.getRangeByName('F2').cellStyle.bold = true;
 
-    sheet.getRangeByName('O3:P3').merge();
-    sheet.getRangeByName('O4:P4').merge();
-    sheet.getRangeByName('O5:P5').merge();
-    sheet.getRangeByName('O4').setText("Unidad");
-    sheet.getRangeByName('O4').cellStyle.bold = true;
+    sheet.getRangeByName('O2:P5').merge();
+    sheet.getRangeByName('O2').setText("Unidad");
+    sheet.getRangeByName('O2').cellStyle.bold = true;
 
-    sheet.getRangeByName('Q3:R3').merge();
-    sheet.getRangeByName('Q4:R4').merge();
-    sheet.getRangeByName('Q5:R5').merge();
-    sheet.getRangeByName('Q4').setText("CITEC UBB");
-    sheet.getRangeByName('Q4').cellStyle.bold = true;
+    sheet.getRangeByName('Q2:R5').merge();
+    sheet.getRangeByName('Q2').setText("CITEC UBB");
+    sheet.getRangeByName('Q2').cellStyle.bold = true;
 
     // -------------------------------------------------------------------------
     // DATOS DEL MURO PRINCIPAL
@@ -3178,8 +3249,7 @@ class AppState extends ChangeNotifier {
       ..bold = true
       ..backColor = '#BFBFBF';
 
-    sheet.getRangeByName('C8:R8').merge();
-    sheet.getRangeByName('C9:R20').merge();
+    sheet.getRangeByName('C8:R20').merge();
 
     sheet.getRangeByName('C21:F22').merge();
     sheet.getRangeByName('C21').setText("¿Presenta patologías visibles?");
@@ -3803,11 +3873,11 @@ class AppState extends ChangeNotifier {
       try {
         final Uint8List imageBytes = await hojaMuroPrincipal.imgpatolGuardada!.readAsBytes();
         final xlsio.Picture picture = sheet.pictures.addBase64(
-          9, // fila
+          8, // fila
           9, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 240;
+        picture.height = 260;
         picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
@@ -3858,22 +3928,22 @@ class AppState extends ChangeNotifier {
     // ENCABEZADO
     // -------------------------------------------------------------------------
 
-    sheet.getRangeByName('B2:R4').cellStyle
+    sheet.getRangeByName('B2:R5').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B2:E4').merge();
+    sheet.getRangeByName('B2:E5').merge();
     final ByteData imageData =
     await rootBundle.load('assets/logo_citec.jpg');
 
     final Uint8List imageBytes = imageData.buffer.asUint8List();
 
     //--> Bordes Celdas Encabezado
-    sheet.getRangeByName('B2:E4').cellStyle
+    sheet.getRangeByName('B2:E5').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B2:E4').merge();
+    sheet.getRangeByName('B2:E5').merge();
     // Insertar imagen en la hoja
     final xlsio.Picture picture = sheet.pictures.addStream(
       2, // fila inicial (1-based)
@@ -3886,49 +3956,45 @@ class AppState extends ChangeNotifier {
     picture.width = 150;
 
     // Opcional: que quede dentro del rango B3:E5
-    picture.lastRow = 5;
+    picture.lastRow = 6;
     picture.lastColumn = 6;
 
-    sheet.getRangeByName('F2:N4').merge();
+    sheet.getRangeByName('F2:N5').merge();
     sheet.getRangeByName('F2').setText(
         "PROTOCOLO\nINSPECCIÓN VISUAL DE VIVIENDAS - ACONDICIONAMIENTO AMBIENTAL");
     sheet.getRangeByName('F2').cellStyle.bold = true;
 
-    sheet.getRangeByName('O2:P2').merge();
-    sheet.getRangeByName('O3:P3').merge();
-    sheet.getRangeByName('O4:P4').merge();
-    sheet.getRangeByName('O3').setText("Unidad");
-    sheet.getRangeByName('O3').cellStyle.bold = true;
+    sheet.getRangeByName('O2:P5').merge();
+    sheet.getRangeByName('O2').setText("Unidad");
+    sheet.getRangeByName('O2').cellStyle.bold = true;
 
-    sheet.getRangeByName('Q2:R2').merge();
-    sheet.getRangeByName('Q3:R3').merge();
-    sheet.getRangeByName('Q4:R4').merge();
-    sheet.getRangeByName('Q3').setText("CITEC UBB");
-    sheet.getRangeByName('Q3').cellStyle.bold = true;
+    sheet.getRangeByName('Q2:R5').merge();
+    sheet.getRangeByName('Q2').setText("CITEC UBB");
+    sheet.getRangeByName('Q2').cellStyle.bold = true;
 
     // -------------------------------------------------------------------------
     // DATOS MUROS NORMALES
     // -------------------------------------------------------------------------
 
-    sheet.getRangeByName('B6:R23').cellStyle
+    sheet.getRangeByName('B7:R23').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B6').setText("Item");
-    sheet.getRangeByName('B6').cellStyle
-      ..bold = true
-      ..backColor = '#FFC000';
-
-    sheet.getRangeByName('B7:B55').merge();
-    sheet.getRangeByName('B7').setText("5");
+    sheet.getRangeByName('B7').setText("Item");
     sheet.getRangeByName('B7').cellStyle
       ..bold = true
       ..backColor = '#FFC000';
 
-    sheet.getRangeByName('C6:R6').merge();
-    sheet.getRangeByName('C6').setText(
+    sheet.getRangeByName('B8:B55').merge();
+    sheet.getRangeByName('B8').setText("5");
+    sheet.getRangeByName('B8').cellStyle
+      ..bold = true
+      ..backColor = '#FFC000';
+
+    sheet.getRangeByName('C7:R7').merge();
+    sheet.getRangeByName('C7').setText(
         "Levantamiento de Patologías higrotérmicas");
-    sheet.getRangeByName('C6').cellStyle
+    sheet.getRangeByName('C7').cellStyle
       ..bold = true
       ..backColor = '#BFBFBF';
 
@@ -4313,7 +4379,7 @@ class AppState extends ChangeNotifier {
           8, // columna
           base64Encode(imageBytes),
         );
-        picture.height = 250;
+        picture.height = 260;
         picture.width = 450;
       } catch (e) {
         print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
@@ -4337,7 +4403,7 @@ class AppState extends ChangeNotifier {
 
     sheet.showGridlines = false;
     sheet.getRangeByName('A1:S55').rowHeight = 15;
-    sheet.getRangeByName('A1:S55').columnWidth = 10;
+    sheet.getRangeByName('A1:S55').columnWidth = 15;
     sheet.getRangeByName('A1:S55').cellStyle
       ..hAlign = xlsio.HAlignType.center
       ..vAlign = xlsio.VAlignType.center
@@ -4356,22 +4422,22 @@ class AppState extends ChangeNotifier {
     // ENCABEZADO
     // -------------------------------------------------------------------------
 
-    sheet.getRangeByName('B2:R4').cellStyle
+    sheet.getRangeByName('B2:R5').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B2:E4').merge();
+    sheet.getRangeByName('B2:E5').merge();
     final ByteData imageData =
     await rootBundle.load('assets/logo_citec.jpg');
 
     final Uint8List imageBytes = imageData.buffer.asUint8List();
 
     //--> Bordes Celdas Encabezado
-    sheet.getRangeByName('B2:E4').cellStyle
+    sheet.getRangeByName('B2:E5').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B2:E4').merge();
+    sheet.getRangeByName('B2:E5').merge();
     // Insertar imagen en la hoja
     final xlsio.Picture picture = sheet.pictures.addStream(
       2, // fila inicial (1-based)
@@ -4379,58 +4445,50 @@ class AppState extends ChangeNotifier {
       imageBytes,
     );
 
-    // Opcional: ajustar tamaño
-    picture.height = 80;
-    picture.width = 150;
 
     // Opcional: que quede dentro del rango B3:E5
-    picture.lastRow = 5;
+    picture.lastRow = 6;
     picture.lastColumn = 6;
 
-    sheet.getRangeByName('F2:N4').merge();
+    sheet.getRangeByName('F2:N5').merge();
     sheet.getRangeByName('F2').setText(
         "PROTOCOLO\nINSPECCIÓN VISUAL DE VIVIENDAS - ACONDICIONAMIENTO AMBIENTAL");
     sheet.getRangeByName('F2').cellStyle.bold = true;
 
-    sheet.getRangeByName('O2:P2').merge();
-    sheet.getRangeByName('O3:P3').merge();
-    sheet.getRangeByName('O4:P4').merge();
-    sheet.getRangeByName('O3').setText("Unidad");
-    sheet.getRangeByName('O3').cellStyle.bold = true;
+    sheet.getRangeByName('O2:P5').merge();
+    sheet.getRangeByName('O2').setText("Unidad");
+    sheet.getRangeByName('O2').cellStyle.bold = true;
 
-    sheet.getRangeByName('Q2:R2').merge();
-    sheet.getRangeByName('Q3:R3').merge();
-    sheet.getRangeByName('Q4:R4').merge();
-    sheet.getRangeByName('Q3').setText("CITEC UBB");
-    sheet.getRangeByName('Q3').cellStyle.bold = true;
+    sheet.getRangeByName('Q2:R5').merge();
+    sheet.getRangeByName('Q2').setText("CITEC UBB");
+    sheet.getRangeByName('Q2').cellStyle.bold = true;
 
     // -------------------------------------------------------------------------
     // DATOS PISO Y CIELO
     // -------------------------------------------------------------------------
 
-    sheet.getRangeByName('B6:R49').cellStyle
+    sheet.getRangeByName('B7:R49').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
       ..borders.all.color = '#000000';
 
-    sheet.getRangeByName('B6').setText("Item");
-    sheet.getRangeByName('B6').cellStyle
-      ..bold = true
-      ..backColor = '#FFC000';
-
-    sheet.getRangeByName('B7:B79').merge();
-    sheet.getRangeByName('B7').setText("5");
+    sheet.getRangeByName('B7').setText("Item");
     sheet.getRangeByName('B7').cellStyle
       ..bold = true
       ..backColor = '#FFC000';
 
-    sheet.getRangeByName('C6:R6').merge();
-    sheet.getRangeByName('C6').setText(
+    sheet.getRangeByName('B8:B79').merge();
+    sheet.getRangeByName('B8').setText("5");
+    sheet.getRangeByName('B8').cellStyle
+      ..bold = true
+      ..backColor = '#FFC000';
+
+    sheet.getRangeByName('C7:R7').merge();
+    sheet.getRangeByName('C7').setText(
         "Levantamiento de Patologías higrotérmicas");
-    sheet.getRangeByName('C6').cellStyle
+    sheet.getRangeByName('C7').cellStyle
       ..bold = true
       ..backColor = '#BFBFBF';
 
-    sheet.getRangeByName('C7:R7').merge();
     sheet.getRangeByName('C8:R20').merge();
 
     sheet.getRangeByName('C21:F21').merge();
@@ -4884,7 +4942,7 @@ class AppState extends ChangeNotifier {
 
     sheet.showGridlines = false;
     sheet.getRangeByName('A1:S80').rowHeight = 15;
-    sheet.getRangeByName('A1:S80').columnWidth = 10;
+    sheet.getRangeByName('A1:S80').columnWidth = 15;
     sheet.getRangeByName('A1:S80').cellStyle
       ..hAlign = xlsio.HAlignType.center
       ..vAlign = xlsio.VAlignType.center
@@ -4913,6 +4971,7 @@ class AppState extends ChangeNotifier {
     nombreInspectorController.dispose();
     usoViviendaController.dispose();
     rutInspectorController.dispose();
+    digVerifController.dispose();
     reparacionesController.dispose();
     detalleReparacionesController.dispose();
     ampliacionesController.dispose();
@@ -4920,7 +4979,7 @@ class AppState extends ChangeNotifier {
     obsInfoGeneralController.dispose();
     numRecintosController.dispose();
     totalHabitantesController.dispose();
-    nnumAdultosController.dispose();
+    numAdultosController.dispose();
     numMenoresController.dispose();
     numAdulMayoresController.dispose();
     ocupDiaCompController.dispose();

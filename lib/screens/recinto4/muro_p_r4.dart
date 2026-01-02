@@ -34,7 +34,7 @@ class _Muro_Principal_R4 extends State<Muro_Principal_R4> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Muro Principal Eje " + appState.r4_murop_nombreController.text,
+                  "Muro Eje " + appState.r4_murop_nombreController.text,
                   style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, decoration: TextDecoration.underline,),
                 ),
 

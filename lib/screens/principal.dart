@@ -120,7 +120,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 return;
               }
               appState.HoraFin();
-              await appState.guardarExcel(context);
+              await appState.guardar(context);
             },
           ),
 
@@ -307,7 +307,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey),
                       ),
                       ListTile(
-                        title: Text("- Muro Principal Eje "+ appState.r1_murop_nombreController.text +" (Obligatorio)"),
+                        title: Text("- Muro Eje "+ appState.r1_murop_nombreController.text +" (Obligatorio)"),
                         selected: appState.pantallaActual == 2,
                         onTap: () {
                           setState(() => appState.pantallaActual = 2);
@@ -415,7 +415,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
                   //-- Recinto 2
                   ExpansionTile(
-                    leading: Icon(Icons.looks_one, color: Colors.blueAccent),
+                    leading: Icon(Icons.looks_two, color: Colors.blueAccent),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -457,7 +457,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey),
                       ),
                       ListTile(
-                        title: Text("- Muro Principal Eje "+ appState.r2_murop_nombreController.text +" (Obligatorio)"),
+                        title: Text("- Muro Eje "+ appState.r2_murop_nombreController.text +" (Obligatorio)"),
                         selected: appState.pantallaActual == 11,
                         onTap: () {
                           setState(() => appState.pantallaActual = 11);
@@ -565,7 +565,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
                   //-- Recinto 3
                   ExpansionTile(
-                    leading: Icon(Icons.looks_one, color: Colors.blueAccent),
+                    leading: Icon(Icons.looks_3, color: Colors.blueAccent),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -607,7 +607,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey),
                       ),
                       ListTile(
-                        title: Text("- Muro Principal Eje "+ appState.r3_murop_nombreController.text +" (Obligatorio)"),
+                        title: Text("- Muro Eje "+ appState.r3_murop_nombreController.text +" (Obligatorio)"),
                         selected: appState.pantallaActual == 20,
                         onTap: () {
                           setState(() => appState.pantallaActual = 20);
@@ -716,7 +716,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
                   //-- Recinto 4
                   ExpansionTile(
-                    leading: Icon(Icons.looks_one, color: Colors.blueAccent),
+                    leading: Icon(Icons.looks_4, color: Colors.blueAccent),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -758,7 +758,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey),
                       ),
                       ListTile(
-                        title: Text("- Muro Principal Eje "+ appState.r4_murop_nombreController.text +" (Obligatorio)"),
+                        title: Text("- Muro Eje "+ appState.r4_murop_nombreController.text +" (Obligatorio)"),
                         selected: appState.pantallaActual == 29,
                         onTap: () {
                           setState(() => appState.pantallaActual = 29);
@@ -867,7 +867,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
 
                   //-- Recinto 5
                   ExpansionTile(
-                    leading: Icon(Icons.looks_one, color: Colors.blueAccent),
+                    leading: Icon(Icons.looks_5, color: Colors.blueAccent),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -909,7 +909,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                             : Icon(Icons.edit_off, color: Colors.grey),
                       ),
                       ListTile(
-                        title: Text("- Muro Principal Eje "+ appState.r5_murop_nombreController.text +" (Obligatorio)"),
+                        title: Text("- Muro Eje "+ appState.r5_murop_nombreController.text +" (Obligatorio)"),
                         selected: appState.pantallaActual == 38,
                         onTap: () {
                           setState(() => appState.pantallaActual = 38);
