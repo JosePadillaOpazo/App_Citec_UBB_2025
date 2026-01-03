@@ -23,7 +23,7 @@ class AppState extends ChangeNotifier {
   // ---------------------------------------------------------------------------
 
   final picker = ImagePicker();
-  final List<HojaMuroPrincipal> hojasP = [];
+  final List<Recinto> recintos = [];
   final List<HojaMuro> hojasM = [];
   final List<HojaPisoCielo> hojasPC = [];
   int pantallaActual = 0;
@@ -31,6 +31,13 @@ class AppState extends ChangeNotifier {
   String? rutaGuardada;
   bool guardando = false;
   String? inspeccionUuid;
+
+  //--> Uso con DB
+  int? proyectoSeleccionadoId;
+  List<Map<String, dynamic>> proyectos = [];
+  Map<String, dynamic>? proyectoSeleccionado;
+
+
 
   //--> Fechas / horas
   String horaInicio = "00:00";
@@ -121,6 +128,7 @@ class AppState extends ChangeNotifier {
 
   //-->Formularios generales
   final TextEditingController nFichaController = TextEditingController();
+
 
   //-->Hoja Información general
   final TextEditingController nombreProyectoController = TextEditingController();
@@ -224,6 +232,42 @@ class AppState extends ChangeNotifier {
   //--------------------------------------------------------------------------------------------------------------------------------------------------------
   //                                                                            Funciones
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  Future<void> cargarProyectos() async {
+    proyectos = await LocalDatabase.obtenerProyectos();
+    notifyListeners();
+  }
+
+  void seleccionarProyecto(int? id) {
+    proyectoSeleccionadoId = id;
+
+    if (id == null) {
+      proyectoSeleccionado = null;
+    } else {
+      proyectoSeleccionado = proyectos.firstWhere(
+            (p) => p['id'] == id,
+      );
+    }
+
+    notifyListeners();
+  }
+
+
+
+  Future<void> initApp() async {
+    final db = await LocalDatabase.database;
+    final tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    );
+
+    debugPrint('📋 TABLAS EN BD: $tables');
+  }
+
+  void iniciarNuevaInspeccion() {
+    inspeccionUuid = const Uuid().v4();
+  }
+
+
   Future<void> guardar(context) async {
     await guardarInspeccion();
     await guardarExcel(context);
@@ -235,7 +279,7 @@ class AppState extends ChangeNotifier {
       return;
     }
 
-    //Inspeccion
+    //-------------------------------INSPECCIONES-------------------------------
     final inspeccionData = {
       'uuid': inspeccionUuid,
       'n_ficha': nFichaController.text,
@@ -251,19 +295,10 @@ class AppState extends ChangeNotifier {
       'sync_status': 0,
     };
 
-    final int inspeccion_id = await LocalDatabase.insertarInspeccion(inspeccionData);
+    await LocalDatabase.insertarInspeccion(inspeccionData);
 
-    //Proyecto
-    final proyectoData = {
-      'inspeccion_id': inspeccion_id,
-      'region': regionController.text ,
-      'comuna': comunasController.text,
-      'etapa': etapaController.text,
-    };
+    //-------------------------------VIVIENDAS-------------------------------
 
-    final int proyecto_id = await LocalDatabase.insertarProyecto(proyectoData);
-
-    //Vivienda
     int reparaciones_VF = 0;
 
     if (reparacionesController.text == "Si"){
@@ -278,7 +313,7 @@ class AppState extends ChangeNotifier {
 
     final viviendaData = {
       // 🔗 Relación
-      'proyecto_id': proyecto_id,
+      'proyecto_id': proyectoSeleccionadoId,
 
       // 🏠 Datos generales
       'tipologia_vivienda': tipologiaViviendaController.text,
@@ -327,37 +362,296 @@ class AppState extends ChangeNotifier {
     };
 
     final int vivienda_id = await LocalDatabase.insertarVivienda(viviendaData);
+    debugPrint('🏠 vivienda_id: $vivienda_id');
 
+    //-------------------------------RECINTOS-------------------------------
+    asignarNombreRecintos(recintos: recintos);
+    asignarNombreMuros(muros: hojasM);
+
+
+    for (final recinto in recintos) {
+
+      int patologias_VF = 0;
+
+      if (recinto.patvisibleController.text == "Si"){
+        patologias_VF = 1;
+      }
+
+      int manifestaciones_VF = 0;
+
+      if (recinto.pinOlimpController.text == "Si"){
+        manifestaciones_VF = 1;
+      }
+
+      int olor_humedad_VF = 0;
+
+      if (recinto.olorhumController.text == "Si"){
+        olor_humedad_VF = 1;
+      }
+      int modificaciones_VF = 0;
+
+      if (recinto.modifController.text == "Si"){
+        modificaciones_VF = 1;
+      }
+      final recinto_id = await LocalDatabase.insertarRecinto({
+        'vivienda_id': vivienda_id,
+        'nombre_recinto': recinto.nombreRecintoController.text,
+        'patologias_visibles': patologias_VF,
+        'manifestaciones_ocultas': manifestaciones_VF,
+        'detalles_manifestaciones': recinto.cualpolController.text,
+        'olor_humedad': olor_humedad_VF,
+        'modificaciones': modificaciones_VF,
+        'detalles_modificaciones': recinto.cualmodController.text,
+        'calefaccion': recinto.sistcalefController.text,
+        'tiempo_calefaccion': recinto.tiemcalefController.text,
+
+      });
+
+      debugPrint('📦 Insertando recinto: ${recinto.nombreRecintoController.text}');
+      debugPrint(
+          '${recinto.nombreRecintoController.text} '
+              'tiene ${recinto.muros.length} muros'
+      );
+
+      await LocalDatabase.asociarSistemasARecinto(recinto_id, recinto);
+
+
+      int mapNivelAfectacion(String value) {
+        switch (value) {
+          case 'Bajo':
+            return 1;
+          case 'Medio':
+            return 2;
+          case 'Alto':
+            return 3;
+          default:
+            return 0; // Nulo
+        }
+      }
+
+      for (final muro in recinto.muros) {
+
+        int muro_tipo = 0;
+        if(muro.tipoMuroController.text == "Muro interior") {
+          muro_tipo = 1;
+        }
+
+        await LocalDatabase.insertarMuros({
+          'recinto_id': recinto_id,
+          'nombre_muro': muro.nombreMuroController.text,
+          'tipo_muro': muro_tipo,
+          'superficie': double.tryParse(muro.supmuroController.text),
+          'superficie_ventana': double.tryParse(muro.supventanaController.text),
+          'nivel_afectacion': mapNivelAfectacion(muro.nivelafecController.text),
+        });
+        
+        debugPrint(
+          '   🧱 Insertando muro: ${muro.nombreMuroController.text} '
+              '(Recinto ID: $recinto_id)',
+        );
+      }
+
+
+
+      final pisocielo = recinto.hojaPisoCielo;
+
+
+      if (pisocielo != null) {
+
+        final pisocielo_id = await LocalDatabase.insertarPisoCielo({
+          'recinto_id': recinto_id,
+          'tipo': 'Piso',
+          'superficie': double.tryParse(pisocielo.supPisoController.text),
+
+          'nivel_afectacion': mapNivelAfectacion(pisocielo.nivelafecPisoController.text),
+        });
+        debugPrint(
+          '   🧱 Insertando piso: ${pisocielo.nombre} '
+              '(Recinto ID: $recinto_id)',
+        );
+
+        await LocalDatabase.insertarPatologiasPisoCielo(
+         pisocielo_id, "Piso", pisocielo);
+
+
+        await LocalDatabase.insertarPisoCielo({
+          'recinto_id': recinto_id,
+          'tipo': 'Cielo',
+          'superficie': double.tryParse(pisocielo.supCieloController.text),
+          'nivel_afectacion': mapNivelAfectacion(pisocielo.nivelafecCieloController.text),
+        });
+        debugPrint(
+          '   🧱 Insertando cielo: ${pisocielo.nombre} '
+              '(Recinto ID: $recinto_id)',
+        );
+
+        await LocalDatabase.insertarPatologiasPisoCielo(
+            pisocielo_id, "Cielo", pisocielo);
+
+
+
+
+
+      }
+
+
+
+
+
+
+    }
 
     debugPrint('✅ Inspección guardada');
   }
 
 
+  void asignarMuroARecinto({
+    required String nombreRecinto,
+    required String nombreMuro,
+  }) {
+    final recinto = obtenerRecinto(nombreRecinto);
+    final muro = obtenerHojaMuro(nombreMuro);
 
+    if (recinto == null || muro == null) return;
 
-  void iniciarNuevaInspeccion() {
-    inspeccionUuid = const Uuid().v4();
+    if (!recinto.muros.any((m) => m.nombre == muro.nombre)) {
+      recinto.muros.add(muro);
+      notifyListeners();
+    }
+
   }
 
-  Future<void> initApp() async {
-    final db = await LocalDatabase.database;
-    final tables = await db.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table'"
-    );
+  void asignarPisoCieloARecinto({
+    required String nombreRecinto,
+    required String nombrePisoCielo,
+  }) {
+    final recinto = obtenerRecinto(nombreRecinto);
+    final pisocielo = obtenerHojaPisoCielo(nombrePisoCielo);
 
-    debugPrint('📋 TABLAS EN BD: $tables');
+    if (recinto == null || pisocielo == null) return;
+
+    recinto.hojaPisoCielo ??= pisocielo;
+    notifyListeners();
   }
+
+
+
+
+  void asignarNombreRecintos ({
+  required List<Recinto> recintos,
+  }) {
+    for(final recinto in recintos){
+      switch(recinto.nombre){
+        case "Recinto 1":
+          recinto.nombreRecintoController = recinto1_nombreController;
+          break;
+        case "Recinto 2":
+          recinto.nombreRecintoController = recinto2_nombreController;
+          break;
+        case "Recinto 3":
+          recinto.nombreRecintoController = recinto3_nombreController;
+          break;
+        case "Recinto 4":
+          recinto.nombreRecintoController = recinto4_nombreController;
+          break;
+        case "Recinto 5":
+          recinto.nombreRecintoController = recinto5_nombreController;
+          break;
+      }
+    }
+  }
+
+
+
+
+
+  void asignarNombreMuros({
+    required List<HojaMuro> muros,
+  }) {
+    final Map<int, Map<String, TextEditingController>> murosControllers = {
+      1: {
+        'A': r1_murop_nombreController,
+        'B': r1_murob_nombreController,
+        'C': r1_muroc_nombreController,
+        'D': r1_murod_nombreController,
+        'E': r1_muroe_nombreController,
+        'F': r1_murof_nombreController,
+        'G': r1_murog_nombreController,
+      },
+      2: {
+        'A': r2_murop_nombreController,
+        'B': r2_murob_nombreController,
+        'C': r2_muroc_nombreController,
+        'D': r2_murod_nombreController,
+        'E': r2_muroe_nombreController,
+        'F': r2_murof_nombreController,
+        'G': r2_murog_nombreController,
+      },
+      3: {
+        'A': r3_murop_nombreController,
+        'B': r3_murob_nombreController,
+        'C': r3_muroc_nombreController,
+        'D': r3_murod_nombreController,
+        'E': r3_muroe_nombreController,
+        'F': r3_murof_nombreController,
+        'G': r3_murog_nombreController,
+      },
+      4: {
+        'A': r4_murop_nombreController,
+        'B': r4_murob_nombreController,
+        'C': r4_muroc_nombreController,
+        'D': r4_murod_nombreController,
+        'E': r4_muroe_nombreController,
+        'F': r4_murof_nombreController,
+        'G': r4_murog_nombreController,
+      },
+      5: {
+        'A': r5_murop_nombreController,
+        'B': r5_murob_nombreController,
+        'C': r5_muroc_nombreController,
+        'D': r5_murod_nombreController,
+        'E': r5_muroe_nombreController,
+        'F': r5_murof_nombreController,
+        'G': r5_murog_nombreController,
+      },
+    };
+    for (final muro in hojasM) {
+
+      // Ej: "Muro Eje A - Recinto 1"
+      final regex = RegExp(r'Muro Eje ([A-Z]) - Recinto (\d+)');
+      final match = regex.firstMatch(muro.nombre);
+
+      if (match == null) continue;
+
+      final eje = match.group(1)!;        // A, B, C...
+      final recintoNum = int.parse(match.group(2)!); // 1, 2, 3...
+
+      final controller = murosControllers[recintoNum]?[eje];
+
+      if (controller != null) {
+        muro.nombreMuroController = controller;
+      }
+    }
+  }
+
+
+
+
+
+
 
   void resetApp(BuildContext context) {
     // ---------------------------------------------------------------------------
     // LIMPIAR CONTROLADORES DE TEXTO
     // ---------------------------------------------------------------------------
-    List<TextEditingController> controllers = [
+    proyectoSeleccionado = null;
+    proyectoSeleccionadoId = null;
+
+    List<TextEditingController> controllersClean = [
       // Formularios generales
       nFichaController,
 
       // Información general
-      nombreProyectoController,
       tipologiaViviendaController,
       regionController,
       comunasController,
@@ -393,14 +687,45 @@ class AppState extends ChangeNotifier {
       densOcupPrevController,
       densOcupRealController,
       obsOcupVivController,
+    ];
 
+    for (var c in controllersClean) {
+      c.clear();
+    }
+
+    List<TextEditingController> controllersRecintos = [
       // Nombres Recintos
       recinto1_nombreController,
       recinto2_nombreController,
       recinto3_nombreController,
       recinto4_nombreController,
       recinto5_nombreController,
+    ];
 
+    for (final entry in controllersRecintos.asMap().entries) {
+      final index = entry.key;
+      final c = entry.value;
+
+      c.clear();
+      c.text = "Recinto ${index + 1}";
+    }
+
+
+    List<TextEditingController> controllersPisoCielo = [
+      r1_pisocielo_nombreController,
+      r2_pisocielo_nombreController,
+      r3_pisocielo_nombreController,
+      r4_pisocielo_nombreController,
+      r5_pisocielo_nombreController,
+    ];
+
+    for (var c in controllersPisoCielo) {
+      c.clear();
+      c.text = "Piso Cielo";
+    }
+
+
+    List<TextEditingController> controllersMuros = [
       // Recinto 1
       r1_murop_nombreController,
       r1_murob_nombreController,
@@ -409,7 +734,7 @@ class AppState extends ChangeNotifier {
       r1_muroe_nombreController,
       r1_murof_nombreController,
       r1_murog_nombreController,
-      r1_pisocielo_nombreController,
+
 
       // Recinto 2
       r2_murop_nombreController,
@@ -419,7 +744,7 @@ class AppState extends ChangeNotifier {
       r2_muroe_nombreController,
       r2_murof_nombreController,
       r2_murog_nombreController,
-      r2_pisocielo_nombreController,
+
 
       // Recinto 3
       r3_murop_nombreController,
@@ -429,7 +754,7 @@ class AppState extends ChangeNotifier {
       r3_muroe_nombreController,
       r3_murof_nombreController,
       r3_murog_nombreController,
-      r3_pisocielo_nombreController,
+
 
       // Recinto 4
       r4_murop_nombreController,
@@ -439,7 +764,7 @@ class AppState extends ChangeNotifier {
       r4_muroe_nombreController,
       r4_murof_nombreController,
       r4_murog_nombreController,
-      r4_pisocielo_nombreController,
+
 
       // Recinto 5
       r5_murop_nombreController,
@@ -449,70 +774,13 @@ class AppState extends ChangeNotifier {
       r5_muroe_nombreController,
       r5_murof_nombreController,
       r5_murog_nombreController,
-      r5_pisocielo_nombreController,
+
     ];
 
-    for (var c in controllers) {
+    for (var c in controllersMuros) {
       c.clear();
+      c.text = "(_)";
     }
-
-    // Reiniciar textos por defecto
-    recinto1_nombreController.text = "Recinto 1";
-    recinto2_nombreController.text = "Recinto 2";
-    recinto3_nombreController.text = "Recinto 3";
-    recinto4_nombreController.text = "Recinto 4";
-    recinto5_nombreController.text = "Recinto 5";
-
-    // Recinto 1
-    r1_murop_nombreController.text = "(__)";
-    r1_murob_nombreController.text = "(__)";
-    r1_muroc_nombreController.text = "(__)";
-    r1_murod_nombreController.text = "(__)";
-    r1_muroe_nombreController.text = "(__)";
-    r1_murof_nombreController.text = "(__)";
-    r1_murog_nombreController.text = "(__)";
-    r1_pisocielo_nombreController.text = "Piso Cielo";
-
-    // Recinto 2
-    r2_murop_nombreController.text = "(__)";
-    r2_murob_nombreController.text = "(__)";
-    r2_muroc_nombreController.text = "(__)";
-    r2_murod_nombreController.text = "(__)";
-    r2_muroe_nombreController.text = "(__)";
-    r2_murof_nombreController.text = "(__)";
-    r2_murog_nombreController.text = "(__)";
-    r2_pisocielo_nombreController.text = "Piso Cielo";
-
-    // Recinto 3
-    r3_murop_nombreController.text = "(__)";
-    r3_murob_nombreController.text = "(__)";
-    r3_muroc_nombreController.text = "(__)";
-    r3_murod_nombreController.text = "(__)";
-    r3_muroe_nombreController.text = "(__)";
-    r3_murof_nombreController.text = "(__)";
-    r3_murog_nombreController.text = "(__)";
-    r3_pisocielo_nombreController.text = "Piso Cielo";
-
-    // Recinto 4
-    r4_murop_nombreController.text = "(__)";
-    r4_murob_nombreController.text = "(__)";
-    r4_muroc_nombreController.text = "(__)";
-    r4_murod_nombreController.text = "(__)";
-    r4_muroe_nombreController.text = "(__)";
-    r4_murof_nombreController.text = "(__)";
-    r4_murog_nombreController.text = "(__)";
-    r4_pisocielo_nombreController.text = "Piso Cielo";
-
-    // Recinto 5
-    r5_murop_nombreController.text = "(__)";
-    r5_murob_nombreController.text = "(__)";
-    r5_muroc_nombreController.text = "(__)";
-    r5_murod_nombreController.text = "(__)";
-    r5_muroe_nombreController.text = "(__)";
-    r5_murof_nombreController.text = "(__)";
-    r5_murog_nombreController.text = "(__)";
-    r5_pisocielo_nombreController.text = "Piso Cielo";
-
 
     // ---------------------------------------------------------------------------
     // REINICIAR FLAGS
@@ -593,7 +861,7 @@ class AppState extends ChangeNotifier {
     // ---------------------------------------------------------------------------
     // REINICIAR LISTAS Y ESTADOS GENERALES
     // ---------------------------------------------------------------------------
-    hojasP.clear();
+    recintos.clear();
     hojasM.clear();
     hojasPC.clear();
 
@@ -622,45 +890,60 @@ class AppState extends ChangeNotifier {
     );
   }
 
-
   // ---------------------------------------------------------------------------
-  // Funcion de agregar hojas a la lista de hojas principales
+  // Funcion de agregar una hoja recinto
   // ---------------------------------------------------------------------------
+  void agregarRecinto({
+    required String nombre,
+  }) {
+    for (final r in recintos) {
+      if (r.nombre == nombre) return;
+    }
 
-  void agregarHojaMuroPrincipal({required String nombre}) {
-    hojasP.add(HojaMuroPrincipal(nombre: nombre));
-    notifyListeners();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Funcion de agregar hojas a la lista de hojas muro
-  // ---------------------------------------------------------------------------
-
-  void agregarHojaMuro({required String nombre}) {
-    hojasM.add(HojaMuro(nombre: nombre));
-    notifyListeners();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Funcion de agregar hojas a la lista de hojas piso Cielo
-  // ---------------------------------------------------------------------------
-
-  void agregarHojaPisoCielo({required String nombre}) {
-    hojasPC.add(HojaPisoCielo(nombre: nombre));
+    recintos.add(Recinto(nombre: nombre));
     notifyListeners();
   }
 
 
   // ---------------------------------------------------------------------------
-  // Funcion de eliminar hojas de la lista de hojas principales
+  // Funcion de obtener una hoja recinto
   // ---------------------------------------------------------------------------
 
-  void eliminarHojaMuroPrincipal(int index) {
-    hojasP[index].dispose();
-    hojasP.removeAt(index);
+  Recinto obtenerRecinto(String nombre) {
+    try {
+      return recintos.firstWhere((h) => h.nombre == nombre);
+    } catch (_) {
+      final nuevaHoja = Recinto(nombre: nombre);
+      recintos.add(nuevaHoja);
+      return nuevaHoja;
+    }
+
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Funcion de eliminar hojas de la lista de recintos
+  // ---------------------------------------------------------------------------
+  void eliminarRecinto(int indexRecinto, int indexHojaMuro) {
+    recintos[indexRecinto].dispose();
+    recintos.removeAt(indexRecinto);
+    eliminarHojaMuro(indexHojaMuro);
     notifyListeners();
   }
 
+  // ---------------------------------------------------------------------------
+  // Funcion de obtener una hoja muro
+  // ---------------------------------------------------------------------------
+
+  HojaMuro obtenerHojaMuro(String nombre) {
+    try {
+      return hojasM.firstWhere((h) => h.nombre == nombre);
+    } catch (_) {
+      final nuevaHoja = HojaMuro(nombre: nombre);
+      hojasM.add(nuevaHoja);
+      return nuevaHoja;
+    }
+  }
   // ---------------------------------------------------------------------------
   // Funcion de eliminar hojas de la lista de hojas muro
   // ---------------------------------------------------------------------------
@@ -681,33 +964,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ---------------------------------------------------------------------------
-  // Funcion de obtener una hoja principal
-  // ---------------------------------------------------------------------------
-
-  HojaMuroPrincipal obtenerHojaMuroPrincipal(String nombre) {
-    try {
-      return hojasP.firstWhere((h) => h.nombre == nombre);
-    } catch (_) {
-      final nuevaHoja = HojaMuroPrincipal(nombre: nombre);
-      hojasP.add(nuevaHoja);
-      return nuevaHoja;
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // Funcion de obtener una hoja muro
-  // ---------------------------------------------------------------------------
-
-  HojaMuro obtenerHojaMuro(String nombre) {
-    try {
-      return hojasM.firstWhere((h) => h.nombre == nombre);
-    } catch (_) {
-      final nuevaHoja = HojaMuro(nombre: nombre);
-      hojasM.add(nuevaHoja);
-      return nuevaHoja;
-    }
-  }
 
   HojaPisoCielo obtenerHojaPisoCielo(String nombre) {
     try {
@@ -901,42 +1157,66 @@ class AppState extends ChangeNotifier {
   }
 
   //----------------------------------------------------------------------------
-  // Funciones de manejo de imagenes de las hojas principales
+  // Funciones de manejo de imagenes de Recintos
   //----------------------------------------------------------------------------
 
-  //--> Obtener Imagen
-  Future<void> obtenerImagenHojaPrincipal({
+  //--> Obtener imagen del recinto
+  Future<void> obtenerImagenRecinto({
     required ImageSource fuente,
-    required HojaMuroPrincipal hoja,
+    required Recinto recinto,
     required Function(File) onImagenSeleccionada,
-    required int imgnum
   }) async {
     final XFile? imagen = await picker.pickImage(source: fuente);
-    if (imagen != null) {
-      final file = File(imagen.path);
-      switch (imgnum) {
-        case 1:
-          hoja.imgpatol = file;
-          hoja.imgpatolGuardada = null;
-          notifyListeners();
-          onImagenSeleccionada(file);
-          break;
-        case 2:
-          hoja.imgelev = file;
-          hoja.imgelevGuardada = null;
-          notifyListeners();
-          onImagenSeleccionada(file);
-          break;
-      }
-    }
+    if (imagen == null) return;
+
+    final file = File(imagen.path);
+
+    // ✅ Asignación directa
+    recinto.imgPlano = file;
+    recinto.imgPlanoGuardada = null;
+
+    notifyListeners();
+    onImagenSeleccionada(file);
   }
 
 
-//--> Guardar edición de imagen de las hojas principales (formato compatible Excel)
-  Future<void> guardarDibujoHojaPrincipal({
+  //--> Elimina edición de imagen del recinto
+  Future<void> eliminarDibujoRecinto({
+    required BuildContext context,
+    required Recinto recinto,
+  }) async {
+    final bool? confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Eliminar dibujo"),
+        content: const Text("¿Seguro que deseas eliminar el dibujo guardado?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("Eliminar"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmar != true) return;
+
+    // ✅ Eliminar imagen del modelo
+    recinto.imgPlanoGuardada = null;
+    recinto.imgPlano = null;
+
+    // ⚠️ Solo si esta clase extiende ChangeNotifier
+    notifyListeners();
+  }
+
+  //--> Guardar edición de imagen de los recintos
+  Future<void> guardarDibujoRecinto({
     required GlobalKey canvasKey,
-    required HojaMuroPrincipal hoja,
-    required int imgnum,
+    required Recinto recinto,
     required void Function(File file) onGuardado,
     BuildContext? context,
     bool silencioso = false,
@@ -944,95 +1224,66 @@ class AppState extends ChangeNotifier {
     try {
       final renderObject = canvasKey.currentContext?.findRenderObject();
       if (renderObject == null || renderObject is! RenderRepaintBoundary) {
-        throw Exception('No se encontró RenderRepaintBoundary para el canvasKey proporcionado.');
+        throw Exception(
+          'No se encontró RenderRepaintBoundary para el canvasKey proporcionado.',
+        );
       }
 
-      final RenderRepaintBoundary boundary = renderObject;
+      final boundary = renderObject as RenderRepaintBoundary;
 
       final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       final ByteData? pngBytes =
       await image.toByteData(format: ui.ImageByteFormat.png);
 
-      if (pngBytes == null) throw Exception('No se pudo convertir la imagen.');
+      if (pngBytes == null) {
+        throw Exception('No se pudo convertir la imagen.');
+      }
 
       final Uint8List pngData = pngBytes.buffer.asUint8List();
 
-      final Uint8List jpgData = Uint8List.fromList(img.encodeJpg(
-        img.decodeImage(pngData)!,
-        quality: 95,
-      ));
+      final Uint8List jpgData = Uint8List.fromList(
+        img.encodeJpg(
+          img.decodeImage(pngData)!,
+          quality: 95,
+        ),
+      );
 
       final directory = await getApplicationDocumentsDirectory();
 
-      //--> Diferenciar nombres piso/cielo
-      final tipo = imgnum == 1 ? "imgPatol" : "imgElev";
+      final tipo = "PlanoRecinto";
       final path =
-          '${directory.path}/${hoja.nombre.replaceAll(" ", "_")}_$tipo.jpg';
+          '${directory.path}/${recinto.nombre.replaceAll(" ", "_")}_$tipo.jpg';
 
       final file = File(path);
       await file.writeAsBytes(jpgData);
 
-      //--> Guardar en el modelo
-      switch (imgnum) {
-        case 1:
-          hoja.imgpatolGuardada = file;
-          break;
-        case 2:
-          hoja.imgelevGuardada = file;
-          break;
-      }
+      // ✅ Guardar directamente en el modelo
+      recinto.imgPlanoGuardada = file;
 
       onGuardado(file);
+
+      // ⚠️ Solo si esta clase extiende ChangeNotifier
       notifyListeners();
 
       if (!silencioso && context != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('✅ Dibujo guardado correctamente')),
+          const SnackBar(
+            content: Text('✅ Dibujo guardado correctamente'),
+          ),
         );
       }
     } catch (e, st) {
-      debugPrint('Error en guardarDibujoHoja: $e\n$st');
+      debugPrint('Error en guardarDibujoRecinto: $e\n$st');
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar dibujo: $e')),
+          SnackBar(
+            content: Text('Error al guardar dibujo: $e'),
+          ),
         );
       }
     }
   }
 
-
-  //--> Eliminar la edicion de la imagen de las hojas principales
-  Future<void> eliminarDibujoHojaPrincipal({
-    required BuildContext context,
-    required HojaMuroPrincipal hoja,
-    required int imgnum,
-  }) async {
-    final bool? confirmar = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Eliminar dibujo"),
-        content: Text("¿Seguro que deseas eliminar el dibujo guardado?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text("Cancelar")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: Text("Eliminar")),
-        ],
-      ),
-    );
-
-    if (confirmar == true) {
-      switch (imgnum) {
-        case 1:
-          hoja.imgpatolGuardada = null;
-          hoja.imgpatol = null;
-          break;
-        case 2:
-          hoja.imgelevGuardada = null;
-          hoja.imgelev = null;
-          break;
-      }
-      notifyListeners();
-    }
-  }
 
   //----------------------------------------------------------------------------
   // Funciones de manejo de imagenes de las hojas de muros
@@ -1064,6 +1315,7 @@ class AppState extends ChangeNotifier {
       }
     }
   }
+
 
   //--> Guardar edición de imagen de las hojas de muros (formato compatible Excel)
   Future<void> guardarDibujoHojaMuro({
@@ -1505,11 +1757,11 @@ class AppState extends ChangeNotifier {
   //----------------------------------------------------------------------------
 
   //--> Indices Hojas Principales
-  int? buscarIndexHojaPrincipal(BuildContext context, String nombreHojaActual) {
-    final indexHoja = hojasP.indexWhere((h) => h.nombre == nombreHojaActual);
+  int? buscarIndexHojaRecinto(BuildContext context, String nombreRecintoActual) {
+    final indexHoja = recintos.indexWhere((h) => h.nombre == nombreRecintoActual);
     if (indexHoja == -1) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No se encontró la hoja \"$nombreHojaActual\".")),
+        SnackBar(content: Text("No se encontró la hoja \"$nombreRecintoActual\".")),
       );
       return null;
     }
@@ -1544,16 +1796,50 @@ class AppState extends ChangeNotifier {
   // Funciones para eliminar Hojas del listado dependiendo de la pantalla
   //----------------------------------------------------------------------------
 
-  //--> Hojas Principales
-  Future<void> eliminarPantallaPrincipalActual(BuildContext context) async {
-    String? nombreHojaActual;
+  //--> Hojas Recintos
+  Future<void> eliminarPantallaRecinto(BuildContext context) async {
+    String? nombreRecintoActual;
+    String? nombreHojaMuro;
+
 
     switch (pantallaActual) {
-      case 2:
-        nombreHojaActual = "Muro Eje Principal - Recinto 1";
+      case 1:
+        nombreRecintoActual = "Recinto 1";
+        nombreHojaMuro = "Muro Eje A - Recinto 1";
+        muro_eje_p_info_r1 = false;
+        muro_eje_p_r1 = false;
+        r1_murop_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 10:
+        nombreRecintoActual = "Recinto 2";
+        nombreHojaMuro = "Muro Eje A - Recinto 2";
+        muro_eje_p_info_r2 = false;
+        muro_eje_p_r2 = false;
+        r2_murop_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 19:
+        nombreRecintoActual = "Recinto 3";
+        nombreHojaMuro = "Muro Eje A - Recinto 3";
+        muro_eje_p_info_r3 = false;
+        muro_eje_p_r3 = false;
+        r3_murop_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 28:
+        nombreRecintoActual = "Recinto 4";
+        nombreHojaMuro = "Muro Eje A - Recinto 4";
+        muro_eje_p_info_r4 = false;
+        muro_eje_p_r4 = false;
+        r4_murop_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 37:
+        nombreRecintoActual = "Recinto 5";
+        nombreHojaMuro = "Muro Eje A - Recinto 5";
+        muro_eje_p_info_r5 = false;
+        muro_eje_p_r5 = false;
+        r5_murop_nombreController = TextEditingController(text: "(_)");
         break;
 
-    //-->agregar más pantallas principales
+    //-->agregar más recintos
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("No hay hoja asociada a esta pantalla.")),
@@ -1561,14 +1847,15 @@ class AppState extends ChangeNotifier {
         return;
     }
 
-    final indexHoja = buscarIndexHojaPrincipal(context, nombreHojaActual);
+    final indexHoja = buscarIndexHojaRecinto(context, nombreRecintoActual);
+    final indexHojaMuro = buscarIndexHojaMuro(context, nombreHojaMuro);
 
     final bool? confirmar = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("Eliminar hoja"),
-          content: Text("¿Seguro que deseas eliminar la hoja \"$nombreHojaActual\"?"),
+          content: Text("¿Seguro que deseas eliminar la hoja \"$nombreRecintoActual\"?"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -1586,20 +1873,13 @@ class AppState extends ChangeNotifier {
       },
     );
     if (confirmar == true) {
-      eliminarHojaMuroPrincipal(indexHoja!);
+      eliminarRecinto(indexHoja!, indexHojaMuro!);
 
-      //--> Actualiza flags según la pantalla
-      switch (pantallaActual) {
-        case 2:
-          muro_eje_p_r1 = false;
-          r1_murop_nombreController = TextEditingController(text: "Muro Eje A");
-          break;
-      }
       pantallaActual = 0;
       notifyListeners();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Hoja \"$nombreHojaActual\" eliminada.")),
+        SnackBar(content: Text("Recinto \"$nombreRecintoActual\" eliminada y Hoja \"$nombreHojaMuro\" eliminada.")),
       );
     }
   }
@@ -1611,93 +1891,153 @@ class AppState extends ChangeNotifier {
     switch (pantallaActual) {
       case 3:
         nombreHojaActual = "Muro Eje B - Recinto 1";
+        muro_eje_b_r1 = false;
+        r1_murob_nombreController = TextEditingController(text: "(_)");
         break;
       case 4:
         nombreHojaActual = "Muro Eje C - Recinto 1";
+        muro_eje_c_r1 = false;
+        r1_muroc_nombreController = TextEditingController(text: "(_)");
         break;
       case 5:
         nombreHojaActual = "Muro Eje D - Recinto 1";
+        muro_eje_d_r1 = false;
+        r1_murod_nombreController = TextEditingController(text: "(_)");
         break;
       case 6:
         nombreHojaActual = "Muro Eje E - Recinto 1";
+        muro_eje_e_r1 = false;
+        r1_muroe_nombreController = TextEditingController(text: "(_)");
         break;
       case 7:
         nombreHojaActual = "Muro Eje F - Recinto 1";
+        muro_eje_f_r1 = false;
+        r1_murof_nombreController = TextEditingController(text: "(_)");
         break;
       case 8:
         nombreHojaActual = "Muro Eje G - Recinto 1";
-        break;
-      case 11:
-        nombreHojaActual = "Muro Eje B - Recinto 2";
+        muro_eje_g_r1 = false;
+        r1_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 12:
-        nombreHojaActual = "Muro Eje C - Recinto 2";
+        nombreHojaActual = "Muro Eje B - Recinto 2";
+        muro_eje_b_r2 = false;
+        r2_murob_nombreController = TextEditingController(text: "(_)");
         break;
       case 13:
-        nombreHojaActual = "Muro Eje D - Recinto 2";
+        nombreHojaActual = "Muro Eje C - Recinto 2";
+        muro_eje_c_r2 = false;
+        r2_muroc_nombreController = TextEditingController(text: "(_)");
         break;
       case 14:
-        nombreHojaActual = "Muro Eje E - Recinto 2";
+        nombreHojaActual = "Muro Eje D - Recinto 2";
+        muro_eje_d_r2 = false;
+        r2_murod_nombreController = TextEditingController(text: "(_)");
         break;
       case 15:
-        nombreHojaActual = "Muro Eje F - Recinto 2";
+        nombreHojaActual = "Muro Eje E - Recinto 2";
+        muro_eje_e_r2 = false;
+        r2_muroe_nombreController = TextEditingController(text: "(_)");
         break;
       case 16:
+        nombreHojaActual = "Muro Eje F - Recinto 2";
+        muro_eje_f_r2 = false;
+        r2_murof_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 17:
         nombreHojaActual = "Muro Eje G - Recinto 2";
-        break;
-      case 19:
-        nombreHojaActual = "Muro Eje B - Recinto 3";
-        break;
-      case 20:
-        nombreHojaActual = "Muro Eje C - Recinto 3";
+        muro_eje_g_r2 = false;
+        r2_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 21:
-        nombreHojaActual = "Muro Eje D - Recinto 3";
+        nombreHojaActual = "Muro Eje B - Recinto 3";
+        muro_eje_b_r3 = false;
+        r3_murob_nombreController = TextEditingController(text: "(_)");
         break;
       case 22:
-        nombreHojaActual = "Muro Eje E - Recinto 3";
+        nombreHojaActual = "Muro Eje C - Recinto 3";
+        muro_eje_c_r3 = false;
+        r3_muroc_nombreController = TextEditingController(text: "(_)");
         break;
       case 23:
-        nombreHojaActual = "Muro Eje F - Recinto 3";
+        nombreHojaActual = "Muro Eje D - Recinto 3";
+        muro_eje_d_r3 = false;
+        r3_murod_nombreController = TextEditingController(text: "(_)");
         break;
       case 24:
+        nombreHojaActual = "Muro Eje E - Recinto 3";
+        muro_eje_e_r3 = false;
+        r3_muroe_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 25:
+        nombreHojaActual = "Muro Eje F - Recinto 3";
+        muro_eje_f_r3 = false;
+        r3_murof_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 26:
         nombreHojaActual = "Muro Eje G - Recinto 3";
-        break;
-      case 27:
-        nombreHojaActual = "Muro Eje B - Recinto 4";
-        break;
-      case 28:
-        nombreHojaActual = "Muro Eje C - Recinto 4";
-        break;
-      case 29:
-        nombreHojaActual = "Muro Eje D - Recinto 4";
+        muro_eje_g_r3 = false;
+        r3_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 30:
-        nombreHojaActual = "Muro Eje E - Recinto 4";
+        nombreHojaActual = "Muro Eje B - Recinto 4";
+        muro_eje_b_r4 = false;
+        r4_murob_nombreController = TextEditingController(text: "(_)");
         break;
       case 31:
-        nombreHojaActual = "Muro Eje F - Recinto 4";
+        nombreHojaActual = "Muro Eje C - Recinto 4";
+        muro_eje_c_r4 = false;
+        r4_muroc_nombreController = TextEditingController(text: "(_)");
         break;
       case 32:
-        nombreHojaActual = "Muro Eje G - Recinto 4";
+        nombreHojaActual = "Muro Eje D - Recinto 4";
+        muro_eje_d_r4 = false;
+        r4_murod_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 33:
+        nombreHojaActual = "Muro Eje E - Recinto 4";
+        muro_eje_e_r4 = false;
+        r4_muroe_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 34:
+        nombreHojaActual = "Muro Eje F - Recinto 4";
+        muro_eje_f_r4 = false;
+        r4_murof_nombreController = TextEditingController(text: "(_)");
         break;
       case 35:
-        nombreHojaActual = "Muro Eje B - Recinto 5";
-        break;
-      case 36:
-        nombreHojaActual = "Muro Eje C - Recinto 5";
-        break;
-      case 37:
-        nombreHojaActual = "Muro Eje D - Recinto 5";
-        break;
-      case 38:
-        nombreHojaActual = "Muro Eje E - Recinto 5";
+        nombreHojaActual = "Muro Eje G - Recinto 4";
+        muro_eje_g_r4 = false;
+        r4_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 39:
-        nombreHojaActual = "Muro Eje F - Recinto 5";
+        nombreHojaActual = "Muro Eje B - Recinto 5";
+        muro_eje_b_r5 = false;
+        r5_murob_nombreController = TextEditingController(text: "(_)");
         break;
       case 40:
+        nombreHojaActual = "Muro Eje C - Recinto 5";
+        muro_eje_c_r5 = false;
+        r5_muroc_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 41:
+        nombreHojaActual = "Muro Eje D - Recinto 5";
+        muro_eje_d_r5 = false;
+        r5_murod_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 42:
+        nombreHojaActual = "Muro Eje E - Recinto 5";
+        muro_eje_e_r5 = false;
+        r5_muroe_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 43:
+        nombreHojaActual = "Muro Eje F - Recinto 5";
+        muro_eje_f_r5 = false;
+        r5_murof_nombreController = TextEditingController(text: "(_)");
+        break;
+      case 44:
         nombreHojaActual = "Muro Eje G - Recinto 5";
+        muro_eje_g_r5 = false;
+        r5_murog_nombreController = TextEditingController(text: "(_)");
         break;
 
     //--> agregar mas pantallas
@@ -1736,130 +2076,6 @@ class AppState extends ChangeNotifier {
     if (confirmar == true) {
       eliminarHojaMuro(indexHoja!);
 
-      //--> Actualiza flags según la pantalla
-      switch (pantallaActual) {
-        case 3:
-          muro_eje_b_r1 = false;
-          r1_murob_nombreController = TextEditingController(text: "Muro Eje B");
-          break;
-        case 4:
-          muro_eje_c_r1 = false;
-          r1_muroc_nombreController = TextEditingController(text: "Muro Eje C");
-          break;
-        case 5:
-          muro_eje_d_r1 = false;
-          r1_murod_nombreController = TextEditingController(text: "Muro Eje D");
-          break;
-        case 6:
-          muro_eje_e_r1 = false;
-          r1_muroe_nombreController = TextEditingController(text: "Muro Eje E");
-          break;
-        case 7:
-          muro_eje_f_r1 = false;
-          r1_murof_nombreController = TextEditingController(text: "Muro Eje F");
-          break;
-        case 8:
-          muro_eje_g_r1 = false;
-          r1_murog_nombreController = TextEditingController(text: "Muro Eje G");
-          break;
-        case 11:
-          muro_eje_b_r2 = false;
-          r2_murob_nombreController = TextEditingController(text: "Muro Eje B");
-          break;
-        case 12:
-          muro_eje_c_r2 = false;
-          r2_murob_nombreController = TextEditingController(text: "Muro Eje C");
-          break;
-        case 13:
-          muro_eje_d_r2 = false;
-          r2_murob_nombreController = TextEditingController(text: "Muro Eje D");
-          break;
-        case 14:
-          muro_eje_e_r2 = false;
-          r2_murob_nombreController = TextEditingController(text: "Muro Eje E");
-          break;
-        case 15:
-          muro_eje_f_r2 = false;
-          r2_murob_nombreController = TextEditingController(text: "Muro Eje F");
-          break;
-        case 16:
-          muro_eje_g_r2 = false;
-          r2_murob_nombreController = TextEditingController(text: "Muro Eje G");
-          break;
-        case 19:
-          muro_eje_b_r3 = false;
-          r3_murob_nombreController = TextEditingController(text: "Muro Eje B");
-          break;
-        case 20:
-          muro_eje_c_r3 = false;
-          r3_murob_nombreController = TextEditingController(text: "Muro Eje C");
-          break;
-        case 21:
-          muro_eje_d_r3 = false;
-          r3_murob_nombreController = TextEditingController(text: "Muro Eje D");
-          break;
-        case 22:
-          muro_eje_e_r3 = false;
-          r3_murob_nombreController = TextEditingController(text: "Muro Eje E");
-          break;
-        case 23:
-          muro_eje_f_r3 = false;
-          r3_murob_nombreController = TextEditingController(text: "Muro Eje F");
-          break;
-        case 24:
-          muro_eje_g_r3 = false;
-          r3_murob_nombreController = TextEditingController(text: "Muro Eje G");
-          break;
-        case 27:
-          muro_eje_b_r4 = false;
-          r4_murob_nombreController = TextEditingController(text: "Muro Eje B");
-          break;
-        case 28:
-          muro_eje_c_r4 = false;
-          r4_murob_nombreController = TextEditingController(text: "Muro Eje C");
-          break;
-        case 29:
-          muro_eje_d_r4 = false;
-          r4_murob_nombreController = TextEditingController(text: "Muro Eje D");
-          break;
-        case 30:
-          muro_eje_e_r4 = false;
-          r4_murob_nombreController = TextEditingController(text: "Muro Eje E");
-          break;
-        case 31:
-          muro_eje_f_r4 = false;
-          r4_murob_nombreController = TextEditingController(text: "Muro Eje F");
-          break;
-        case 32:
-          muro_eje_g_r4 = false;
-          r4_murob_nombreController = TextEditingController(text: "Muro Eje G");
-          break;
-        case 35:
-          muro_eje_b_r5 = false;
-          r5_murob_nombreController = TextEditingController(text: "Muro Eje B");
-          break;
-        case 36:
-          muro_eje_c_r5 = false;
-          r5_murob_nombreController = TextEditingController(text: "Muro Eje C");
-          break;
-        case 37:
-          muro_eje_d_r5 = false;
-          r5_murob_nombreController = TextEditingController(text: "Muro Eje D");
-          break;
-        case 38:
-          muro_eje_e_r5 = false;
-          r5_murob_nombreController = TextEditingController(text: "Muro Eje E");
-          break;
-        case 39:
-          muro_eje_f_r5 = false;
-          r5_murob_nombreController = TextEditingController(text: "Muro Eje F");
-          break;
-        case 40:
-          muro_eje_g_r5 = false;
-          r5_murob_nombreController = TextEditingController(text: "Muro Eje G");
-          break;
-
-      }
       pantallaActual = 0;
       notifyListeners();
 
@@ -1877,16 +2093,16 @@ class AppState extends ChangeNotifier {
       case 9: //--------------------------------------------------cambiar al agregar las demas pantallas de muros de r1
         nombreHojaActual = "Piso Cielo - Recinto 1";
         break;
-      case 17:
+      case 18:
         nombreHojaActual = "Piso Cielo - Recinto 2";
         break;
-      case 25:
+      case 27:
         nombreHojaActual = "Piso Cielo - Recinto 3";
         break;
-      case 33:
+      case 36:
         nombreHojaActual = "Piso Cielo - Recinto 4";
         break;
-      case 41:
+      case 45:
         nombreHojaActual = "Piso Cielo - Recinto 5";
         break;
 
@@ -1932,16 +2148,16 @@ class AppState extends ChangeNotifier {
           piso_cielo_r1 = false;
           r1_pisocielo_nombreController = TextEditingController(text: "Piso Cielo");
           break;
-        case 17:
+        case 18:
           piso_cielo_r2 = false;
           break;
-        case 25:
+        case 27:
           piso_cielo_r3 = false;
           break;
-        case 33:
+        case 36:
           piso_cielo_r4 = false;
           break;
-        case 41:
+        case 45:
           piso_cielo_r5 = false;
           break;
 
@@ -2598,16 +2814,19 @@ class AppState extends ChangeNotifier {
       //------------------------------------------------------------------------
 
       //-- Recinto 1
-      if (muro_eje_p_r1 == true) {
-        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 1");
-        if (indexHojaPrincipal == null) {
+      if (muro_eje_p_info_r1 == true && muro_eje_p_r1 == true) {
+        final indexRecinto = buscarIndexHojaRecinto(context, "Recinto 1");
+        final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje A - Recinto 1");
+        if (indexRecinto == null && indexHojaMuro == null) {
 
         } else {
           await crearHojaMuroPrincipalExcel(
             workbook: workbook,
-            hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-            nombreHoja: "MP${r1_murop_nombreController.text} - R1",
-            muroEje: r1_murop_nombreController.text
+            recinto: recintos[indexRecinto!],
+            hojaMuro: hojasM[indexHojaMuro!],
+            nombreRecinto: recintos[indexRecinto].nombreRecintoController.text,
+            nombreHoja: "MP${hojasM[indexHojaMuro].nombreMuroController.text}-",
+            muroEje: hojasM[indexHojaMuro].nombreMuroController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
           //--HOJA Muro Eje B - Recinto 1
@@ -2704,16 +2923,19 @@ class AppState extends ChangeNotifier {
       }
 
       //--Recinto 2
-      if (muro_eje_p_r2 == true) {
-        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 2");
-        if (indexHojaPrincipal == null) {
+      if (muro_eje_p_info_r2 == true && muro_eje_p_r2 == true) {
+        final indexRecinto = buscarIndexHojaRecinto(context, "Recinto 2");
+        final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje A - Recinto 2");
+        if (indexRecinto == null && indexHojaMuro == null) {
 
         } else {
           await crearHojaMuroPrincipalExcel(
-            workbook: workbook,
-            hojaMuroPrincipal: hojasP[indexHojaPrincipal],
-            nombreHoja: "MP${r2_murop_nombreController.text} - R2",
-            muroEje: r2_murop_nombreController.text,
+              workbook: workbook,
+              recinto: recintos[indexRecinto!],
+              hojaMuro: hojasM[indexHojaMuro!],
+              nombreRecinto: "MP${recinto2_nombreController.text} - R2",
+              nombreHoja: "MP${r2_murop_nombreController.text} - R2",
+              muroEje: r2_murop_nombreController.text
           );
           //--ESTAS HOJAS SE GUARDAN SOLO SI LA HOJA PRINCIPAL ESTA UTILIZADA---
           //--HOJA Muro Eje B - Recinto 2
@@ -2810,14 +3032,17 @@ class AppState extends ChangeNotifier {
       }
 
       //-- Recinto 3
-      if (muro_eje_p_r3 == true) {
-        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 3");
-        if (indexHojaPrincipal == null) {
+      if (muro_eje_p_info_r3 == true && muro_eje_p_r3 == true) {
+        final indexRecinto = buscarIndexHojaRecinto(context, "Recinto 3");
+        final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje A - Recinto 3");
+        if (indexRecinto == null && indexHojaMuro == null) {
 
         } else {
           await crearHojaMuroPrincipalExcel(
               workbook: workbook,
-              hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+              recinto: recintos[indexRecinto!],
+              hojaMuro: hojasM[indexHojaMuro!],
+              nombreRecinto: "MP${recinto3_nombreController.text} - R3",
               nombreHoja: "MP${r3_murop_nombreController.text} - R3",
               muroEje: r3_murop_nombreController.text
           );
@@ -2916,14 +3141,17 @@ class AppState extends ChangeNotifier {
       }
 
       //-- Recinto 4
-      if (muro_eje_p_r4 == true) {
-        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 4");
-        if (indexHojaPrincipal == null) {
+      if (muro_eje_p_info_r4 == true && muro_eje_p_r4 == true) {
+        final indexRecinto = buscarIndexHojaRecinto(context, "Recinto 4");
+        final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje A - Recinto 4");
+        if (indexRecinto == null && indexHojaMuro == null) {
 
         } else {
           await crearHojaMuroPrincipalExcel(
               workbook: workbook,
-              hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+              recinto: recintos[indexRecinto!],
+              hojaMuro: hojasM[indexHojaMuro!],
+              nombreRecinto: "MP${recinto4_nombreController.text} - R4",
               nombreHoja: "MP${r4_murop_nombreController.text} - R4",
               muroEje: r4_murop_nombreController.text
           );
@@ -3022,14 +3250,17 @@ class AppState extends ChangeNotifier {
       }
 
       //-- Recinto 5
-      if (muro_eje_p_r5 == true) {
-        final indexHojaPrincipal = buscarIndexHojaPrincipal(context, "Muro Eje Principal - Recinto 5");
-        if (indexHojaPrincipal == null) {
+      if (muro_eje_p_info_r5 == true && muro_eje_p_r5 == true) {
+        final indexRecinto = buscarIndexHojaRecinto(context, "Recinto 5");
+        final indexHojaMuro = buscarIndexHojaMuro(context, "Muro Eje A - Recinto 5");
+        if (indexRecinto == null || indexHojaMuro == null) {
 
         } else {
           await crearHojaMuroPrincipalExcel(
               workbook: workbook,
-              hojaMuroPrincipal: hojasP[indexHojaPrincipal],
+              recinto: recintos[indexRecinto],
+              hojaMuro: hojasM[indexHojaMuro],
+              nombreRecinto: "MP${recinto5_nombreController.text} - R5",
               nombreHoja: "MP${r5_murop_nombreController.text} - R5",
               muroEje: r5_murop_nombreController.text
           );
@@ -3173,12 +3404,14 @@ class AppState extends ChangeNotifier {
 
   Future<void> crearHojaMuroPrincipalExcel({
     required xlsio.Workbook workbook,
-    required HojaMuroPrincipal hojaMuroPrincipal,
+    required Recinto recinto,
+    required HojaMuro hojaMuro,
     required String nombreHoja,
+    required String nombreRecinto,
     required String muroEje,
   }) async {
 
-    final sheet = workbook.worksheets.addWithName(nombreHoja);
+    final sheet = workbook.worksheets.addWithName(nombreHoja+nombreRecinto);
 
     // -------------------------------------------------------------------------
     // ENCABEZADO
@@ -3261,7 +3494,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('H21').setText("No");
     sheet.getRangeByName('H21').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.patvisibleController.text == "Si") {
+    if (recinto.patvisibleController.text == "Si") {
       sheet.getRangeByName('G22').setText("✔");
     } else {
       sheet.getRangeByName('H22').setText("✔");
@@ -3277,7 +3510,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('N21').setText("No");
     sheet.getRangeByName('N21').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.pinOlimpController.text == "Si") {
+    if (recinto.pinOlimpController.text == "Si") {
       sheet.getRangeByName('M22').setText("✔");
     } else {
       sheet.getRangeByName('N22').setText("✔");
@@ -3288,7 +3521,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('O21').cellStyle.bold = true;
 
     sheet.getRangeByName('O22:R22').merge();
-    sheet.getRangeByName('O22').setText(hojaMuroPrincipal.cualpolController.text);
+    sheet.getRangeByName('O22').setText(recinto.cualpolController.text);
 
     sheet.getRangeByName('C23:F24').merge();
     sheet.getRangeByName('C23').setText("¿Olor a humedad?");
@@ -3300,7 +3533,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('H23').setText("No");
     sheet.getRangeByName('H23').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.olorhumController.text == "Si") {
+    if (recinto.olorhumController.text == "Si") {
       sheet.getRangeByName('G24').setText("✔");
     } else {
       sheet.getRangeByName('H24').setText("✔");
@@ -3316,7 +3549,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('N23').setText("No");
     sheet.getRangeByName('N23').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.modifController.text == "Si") {
+    if (recinto.modifController.text == "Si") {
       sheet.getRangeByName('M24').setText("✔");
     } else {
       sheet.getRangeByName('N24').setText("✔");
@@ -3327,7 +3560,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('O23').cellStyle.bold = true;
 
     sheet.getRangeByName('O24:R24').merge();
-    sheet.getRangeByName('O24').setText(hojaMuroPrincipal.cualmodController.text);
+    sheet.getRangeByName('O24').setText(recinto.cualmodController.text);
 
     sheet.getRangeByName('C25:F26').merge();
     sheet.getRangeByName('C25').setText("Sistema de Calefacción");
@@ -3363,20 +3596,20 @@ class AppState extends ChangeNotifier {
 
     sheet.getRangeByName('O26:R26').merge();
 
-    if (hojaMuroPrincipal.sistcalefController.text == "Eléctrico (seca)") {
+    if (recinto.sistcalefController.text == "Eléctrico (seca)") {
       sheet.getRangeByName('G26').setText("✔");
     }
-    if (hojaMuroPrincipal.sistcalefController.text == "Gas / parafina con evacuación exterior (seca)") {
+    if (recinto.sistcalefController.text == "Gas / parafina con evacuación exterior (seca)") {
       sheet.getRangeByName('I26').setText("✔");
     }
-    if (hojaMuroPrincipal.sistcalefController.text == "Biomasa con evacuación exterior (seca)") {
+    if (recinto.sistcalefController.text == "Biomasa con evacuación exterior (seca)") {
       sheet.getRangeByName('K26').setText("✔");
     }
-    if (hojaMuroPrincipal.sistcalefController.text == "Parafina/gas móvil (húmeda)") {
+    if (recinto.sistcalefController.text == "Parafina/gas móvil (húmeda)") {
       sheet.getRangeByName('M26').setText("✔");
     }
-    if (hojaMuroPrincipal.sistcalefController.text == "Otro ¿cuál?") {
-      sheet.getRangeByName('O26').setText(hojaMuroPrincipal.otrocalefController.text);
+    if (recinto.sistcalefController.text == "Otro ¿cuál?") {
+      sheet.getRangeByName('O26').setText(recinto.otrocalefController.text);
     }
 
 
@@ -3385,7 +3618,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('C27').cellStyle.bold = true;
 
     sheet.getRangeByName('G27:R27').merge();
-    sheet.getRangeByName('G27').setText(hojaMuroPrincipal.tiemcalefController.text);
+    sheet.getRangeByName('G27').setText(recinto.tiemcalefController.text);
 
     sheet.getRangeByName('C28:F30').merge();
     sheet.getRangeByName('C28').setText("Sistema de ventilación (indicar en la planta su ubicación)");
@@ -3401,10 +3634,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('H29').setText("No Op");
     sheet.getRangeByName('H29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.aireadorController.text == "Operativo") {
+    if (recinto.aireadorController.text == "Operativo") {
       sheet.getRangeByName('G30').setText("✔");
     }
-    if (hojaMuroPrincipal.aireadorController.text == "No Operativo") {
+    if (recinto.aireadorController.text == "No Operativo") {
       sheet.getRangeByName('H30').setText("✔");
     }
 
@@ -3418,10 +3651,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('J29').setText("No Op");
     sheet.getRangeByName('J29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.extractorController.text == "Operativo") {
+    if (recinto.extractorController.text == "Operativo") {
       sheet.getRangeByName('I30').setText("✔");
     }
-    if (hojaMuroPrincipal.extractorController.text == "No Operativo") {
+    if (recinto.extractorController.text == "No Operativo") {
       sheet.getRangeByName('J30').setText("✔");
     }
 
@@ -3435,10 +3668,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('L29').setText("No Op");
     sheet.getRangeByName('L29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.campanaController.text == "Operativo") {
+    if (recinto.campanaController.text == "Operativo") {
       sheet.getRangeByName('K30').setText("✔");
     }
-    if (hojaMuroPrincipal.campanaController.text == "No Operativo") {
+    if (recinto.campanaController.text == "No Operativo") {
       sheet.getRangeByName('L30').setText("✔");
     }
 
@@ -3452,10 +3685,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('N29').setText("No Op");
     sheet.getRangeByName('N29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.celosiapueController.text == "Operativo") {
+    if (recinto.celosiapueController.text == "Operativo") {
       sheet.getRangeByName('M30').setText("✔");
     }
-    if (hojaMuroPrincipal.celosiapueController.text == "No Operativo") {
+    if (recinto.celosiapueController.text == "No Operativo") {
       sheet.getRangeByName('N30').setText("✔");
     }
 
@@ -3469,10 +3702,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('P29').setText("No Op");
     sheet.getRangeByName('P29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.rebajepueController.text == "Operativo") {
+    if (recinto.rebajepueController.text == "Operativo") {
       sheet.getRangeByName('O30').setText("✔");
     }
-    if (hojaMuroPrincipal.rebajepueController.text == "No Operativo") {
+    if (recinto.rebajepueController.text == "No Operativo") {
       sheet.getRangeByName('P30').setText("✔");
     }
 
@@ -3486,10 +3719,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('R29').setText("No Op");
     sheet.getRangeByName('R29').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.otroequipController.text == "Operativo") {
+    if (recinto.otroequipController.text == "Operativo") {
       sheet.getRangeByName('Q30').setText("✔");
     }
-    if (hojaMuroPrincipal.otroequipController.text == "No Operativo") {
+    if (recinto.otroequipController.text == "No Operativo") {
       sheet.getRangeByName('R30').setText("✔");
     }
 
@@ -3515,14 +3748,14 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G32').cellStyle.bold = true;
 
     sheet.getRangeByName('J32:L32').merge();
-    sheet.getRangeByName('J32').setText(hojaMuroPrincipal.supmuroController.text);
+    sheet.getRangeByName('J32').setText(hojaMuro.supmuroController.text);
 
     sheet.getRangeByName('M32:O32').merge();
     sheet.getRangeByName('M32').setText("Superficie ventana");
     sheet.getRangeByName('M32').cellStyle.bold = true;
 
     sheet.getRangeByName('P32:R32').merge();
-    sheet.getRangeByName('P32').setText(hojaMuroPrincipal.supventanaController.text);
+    sheet.getRangeByName('P32').setText(hojaMuro.supventanaController.text);
 
     sheet.getRangeByName('C33:E33').merge();
     sheet.getRangeByName('C33').setText("Muro perimetral");
@@ -3532,10 +3765,10 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('C34').setText("Muro interior");
     sheet.getRangeByName('C34').cellStyle.bold = true;
 
-    if (hojaMuroPrincipal.tipomuroController.text == "Muro perimetral") {
+    if (hojaMuro.tipoMuroController.text == "Muro perimetral") {
       sheet.getRangeByName('F33').setText("✔");
     }
-    if (hojaMuroPrincipal.tipomuroController.text == "Muro interior") {
+    if (hojaMuro.tipoMuroController.text == "Muro interior") {
       sheet.getRangeByName('F34').setText("✔");
     }
 
@@ -3567,7 +3800,7 @@ class AppState extends ChangeNotifier {
 
     sheet.getRangeByName('P34:R34').merge();
 
-    switch(hojaMuroPrincipal.nivelafecController.text) {
+    switch(hojaMuro.nivelafecController.text) {
       case "Nulo":
         sheet.getRangeByName('J34').setText("✔");
         break;
@@ -3635,28 +3868,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G39:H39').merge(); //Si
     sheet.getRangeByName('I39:J39').merge(); // No
 
-    if (hojaMuroPrincipal.mh_encEsqMurController.text == "Si") {
+    if (hojaMuro.mh_encEsqMurController.text == "Si") {
       sheet.getRangeByName('G39').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_encEsqMurController.text == "No") {
+    if (hojaMuro.mh_encEsqMurController.text == "No") {
       sheet.getRangeByName('I39').setText("✔");
     }
 
     sheet.getRangeByName('K39:L39').merge();
-    sheet.getRangeByName('K39').setText(hojaMuroPrincipal.mh_supencEsqMurController.text);
+    sheet.getRangeByName('K39').setText(hojaMuro.mh_supencEsqMurController.text);
 
     sheet.getRangeByName('M39:N39').merge(); //Si
     sheet.getRangeByName('O39:P39').merge(); // No
 
-    if (hojaMuroPrincipal.df_encEsqMurController.text == "Si") {
+    if (hojaMuro.df_encEsqMurController.text == "Si") {
       sheet.getRangeByName('M39').setText("✔");
     }
-    if (hojaMuroPrincipal.df_encEsqMurController.text == "No") {
+    if (hojaMuro.df_encEsqMurController.text == "No") {
       sheet.getRangeByName('O39').setText("✔");
     }
 
     sheet.getRangeByName('Q39:R39').merge();
-    sheet.getRangeByName('Q39').setText(hojaMuroPrincipal.df_supencEsqMurController.text);
+    sheet.getRangeByName('Q39').setText(hojaMuro.df_supencEsqMurController.text);
 
 
     //-- Encuentro cielo muro
@@ -3667,28 +3900,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G40:H40').merge(); //Si
     sheet.getRangeByName('I40:J40').merge(); // No
 
-    if (hojaMuroPrincipal.mh_encCieMurController.text == "Si") {
+    if (hojaMuro.mh_encCieMurController.text == "Si") {
       sheet.getRangeByName('G40').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_encCieMurController.text == "No") {
+    if (hojaMuro.mh_encCieMurController.text == "No") {
       sheet.getRangeByName('I40').setText("✔");
     }
 
     sheet.getRangeByName('K40:L40').merge();
-    sheet.getRangeByName('K40').setText(hojaMuroPrincipal.mh_supencCieMurController.text);
+    sheet.getRangeByName('K40').setText(hojaMuro.mh_supencCieMurController.text);
 
     sheet.getRangeByName('M40:N40').merge(); //Si
     sheet.getRangeByName('O40:P40').merge(); // No
 
-    if (hojaMuroPrincipal.df_encCieMurController.text == "Si") {
+    if (hojaMuro.df_encCieMurController.text == "Si") {
       sheet.getRangeByName('M40').setText("✔");
     }
-    if (hojaMuroPrincipal.df_encCieMurController.text == "No") {
+    if (hojaMuro.df_encCieMurController.text == "No") {
       sheet.getRangeByName('O40').setText("✔");
     }
 
     sheet.getRangeByName('Q40:R40').merge();
-    sheet.getRangeByName('Q40').setText(hojaMuroPrincipal.df_supencCieMurController.text);
+    sheet.getRangeByName('Q40').setText(hojaMuro.df_supencCieMurController.text);
 
 
     //-- Encuentro piso muro
@@ -3699,28 +3932,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G41:H41').merge(); //Si
     sheet.getRangeByName('I41:J41').merge(); // No
 
-    if (hojaMuroPrincipal.mh_encPisMurController.text == "Si") {
+    if (hojaMuro.mh_encPisMurController.text == "Si") {
       sheet.getRangeByName('G41').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_encPisMurController.text == "No") {
+    if (hojaMuro.mh_encPisMurController.text == "No") {
       sheet.getRangeByName('I41').setText("✔");
     }
 
     sheet.getRangeByName('K41:L41').merge();
-    sheet.getRangeByName('K41').setText(hojaMuroPrincipal.mh_supencPisMurController.text);
+    sheet.getRangeByName('K41').setText(hojaMuro.mh_supencPisMurController.text);
 
     sheet.getRangeByName('M41:N41').merge(); //Si
     sheet.getRangeByName('O41:P41').merge(); // No
 
-    if (hojaMuroPrincipal.df_encPisMurController.text == "Si") {
+    if (hojaMuro.df_encPisMurController.text == "Si") {
       sheet.getRangeByName('M41').setText("✔");
     }
-    if (hojaMuroPrincipal.df_encPisMurController.text == "No") {
+    if (hojaMuro.df_encPisMurController.text == "No") {
       sheet.getRangeByName('O41').setText("✔");
     }
 
     sheet.getRangeByName('Q41:R41').merge();
-    sheet.getRangeByName('Q41').setText(hojaMuroPrincipal.df_supencPisMurController.text);
+    sheet.getRangeByName('Q41').setText(hojaMuro.df_supencPisMurController.text);
 
 
     //-- Rasgo de ventana
@@ -3731,28 +3964,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G42:H42').merge(); //Si
     sheet.getRangeByName('I42:J42').merge(); // No
 
-    if (hojaMuroPrincipal.mh_rasgventController.text == "Si") {
+    if (hojaMuro.mh_rasgventController.text == "Si") {
       sheet.getRangeByName('G42').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_rasgventController.text == "No") {
+    if (hojaMuro.mh_rasgventController.text == "No") {
       sheet.getRangeByName('I42').setText("✔");
     }
 
     sheet.getRangeByName('K42:L42').merge();
-    sheet.getRangeByName('K42').setText(hojaMuroPrincipal.mh_suprasgventController.text);
+    sheet.getRangeByName('K42').setText(hojaMuro.mh_suprasgventController.text);
 
     sheet.getRangeByName('M42:N42').merge(); //Si
     sheet.getRangeByName('O42:P42').merge(); // No
 
-    if (hojaMuroPrincipal.df_rasgventController.text == "Si") {
+    if (hojaMuro.df_rasgventController.text == "Si") {
       sheet.getRangeByName('M42').setText("✔");
     }
-    if (hojaMuroPrincipal.df_rasgventController.text == "No") {
+    if (hojaMuro.df_rasgventController.text == "No") {
       sheet.getRangeByName('O42').setText("✔");
     }
 
     sheet.getRangeByName('Q42:R42').merge();
-    sheet.getRangeByName('Q42').setText(hojaMuroPrincipal.df_suprasgventController.text);
+    sheet.getRangeByName('Q42').setText(hojaMuro.df_suprasgventController.text);
 
 
     //-- Bajo ventana (antepecho)
@@ -3763,28 +3996,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G43:H43').merge(); //Si
     sheet.getRangeByName('I43:J43').merge(); // No
 
-    if (hojaMuroPrincipal.mh_bajovenController.text == "Si") {
+    if (hojaMuro.mh_bajovenController.text == "Si") {
       sheet.getRangeByName('G43').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_bajovenController.text == "No") {
+    if (hojaMuro.mh_bajovenController.text == "No") {
       sheet.getRangeByName('I43').setText("✔");
     }
 
     sheet.getRangeByName('K43:L43').merge();
-    sheet.getRangeByName('K43').setText(hojaMuroPrincipal.mh_supbajovenController.text);
+    sheet.getRangeByName('K43').setText(hojaMuro.mh_supbajovenController.text);
 
     sheet.getRangeByName('M43:N43').merge(); //Si
     sheet.getRangeByName('O43:P43').merge(); // No
 
-    if (hojaMuroPrincipal.df_bajovenController.text == "Si") {
+    if (hojaMuro.df_bajovenController.text == "Si") {
       sheet.getRangeByName('M43').setText("✔");
     }
-    if (hojaMuroPrincipal.df_bajovenController.text == "No") {
+    if (hojaMuro.df_bajovenController.text == "No") {
       sheet.getRangeByName('O43').setText("✔");
     }
 
     sheet.getRangeByName('Q43:R43').merge();
-    sheet.getRangeByName('Q43').setText(hojaMuroPrincipal.df_supbajovenController.text);
+    sheet.getRangeByName('Q43').setText(hojaMuro.df_supbajovenController.text);
 
 
     //-- Área central
@@ -3795,28 +4028,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G44:H44').merge(); //Si
     sheet.getRangeByName('I44:J44').merge(); // No
 
-    if (hojaMuroPrincipal.mh_aCentralController.text == "Si") {
+    if (hojaMuro.mh_aCentralController.text == "Si") {
       sheet.getRangeByName('G44').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_aCentralController.text == "No") {
+    if (hojaMuro.mh_aCentralController.text == "No") {
       sheet.getRangeByName('I44').setText("✔");
     }
 
     sheet.getRangeByName('K44:L44').merge();
-    sheet.getRangeByName('K44').setText(hojaMuroPrincipal.mh_supaCentralController.text);
+    sheet.getRangeByName('K44').setText(hojaMuro.mh_supaCentralController.text);
 
     sheet.getRangeByName('M44:N44').merge(); //Si
     sheet.getRangeByName('O44:P44').merge(); // No
 
-    if (hojaMuroPrincipal.df_aCentralController.text == "Si") {
+    if (hojaMuro.df_aCentralController.text == "Si") {
       sheet.getRangeByName('M44').setText("✔");
     }
-    if (hojaMuroPrincipal.df_aCentralController.text == "No") {
+    if (hojaMuro.df_aCentralController.text == "No") {
       sheet.getRangeByName('O44').setText("✔");
     }
 
     sheet.getRangeByName('Q44:R44').merge();
-    sheet.getRangeByName('Q44').setText(hojaMuroPrincipal.df_supaCentralController.text);
+    sheet.getRangeByName('Q44').setText(hojaMuro.df_supaCentralController.text);
 
 
     //-- Puntual localizada y/o extendida
@@ -3827,28 +4060,28 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('G45:H45').merge(); //Si
     sheet.getRangeByName('I45:J45').merge(); // No
 
-    if (hojaMuroPrincipal.mh_punLocController.text == "Si") {
+    if (hojaMuro.mh_punLocController.text == "Si") {
       sheet.getRangeByName('G45').setText("✔");
     }
-    if (hojaMuroPrincipal.mh_punLocController.text == "No") {
+    if (hojaMuro.mh_punLocController.text == "No") {
       sheet.getRangeByName('I45').setText("✔");
     }
 
     sheet.getRangeByName('K45:L45').merge();
-    sheet.getRangeByName('K45').setText(hojaMuroPrincipal.mh_suppunLocController.text);
+    sheet.getRangeByName('K45').setText(hojaMuro.mh_suppunLocController.text);
 
     sheet.getRangeByName('M45:N45').merge(); //Si
     sheet.getRangeByName('O45:P45').merge(); // No
 
-    if (hojaMuroPrincipal.df_punLocController.text == "Si") {
+    if (hojaMuro.df_punLocController.text == "Si") {
       sheet.getRangeByName('M45').setText("✔");
     }
-    if (hojaMuroPrincipal.df_punLocController.text == "No") {
+    if (hojaMuro.df_punLocController.text == "No") {
       sheet.getRangeByName('O45').setText("✔");
     }
 
     sheet.getRangeByName('Q45:R45').merge();
-    sheet.getRangeByName('Q45').setText(hojaMuroPrincipal.df_suppunLocController.text);
+    sheet.getRangeByName('Q45').setText(hojaMuro.df_suppunLocController.text);
 
 
     //-- Total superficie afectada
@@ -3857,7 +4090,7 @@ class AppState extends ChangeNotifier {
     sheet.getRangeByName('C46').cellStyle.bold = true;
 
     sheet.getRangeByName('G46:R46').merge();
-    sheet.getRangeByName('G46').setText(hojaMuroPrincipal.totpalsupafecController.text);
+    sheet.getRangeByName('G46').setText(hojaMuro.totpalsupafecController.text);
 
     sheet.getRangeByName('C48:R65').cellStyle
       ..borders.all.lineStyle = xlsio.LineStyle.thin
@@ -3869,9 +4102,9 @@ class AppState extends ChangeNotifier {
     // IMAGEN
     // -------------------------------------------------------------------------
 
-    if (hojaMuroPrincipal.imgpatol != null && hojaMuroPrincipal.imgpatolGuardada!.existsSync()) {
+    if (hojaMuro.imgpatol != null && hojaMuro.imgpatolGuardada!.existsSync()) {
       try {
-        final Uint8List imageBytes = await hojaMuroPrincipal.imgpatolGuardada!.readAsBytes();
+        final Uint8List imageBytes = await hojaMuro.imgpatolGuardada!.readAsBytes();
         final xlsio.Picture picture = sheet.pictures.addBase64(
           8, // fila
           9, // columna
@@ -3880,13 +4113,13 @@ class AppState extends ChangeNotifier {
         picture.height = 260;
         picture.width = 450;
       } catch (e) {
-        print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
+        debugPrint("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
     }
 
-    if (hojaMuroPrincipal.imgelev != null && hojaMuroPrincipal.imgelevGuardada!.existsSync()) {
+    if (hojaMuro.imgelev != null && hojaMuro.imgelevGuardada!.existsSync()) {
       try {
-        final Uint8List imageBytes = await hojaMuroPrincipal.imgelevGuardada!.readAsBytes();
+        final Uint8List imageBytes = await hojaMuro.imgelevGuardada!.readAsBytes();
         final xlsio.Picture picture = sheet.pictures.addBase64(
           48, // fila
           9, // columna
@@ -3895,7 +4128,7 @@ class AppState extends ChangeNotifier {
         picture.height = 360;
         picture.width = 450;
       } catch (e) {
-        print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
+        debugPrint("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
     }
 
@@ -4382,7 +4615,7 @@ class AppState extends ChangeNotifier {
         picture.height = 260;
         picture.width = 450;
       } catch (e) {
-        print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
+        debugPrint("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
     }
 
@@ -4397,7 +4630,7 @@ class AppState extends ChangeNotifier {
         picture.height = 380;
         picture.width = 450;
       } catch (e) {
-        print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
+        debugPrint("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
     }
 
@@ -4921,7 +5154,7 @@ class AppState extends ChangeNotifier {
         picture.height = 360;
         picture.width = 450;
       } catch (e) {
-        print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
+        debugPrint("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
     }
 
@@ -4936,7 +5169,7 @@ class AppState extends ChangeNotifier {
         picture.height = 360;
         picture.width = 450;
       } catch (e) {
-        print("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
+        debugPrint("⚠️ Error al insertar imagen en hoja $nombreHoja: $e");
       }
     }
 
@@ -4988,7 +5221,6 @@ class AppState extends ChangeNotifier {
     densOcupRealController.dispose();
     obsOcupVivController.dispose();
     nFichaController.dispose();
-    recinto1_nombreController.dispose();
     recinto2_nombreController.dispose();
     recinto3_nombreController.dispose();
     super.dispose();
@@ -5022,16 +5254,15 @@ class DibujoPainter extends CustomPainter {
   bool shouldRepaint(DibujoPainter oldDelegate) => oldDelegate.puntos != puntos;
 }
 
-class HojaMuroPrincipal {
+class Recinto {
   final String nombre;
+  final List <HojaMuro> muros = [];
+  HojaPisoCielo? hojaPisoCielo;
 
-  File? imgpatol;
-  File? imgpatolGuardada;
+  File? imgPlano;
+  File? imgPlanoGuardada;
 
-  File? imgelev;
-  File? imgelevGuardada;
-
-  // Controladores
+  late TextEditingController nombreRecintoController = TextEditingController(text: "Recinto");
   final TextEditingController patvisibleController = TextEditingController();
   final TextEditingController pinOlimpController = TextEditingController();
   final TextEditingController cualpolController = TextEditingController();
@@ -5047,41 +5278,8 @@ class HojaMuroPrincipal {
   final TextEditingController celosiapueController = TextEditingController();
   final TextEditingController rebajepueController = TextEditingController();
   final TextEditingController otroequipController = TextEditingController();
-  final TextEditingController supmuroController = TextEditingController();
-  final TextEditingController supventanaController = TextEditingController();
-  final TextEditingController tipomuroController = TextEditingController();
-  final TextEditingController nivelafecController = TextEditingController();
-  final TextEditingController mh_encEsqMurController = TextEditingController();
-  final TextEditingController mh_encCieMurController = TextEditingController();
-  final TextEditingController mh_encPisMurController = TextEditingController();
-  final TextEditingController mh_rasgventController = TextEditingController();
-  final TextEditingController mh_bajovenController = TextEditingController();
-  final TextEditingController mh_aCentralController = TextEditingController();
-  final TextEditingController mh_punLocController = TextEditingController();
-  final TextEditingController mh_supencEsqMurController = TextEditingController();
-  final TextEditingController mh_supencCieMurController = TextEditingController();
-  final TextEditingController mh_supencPisMurController = TextEditingController();
-  final TextEditingController mh_suprasgventController = TextEditingController();
-  final TextEditingController mh_supbajovenController = TextEditingController();
-  final TextEditingController mh_supaCentralController = TextEditingController();
-  final TextEditingController mh_suppunLocController = TextEditingController();
-  final TextEditingController df_encEsqMurController = TextEditingController();
-  final TextEditingController df_encCieMurController = TextEditingController();
-  final TextEditingController df_encPisMurController = TextEditingController();
-  final TextEditingController df_rasgventController = TextEditingController();
-  final TextEditingController df_bajovenController = TextEditingController();
-  final TextEditingController df_aCentralController = TextEditingController();
-  final TextEditingController df_punLocController = TextEditingController();
-  final TextEditingController df_supencEsqMurController = TextEditingController();
-  final TextEditingController df_supencCieMurController = TextEditingController();
-  final TextEditingController df_supencPisMurController = TextEditingController();
-  final TextEditingController df_suprasgventController = TextEditingController();
-  final TextEditingController df_supbajovenController = TextEditingController();
-  final TextEditingController df_supaCentralController = TextEditingController();
-  final TextEditingController df_suppunLocController = TextEditingController();
-  final TextEditingController totpalsupafecController = TextEditingController();
 
-  HojaMuroPrincipal({required this.nombre});
+  Recinto({required this.nombre});
 
   void dispose() {
     patvisibleController.dispose();
@@ -5099,39 +5297,6 @@ class HojaMuroPrincipal {
     celosiapueController.dispose();
     rebajepueController.dispose();
     otroequipController.dispose();
-    supmuroController.dispose();
-    supventanaController.dispose();
-    tipomuroController.dispose();
-    nivelafecController.dispose();
-    mh_encEsqMurController.dispose();
-    mh_encCieMurController.dispose();
-    mh_encPisMurController.dispose();
-    mh_rasgventController.dispose();
-    mh_bajovenController.dispose();
-    mh_aCentralController.dispose();
-    mh_punLocController.dispose();
-    mh_supencEsqMurController.dispose();
-    mh_supencCieMurController.dispose();
-    mh_supencPisMurController.dispose();
-    mh_suprasgventController.dispose();
-    mh_supbajovenController.dispose();
-    mh_supaCentralController.dispose();
-    mh_suppunLocController.dispose();
-    df_encEsqMurController.dispose();
-    df_encCieMurController.dispose();
-    df_encPisMurController.dispose();
-    df_rasgventController.dispose();
-    df_bajovenController.dispose();
-    df_aCentralController.dispose();
-    df_punLocController.dispose();
-    df_supencEsqMurController.dispose();
-    df_supencCieMurController.dispose();
-    df_supencPisMurController.dispose();
-    df_suprasgventController.dispose();
-    df_supbajovenController.dispose();
-    df_supaCentralController.dispose();
-    df_suppunLocController.dispose();
-    totpalsupafecController.dispose();
   }
 }
 
@@ -5144,6 +5309,7 @@ class HojaMuro {
   File? imgelev;
   File? imgelevGuardada;
 
+  late TextEditingController nombreMuroController = TextEditingController(text: "(_)");
   final TextEditingController supmuroController = TextEditingController();
   final TextEditingController supventanaController = TextEditingController();
   final TextEditingController tipoMuroController = TextEditingController();
@@ -5181,6 +5347,7 @@ class HojaMuro {
   HojaMuro({required this.nombre});
 
   void dispose() {
+    nombreMuroController.dispose();
     supmuroController.dispose();
     supventanaController.dispose();
     tipoMuroController.dispose();

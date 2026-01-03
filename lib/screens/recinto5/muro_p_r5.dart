@@ -20,7 +20,7 @@ class _Muro_Principal_R5 extends State<Muro_Principal_R5> {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final hojaActual = appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 5");
+    final hojaActual = appState.obtenerHojaMuro("Muro Eje A - Recinto 5");
 
 
     return SingleChildScrollView(
@@ -170,12 +170,12 @@ class _Muro_Principal_R5 extends State<Muro_Principal_R5> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.tipomuroController,
+            valueListenable: hojaActual.tipoMuroController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.tipomuroController.text = "Muro perimetral";
+                hojaActual.tipoMuroController.text = "Muro perimetral";
               }
-              final seleccion = hojaActual.tipomuroController.text;
+              final seleccion = hojaActual.tipoMuroController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -184,7 +184,7 @@ class _Muro_Principal_R5 extends State<Muro_Principal_R5> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.tipomuroController.text = newSelection.first;
+                  hojaActual.tipoMuroController.text = newSelection.first;
                 },
 
               );
@@ -1536,7 +1536,7 @@ class _Muro_Principal_R5 extends State<Muro_Principal_R5> {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPrincipal(
+                onPressed: () => appState.obtenerImagenHojaMuro(
                   fuente: ImageSource.camera,
                   hoja: hojaActual,
                   imgnum: 2,
@@ -1613,7 +1613,7 @@ class _Muro_Principal_R5 extends State<Muro_Principal_R5> {
                 icon: Icon(Icons.save),
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
-                  await appState.guardarDibujoHojaPrincipal(
+                  await appState.guardarDibujoHojaMuro(
                     canvasKey: canvaskeyImg2_Murop_R5,
                     hoja: hojaActual,
                     imgnum: 2,
@@ -1657,7 +1657,7 @@ class _Muro_Principal_R5 extends State<Muro_Principal_R5> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await appState.eliminarDibujoHojaPrincipal(
+                  await appState.eliminarDibujoHojaMuro(
                     context: context,
                     hoja: hojaActual,
                     imgnum: 2,

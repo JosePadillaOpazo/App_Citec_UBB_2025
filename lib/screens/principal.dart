@@ -125,23 +125,24 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
           ),
 
           if (appState.pantallaActual != 0
-              && appState.pantallaActual != 1
-              && appState.pantallaActual != 10
-              && appState.pantallaActual != 19
-              && appState.pantallaActual != 28
-              && appState.pantallaActual != 37)
+              && appState.pantallaActual != 2
+              && appState.pantallaActual != 11
+              && appState.pantallaActual != 20
+              && appState.pantallaActual != 29
+              && appState.pantallaActual != 38
+          )
             IconButton(
               icon: Icon(Icons.delete, color: Colors.white),
               onPressed: () async {
                 if(
-                  appState.pantallaActual == 2
-                  || appState.pantallaActual == 11
-                  || appState.pantallaActual == 20
-                  || appState.pantallaActual == 29
-                  || appState.pantallaActual == 38
-                  || appState.pantallaActual == 42
-                )
-                  await appState.eliminarPantallaPrincipalActual(context);
+                  appState.pantallaActual == 1
+                  || appState.pantallaActual == 10
+                  || appState.pantallaActual == 19
+                  || appState.pantallaActual == 28
+                  || appState.pantallaActual == 37
+                ){
+                  await appState.eliminarPantallaRecinto(context);
+                }
                 if(
                   appState.pantallaActual == 3
                   || appState.pantallaActual == 4
@@ -183,7 +184,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 if(
                   appState.pantallaActual == 9
                   || appState.pantallaActual == 18
-                  || appState.pantallaActual == 22
+                  || appState.pantallaActual == 27
                   || appState.pantallaActual == 36
                   || appState.pantallaActual == 45
                   )
@@ -299,7 +300,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 1);
                           appState.muro_eje_p_info_r1 = true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 1");
+                          appState.obtenerRecinto("Recinto 1");
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_info_r1
@@ -312,7 +313,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 2);
                           appState.muro_eje_p_r1 = true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje A - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje A - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_r1
@@ -325,7 +327,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 3);
                           appState.muro_eje_b_r1=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje B - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje B - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_b_r1
@@ -338,7 +341,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 4);
                           appState.muro_eje_c_r1=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje C - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje C - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_c_r1
@@ -351,7 +355,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 5);
                           appState.muro_eje_d_r1=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje D - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje D - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje D - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_d_r1
@@ -364,7 +369,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 6);
                           appState.muro_eje_e_r1=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje E - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje E - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje E - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_e_r1
@@ -377,7 +383,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 7);
                           appState.muro_eje_f_r1=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje F - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje F - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje F - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_f_r1
@@ -390,7 +397,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 8);
                           appState.muro_eje_g_r1=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje g - Recinto 1");
+                          appState.obtenerHojaMuro("Muro Eje G - Recinto 1");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje G - Recinto 1');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_g_r1
@@ -403,6 +411,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 9);
                           appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 1");
+                          appState.asignarPisoCieloARecinto(nombreRecinto: 'Recinto 1', nombrePisoCielo: 'Piso Cielo - Recinto 1');
                           appState.piso_cielo_r1=true;
                           Navigator.pop(context);
                         },
@@ -449,7 +458,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 10);
                           appState.muro_eje_p_info_r2 = true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 2");
+                          appState.agregarRecinto(nombre: "Recinto 2");
+                          appState.obtenerRecinto("Recinto 2");
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_info_r2
@@ -462,7 +472,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 11);
                           appState.muro_eje_p_r2 = true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje A - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje A - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_r2
@@ -475,7 +486,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 12);
                           appState.muro_eje_b_r2=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje B - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje B - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_b_r2
@@ -488,7 +500,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 13);
                           appState.muro_eje_c_r2=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje C - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje C - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_c_r2
@@ -501,7 +514,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 14);
                           appState.muro_eje_d_r2=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje D - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje D - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje D - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_d_r2
@@ -514,7 +528,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 15);
                           appState.muro_eje_e_r2=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje E - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje E - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje E - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_e_r2
@@ -527,7 +542,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 16);
                           appState.muro_eje_f_r2=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje F - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje F - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje F - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_f_r2
@@ -540,7 +556,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 17);
                           appState.muro_eje_g_r2=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje G - Recinto 2");
+                          appState.obtenerHojaMuro("Muro Eje G - Recinto 2");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje G - Recinto 2');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_g_r2
@@ -553,6 +570,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 18);
                           appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 2");
+                          appState.asignarPisoCieloARecinto(nombreRecinto: 'Recinto 2', nombrePisoCielo: 'Piso Cielo - Recinto 2');
                           appState.piso_cielo_r2=true;
                           Navigator.pop(context);
                         },
@@ -599,7 +617,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 19);
                           appState.muro_eje_p_info_r3 = true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 3");
+                          appState.agregarRecinto(nombre: "Recinto 3");
+                          appState.obtenerRecinto("Recinto 3");
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_info_r3
@@ -612,7 +631,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 20);
                           appState.muro_eje_p_r3 = true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje A - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje A - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_r3
@@ -625,7 +645,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 21);
                           appState.muro_eje_b_r3=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje B - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje B - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_b_r3
@@ -638,7 +659,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 22);
                           appState.muro_eje_c_r3=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje C - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje C - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_c_r3
@@ -651,7 +673,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 23);
                           appState.muro_eje_d_r3=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje D - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje D - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje D - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_d_r3
@@ -664,7 +687,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 24);
                           appState.muro_eje_e_r3=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje E - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje E - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje E - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_e_r3
@@ -677,7 +701,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 25);
                           appState.muro_eje_f_r3=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje F - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje F - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje F - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_f_r3
@@ -690,7 +715,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 26);
                           appState.muro_eje_g_r3=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje G - Recinto 3");
+                          appState.obtenerHojaMuro("Muro Eje G - Recinto 3");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje G - Recinto 3');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_g_r3
@@ -703,6 +729,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 27);
                           appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 3");
+                          appState.asignarPisoCieloARecinto(nombreRecinto: 'Recinto 3', nombrePisoCielo: 'Piso Cielo - Recinto 3');
                           appState.piso_cielo_r3=true;
                           Navigator.pop(context);
                         },
@@ -750,7 +777,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 28);
                           appState.muro_eje_p_info_r4= true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 4");
+                          appState.agregarRecinto(nombre: "Recinto 4");
+                          appState.obtenerRecinto("Recinto 4");
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_info_r4
@@ -763,7 +791,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 29);
                           appState.muro_eje_p_r4= true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje A - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje A - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_r4
@@ -776,7 +805,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 30);
                           appState.muro_eje_b_r4=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje B - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje B - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_b_r4
@@ -789,7 +819,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 31);
                           appState.muro_eje_c_r4=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje C - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje C - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_c_r4
@@ -802,7 +833,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 32);
                           appState.muro_eje_d_r4=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje D - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje D - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje D - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_d_r4
@@ -815,7 +847,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 33);
                           appState.muro_eje_e_r4=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje E - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje E - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje E - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_e_r4
@@ -828,7 +861,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 34);
                           appState.muro_eje_f_r4=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje F - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje F - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje F - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_f_r4
@@ -841,7 +875,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 35);
                           appState.muro_eje_g_r4=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje G - Recinto 4");
+                          appState.obtenerHojaMuro("Muro Eje G - Recinto 4");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje G - Recinto 4');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_g_r4
@@ -854,6 +889,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 36);
                           appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 4");
+                          appState.asignarPisoCieloARecinto(nombreRecinto: 'Recinto 4', nombrePisoCielo: 'Piso Cielo - Recinto 4');
                           appState.piso_cielo_r4=true;
                           Navigator.pop(context);
                         },
@@ -901,7 +937,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 37);
                           appState.muro_eje_p_info_r5= true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 5");
+                          appState.agregarRecinto(nombre: "Recinto 5");
+                          appState.obtenerRecinto("Recinto 5");
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_info_r5
@@ -914,7 +951,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 38);
                           appState.muro_eje_p_r5= true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje A - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje A - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_p_r5
@@ -927,7 +965,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 39);
                           appState.muro_eje_b_r5=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje B - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje B - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje B - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_b_r5
@@ -940,7 +979,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 40);
                           appState.muro_eje_c_r5=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje C - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje C - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje C - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_c_r5
@@ -953,7 +993,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 41);
                           appState.muro_eje_d_r5=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje D - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje D - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje D - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_d_r5
@@ -966,7 +1007,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 42);
                           appState.muro_eje_e_r5=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje E - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje E - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje E - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_e_r5
@@ -979,7 +1021,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 43);
                           appState.muro_eje_f_r5=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje F - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje F - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje F - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_f_r5
@@ -992,7 +1035,8 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 44);
                           appState.muro_eje_g_r5=true;
-                          appState.obtenerHojaMuroPrincipal("Muro Eje G - Recinto 5");
+                          appState.obtenerHojaMuro("Muro Eje G - Recinto 5");
+                          appState.asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje G - Recinto 5');
                           Navigator.pop(context);
                         },
                         trailing: appState.muro_eje_g_r5
@@ -1005,6 +1049,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                         onTap: () {
                           setState(() => appState.pantallaActual = 45);
                           appState.obtenerHojaPisoCielo("Piso Cielo - Recinto 5");
+                          appState.asignarPisoCieloARecinto(nombreRecinto: 'Recinto 5', nombrePisoCielo: 'Piso Cielo - Recinto 5');
                           appState.piso_cielo_r5=true;
                           Navigator.pop(context);
                         },

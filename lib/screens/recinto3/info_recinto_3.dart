@@ -19,7 +19,7 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final hojaActual = appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 3");
+    final hojaActual = appState.obtenerRecinto("Recinto 3");
 
 
     return SingleChildScrollView(
@@ -753,14 +753,13 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPrincipal(
+                onPressed: () => appState.obtenerImagenRecinto(
                   fuente: ImageSource.camera,
-                  hoja: hojaActual,
-                  imgnum: 1,
+                  recinto: hojaActual,
                   onImagenSeleccionada: (img) {
                     setState(() {
-                      hojaActual.imgpatol = img;
-                      hojaActual.imgpatolGuardada = null;
+                      hojaActual.imgPlano = img;
+                      hojaActual.imgPlanoGuardada = null;
                       _pointsImg1_PR3.clear();
                     });
                   },
@@ -778,7 +777,7 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
           // SECCIÓN DIBUJO
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgpatol != null && hojaActual.imgpatolGuardada == null) ...[
+          if (hojaActual.imgPlano != null && hojaActual.imgPlanoGuardada == null) ...[
             Text(
               "Dibuja observaciones sobre la imagen:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -795,7 +794,7 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
-                      image: FileImage(hojaActual.imgpatol!),
+                      image: FileImage(hojaActual.imgPlano!),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -832,13 +831,12 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
                 icon: Icon(Icons.save),
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
-                  await appState.guardarDibujoHojaPrincipal(
+                  await appState.guardarDibujoRecinto(
                     canvasKey: canvaskeyImg1_Murop_R3,
-                    hoja: hojaActual,
-                    imgnum: 1,
+                    recinto: hojaActual,
                     onGuardado: (file) {
                       setState(() {
-                        hojaActual.imgpatolGuardada= file;
+                        hojaActual.imgPlanoGuardada= file;
                         _pointsImg1_PR3.clear();
                       });
                     },
@@ -855,7 +853,7 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
           // SECCIÓN RESULTADO (IMAGEN GUARDADA)
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgpatolGuardada != null) ...[
+          if (hojaActual.imgPlanoGuardada != null) ...[
             Text(
               "Imagen guardada:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -865,7 +863,7 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
 
             Center(
               child: Image.file(
-                hojaActual.imgpatolGuardada!,
+                hojaActual.imgPlanoGuardada!,
                 width: 900,
                 height: 800,
                 fit: BoxFit.contain,
@@ -877,10 +875,9 @@ class _Info_Recinto_3 extends State<Info_Recinto_3> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await appState.eliminarDibujoHojaPrincipal(
+                  await appState.eliminarDibujoRecinto(
                     context: context,
-                    hoja: hojaActual,
-                    imgnum: 1,
+                    recinto: hojaActual,
                   );
                   setState(() {
                     _pointsImg1_PR3.clear();

@@ -19,7 +19,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
-    final hojaActual = appState.obtenerHojaMuroPrincipal("Muro Eje Principal - Recinto 1");
+    final recintoActual = appState.obtenerRecinto("Recinto 1");
 
 
     return SingleChildScrollView(
@@ -59,12 +59,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.patvisibleController,
+            valueListenable: recintoActual.patvisibleController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.patvisibleController.text = "No";
+                recintoActual.patvisibleController.text = "No";
               }
-              final seleccion = hojaActual.patvisibleController.text;
+              final seleccion = recintoActual.patvisibleController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -73,7 +73,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.patvisibleController.text = newSelection.first;
+                  recintoActual.patvisibleController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -104,12 +104,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.pinOlimpController,
+            valueListenable: recintoActual.pinOlimpController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.pinOlimpController.text = "No";
+                recintoActual.pinOlimpController.text = "No";
               }
-              final seleccion = hojaActual.pinOlimpController.text;
+              final seleccion = recintoActual.pinOlimpController.text;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -121,9 +121,9 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                     ],
                     selected: {seleccion},
                     onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.pinOlimpController.text = newSelection.first;
+                      recintoActual.pinOlimpController.text = newSelection.first;
                       if (newSelection.first != 'Si') {
-                        hojaActual.cualpolController.clear();
+                        recintoActual.cualpolController.clear();
                       }
                     },
                     style: ButtonStyle(
@@ -153,7 +153,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: hojaActual.cualpolController,
+                    controller: recintoActual.cualpolController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
                       labelText: "Detalles de Manifestaciones Ocultas",
@@ -192,12 +192,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.olorhumController,
+            valueListenable: recintoActual.olorhumController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.olorhumController.text = "No";
+                recintoActual.olorhumController.text = "No";
               }
-              final seleccion = hojaActual.olorhumController.text;
+              final seleccion = recintoActual.olorhumController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -206,7 +206,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.olorhumController.text = newSelection.first;
+                  recintoActual.olorhumController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -237,12 +237,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.modifController,
+            valueListenable: recintoActual.modifController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.modifController.text = "No";
+                recintoActual.modifController.text = "No";
               }
-              final seleccion = hojaActual.modifController.text;
+              final seleccion = recintoActual.modifController.text;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -254,9 +254,9 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                     ],
                     selected: {seleccion},
                     onSelectionChanged: (Set<String> newSelection) {
-                      hojaActual.modifController.text = newSelection.first;
+                      recintoActual.modifController.text = newSelection.first;
                       if (newSelection.first != 'Si') {
-                        hojaActual.cualmodController.clear();
+                        recintoActual.cualmodController.clear();
                       }
                     },
                     style: ButtonStyle(
@@ -286,7 +286,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: hojaActual.cualmodController,
+                    controller: recintoActual.cualmodController,
                     enabled: seleccion == 'Si',
                     decoration: const InputDecoration(
                       labelText: "Detalles de Manifestaciones Ocultas",
@@ -332,7 +332,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.sistcalefController,
+            valueListenable: recintoActual.sistcalefController,
             builder: (context, TextEditingValue value, _) {
               final seleccion = value.text.isEmpty ? null : value.text;
 
@@ -386,9 +386,9 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                     ],
                     onChanged: (newValue) {
                       if (newValue == null) return;
-                      hojaActual.sistcalefController.text = newValue;
+                      recintoActual.sistcalefController.text = newValue;
                       if (newValue != 'Otro ¿cuál?') {
-                        hojaActual.otrocalefController.clear();
+                        recintoActual.otrocalefController.clear();
                       }
                     },
                   ),
@@ -404,7 +404,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                   const SizedBox(height: 10),
 
                   TextFormField(
-                    controller: hojaActual.otrocalefController,
+                    controller: recintoActual.otrocalefController,
                     enabled: value.text == 'Otro ¿cuál?',
                     decoration: const InputDecoration(
                       labelText: "Detalle",
@@ -442,7 +442,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           TextFormField(
-            controller: hojaActual.tiemcalefController,
+            controller: recintoActual.tiemcalefController,
             decoration: const InputDecoration(
               labelText: "Tiempo",
               border: OutlineInputBorder(),
@@ -478,12 +478,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.aireadorController,
+            valueListenable: recintoActual.aireadorController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.aireadorController.text = "No Operativo";
+                recintoActual.aireadorController.text = "No Operativo";
               }
-              final seleccion = hojaActual.aireadorController.text;
+              final seleccion = recintoActual.aireadorController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -492,7 +492,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.aireadorController.text = newSelection.first;
+                  recintoActual.aireadorController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -523,12 +523,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.extractorController,
+            valueListenable: recintoActual.extractorController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.extractorController.text = "No Operativo";
+                recintoActual.extractorController.text = "No Operativo";
               }
-              final seleccion = hojaActual.extractorController.text;
+              final seleccion = recintoActual.extractorController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -537,7 +537,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.extractorController.text = newSelection.first;
+                  recintoActual.extractorController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -568,12 +568,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.campanaController,
+            valueListenable: recintoActual.campanaController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.campanaController.text = "No Operativo";
+                recintoActual.campanaController.text = "No Operativo";
               }
-              final seleccion = hojaActual.campanaController.text;
+              final seleccion = recintoActual.campanaController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -582,7 +582,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.campanaController.text = newSelection.first;
+                  recintoActual.campanaController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -613,12 +613,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.celosiapueController,
+            valueListenable: recintoActual.celosiapueController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.celosiapueController.text = "No Operativo";
+                recintoActual.celosiapueController.text = "No Operativo";
               }
-              final seleccion = hojaActual.celosiapueController.text;
+              final seleccion = recintoActual.celosiapueController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -627,7 +627,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.celosiapueController.text = newSelection.first;
+                  recintoActual.celosiapueController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -658,12 +658,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.rebajepueController,
+            valueListenable: recintoActual.rebajepueController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.rebajepueController.text = "No Operativo";
+                recintoActual.rebajepueController.text = "No Operativo";
               }
-              final seleccion = hojaActual.rebajepueController.text;
+              final seleccion = recintoActual.rebajepueController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -672,7 +672,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.rebajepueController.text = newSelection.first;
+                  recintoActual.rebajepueController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -703,12 +703,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           const SizedBox(height: 10),
 
           ValueListenableBuilder(
-            valueListenable: hojaActual.otroequipController,
+            valueListenable: recintoActual.otroequipController,
             builder: (context, TextEditingValue value, _) {
               if (value.text.isEmpty) {
-                hojaActual.otroequipController.text = "No Operativo";
+                recintoActual.otroequipController.text = "No Operativo";
               }
-              final seleccion = hojaActual.otroequipController.text;
+              final seleccion = recintoActual.otroequipController.text;
               return SegmentedButton<String>(
                 showSelectedIcon: false,
                 segments: const [
@@ -717,7 +717,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 ],
                 selected: {seleccion},
                 onSelectionChanged: (Set<String> newSelection) {
-                  hojaActual.otroequipController.text = newSelection.first;
+                  recintoActual.otroequipController.text = newSelection.first;
                 },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.resolveWith<Color?>(
@@ -754,14 +754,13 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           Row(
             children: [
               ElevatedButton.icon(
-                onPressed: () => appState.obtenerImagenHojaPrincipal(
+                onPressed: () => appState.obtenerImagenRecinto(
                   fuente: ImageSource.camera,
-                  hoja: hojaActual,
-                  imgnum: 1,
+                  recinto: recintoActual,
                   onImagenSeleccionada: (img) {
                     setState(() {
-                      hojaActual.imgpatol = img;
-                      hojaActual.imgpatolGuardada = null;
+                      recintoActual.imgPlano = img;
+                      recintoActual.imgPlanoGuardada = null;
                       _pointsImg1_PR1.clear();
                     });
                   },
@@ -779,7 +778,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           // SECCIÓN DIBUJO
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgpatol != null && hojaActual.imgpatolGuardada == null) ...[
+          if (recintoActual.imgPlano != null && recintoActual.imgPlanoGuardada == null) ...[
             Text(
               "Dibuja observaciones sobre la imagen:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -796,7 +795,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
-                      image: FileImage(hojaActual.imgpatol!),
+                      image: FileImage(recintoActual.imgPlano!),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -833,13 +832,12 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
                 icon: Icon(Icons.save),
                 label: Text("Guardar Dibujo"),
                 onPressed: () async {
-                  await appState.guardarDibujoHojaPrincipal(
+                  await appState.guardarDibujoRecinto(
                     canvasKey: canvaskeyImg1_Murop_R1,
-                    hoja: hojaActual,
-                    imgnum: 1,
+                    recinto: recintoActual,
                     onGuardado: (file) {
                       setState(() {
-                        hojaActual.imgpatolGuardada= file;
+                        recintoActual.imgPlanoGuardada= file;
                         _pointsImg1_PR1.clear();
                       });
                     },
@@ -856,7 +854,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
           // SECCIÓN RESULTADO (IMAGEN GUARDADA)
           // -------------------------------------------------------------------
 
-          if (hojaActual.imgpatolGuardada != null) ...[
+          if (recintoActual.imgPlanoGuardada != null) ...[
             Text(
               "Imagen guardada:",
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -866,7 +864,7 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
 
             Center(
               child: Image.file(
-                hojaActual.imgpatolGuardada!,
+                recintoActual.imgPlanoGuardada!,
                 width: 900,
                 height: 800,
                 fit: BoxFit.contain,
@@ -878,10 +876,9 @@ class _Info_Recinto_1 extends State<Info_Recinto_1> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  await appState.eliminarDibujoHojaPrincipal(
+                  await appState.eliminarDibujoRecinto(
                     context: context,
-                    hoja: hojaActual,
-                    imgnum: 1,
+                    recinto: recintoActual,
                   );
                   setState(() {
                     _pointsImg1_PR1.clear();
