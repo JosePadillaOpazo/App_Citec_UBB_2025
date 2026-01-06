@@ -56,7 +56,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'inspecciones',
-      orderBy: 'id ASC',
+      orderBy: 'inspeccion_uuid ASC',
     );
 
     inspecciones = result;
@@ -67,7 +67,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'proyectos',
-      orderBy: 'id ASC',
+      orderBy: 'proyecto_uuid ASC',
     );
 
     proyectos = result;
@@ -78,7 +78,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'viviendas',
-      orderBy: 'id ASC',
+      orderBy: 'vivienda_uuid ASC',
     );
 
     viviendas = result;
@@ -89,7 +89,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'recintos',
-      orderBy: 'id ASC',
+      orderBy: 'recinto_uuid ASC',
     );
 
     recintos = result;
@@ -100,7 +100,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'muros',
-      orderBy: 'id ASC',
+      orderBy: 'muro_uuid ASC',
     );
 
     muros = result;
@@ -111,7 +111,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'pisocielo',
-      orderBy: 'id ASC',
+      orderBy: 'pisocielo_uuid ASC',
     );
 
     pisocielo = result;
@@ -122,7 +122,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'sistemas_ventilacion',
-      orderBy: 'id ASC',
+      orderBy: 'sistema_ventilacion_uuid ASC',
     );
 
     sistemas_ventilacion = result;
@@ -133,7 +133,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'ventilacion_recintos',
-      orderBy: 'id ASC',
+      orderBy: 'ventilacion_recinto_uuid ASC',
     );
 
     ventilacion_recintos = result;
@@ -144,7 +144,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
     final result = await db.query(
       'patologias',
-      orderBy: 'id ASC',
+      orderBy: 'patologia_uuid ASC',
     );
 
     patologias = result;
@@ -260,7 +260,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
             const SizedBox(height: 30),
 
-            /// ================= RECINTOS =================
+              /// ================= RECINTOS =================
 
             const Text(
                 "Recintos",
@@ -277,42 +277,6 @@ class _DB_ViewerState extends State<DB_Viewer> {
                 : _tablaRecintos(),
 
             const SizedBox(height: 30),
-
-            /// ================= Muros =================
-            const Text(
-              'Muros',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            muros.isEmpty
-                ? const Text('No hay Muros')
-                : _tablaMuros(),
-
-            const SizedBox(height: 30),
-
-            /// ================= Piso Cielo =================
-            const Text(
-              'Pisos y Cielos',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            pisocielo.isEmpty
-                ? const Text('No hay Pisos y Cielos')
-                : _tablaPisoCielo(),
-
-            const SizedBox(height: 50),
-
-
 
             /// ================= Recintos y ventilacion =================
             const Text(
@@ -331,6 +295,23 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
             const SizedBox(height: 50),
 
+            /// ================= Muros =================
+            const Text(
+              'Muros',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            muros.isEmpty
+                ? const Text('No hay Muros')
+                : _tablaMuros(),
+
+            const SizedBox(height: 30),
+
             /// ================= Patologias Muro=================
             const Text(
               'Muros con Patologias',
@@ -348,6 +329,25 @@ class _DB_ViewerState extends State<DB_Viewer> {
 
             const SizedBox(height: 50),
 
+            /// ================= Piso Cielo =================
+            const Text(
+              'Pisos y Cielos',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+            pisocielo.isEmpty
+                ? const Text('No hay Pisos y Cielos')
+                : _tablaPisoCielo(),
+
+            const SizedBox(height: 50),
+
+
+
+
             /// ================= Patologias Piso Cielo=================
             const Text(
               'Pisos y Cielos con Patologias',
@@ -362,6 +362,25 @@ class _DB_ViewerState extends State<DB_Viewer> {
             patologias_pisocielo.isEmpty
                 ? const Text('No hay Pisos ni Cielos con Patologias')
                 : _tablaPatologias_PisoCielo(),
+
+            const SizedBox(height: 50),
+
+
+
+          /// ================= Sistema Ventilacion =================
+            const Text(
+              'Sistema de Ventilación',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            sistemas_ventilacion.isEmpty
+                ? const Text('No hay sistema de ventilacion')
+                : _tablaSistemaVentilacion(),
 
             const SizedBox(height: 50),
 
@@ -381,24 +400,6 @@ class _DB_ViewerState extends State<DB_Viewer> {
                 : _tablaPatologias(),
 
             const SizedBox(height: 50),
-
-            /// ================= Sistema Ventilacion =================
-            const Text(
-              'Sistema de Ventilación',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            sistemas_ventilacion.isEmpty
-                ? const Text('No hay sistema de ventilacion')
-                : _tablaSistemaVentilacion(),
-
-            const SizedBox(height: 50),
-
 
 
 
@@ -420,7 +421,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
         columns: const [
           DataColumn(label: Text('Eliminar')),
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('PROYECTO ID')),
+          DataColumn(label: Text('PROYECTO UUID')),
           DataColumn(label: Text('INSPECCION UUID')),
           DataColumn(label: Text('Fecha')),
           DataColumn(label: Text('Ingreso')),
@@ -439,13 +440,13 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(
                 _botonBorrar(
                   tabla: 'inspecciones',
-                  idColumn: 'id',
-                  id: item['id'],
-                  descripcion: 'inspeccion ${item['id']}',
+                  idColumn: 'inspeccion_uuid',
+                  uuid: item['inspeccion_uuid'],
+                  descripcion: 'inspeccion ${item['inspeccion_uuid']}',
                 ),
               ),
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['proyecto_id'] ?? '-'}')),
+              DataCell(Text('${item['proyecto_uuid'] ?? '-'}')),
               DataCell(Text('${item['inspeccion_uuid'] ?? '-'}')),
               DataCell(Text('${item['fecha'] ?? '-'}')),
               DataCell(Text('${item['hora_ingreso'] ?? '-'}')),
@@ -492,7 +493,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
         MaterialStateProperty.all(Colors.grey.shade300),
         columns: const [
           DataColumn(label: Text('Eliminar')),
-          DataColumn(label: Text('ID')),
+          DataColumn(label: Text('PROYECTO UUID')),
           DataColumn(label: Text('Nombre Proyecto')),
           DataColumn(label: Text('Región')),
           DataColumn(label: Text('Comuna')),
@@ -501,15 +502,15 @@ class _DB_ViewerState extends State<DB_Viewer> {
         rows: proyectos.map((item) {
           return DataRow(
             cells: [
-              DataCell(
+             DataCell(
                 _botonBorrar(
                   tabla: 'proyectos',
-                  idColumn: 'id',
-                  id: item['id'],
-                  descripcion: 'proyecto ${item['id']}',
+                  idColumn: 'proyecto_uuid',
+                  uuid: item['proyecto_uuid'],
+                  descripcion: 'proyecto ${item['proyecto_uuid']}',
                 ),
               ),
-              DataCell(Text('${item['id'] ?? '-'}')),
+              DataCell(Text('${item['proyecto_uuid'] ?? '-'}')),
               DataCell(Text('${item['nombre_proyecto'] ?? '-'}')),
               DataCell(Text('${item['region'] ?? '-'}')),
               DataCell(Text('${item['comuna'] ?? '-'}')),
@@ -535,8 +536,8 @@ class _DB_ViewerState extends State<DB_Viewer> {
         columns: const [
           DataColumn(label: Text('Eliminar')),
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('Proyecto ID')),
-          DataColumn(label: Text('Inspeccion ID')),
+          DataColumn(label: Text('INSPECCION UUID')),
+          DataColumn(label: Text('VIVIENDA UUID')),
           DataColumn(label: Text('Tipología')),
           DataColumn(label: Text('Dirección')),
           DataColumn(label: Text('Superficie')),
@@ -570,14 +571,14 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(
                 _botonBorrar(
                   tabla: 'viviendas',
-                  idColumn: 'id',
-                  id: item['id'],
-                  descripcion: 'vivienda ${item['id']}',
+                  idColumn: 'vivienda_uuid',
+                  uuid: item['vivienda_uuid'],
+                  descripcion: 'vivienda ${item['vivienda_uuid']}',
                 ),
               ),
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['proyecto_id'] ?? '-'}')),
-              DataCell(Text('${item['inspeccion_id'] ?? '-'}')),
+              DataCell(Text('${item['inspeccion_uuid'] ?? '-'}')),
+              DataCell(Text('${item['vivienda_uuid'] ?? '-'}')),
               DataCell(Text(item['tipologia_vivienda'] ?? '-')),
               DataCell(Text(item['direccion'] ?? '-')),
               DataCell(Text('${item['superficie'] ?? '-'}')),
@@ -630,8 +631,8 @@ class _DB_ViewerState extends State<DB_Viewer> {
         columns: const [
           DataColumn(label: Text('Eliminar')),
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('INSPECCION ID')),
-          DataColumn(label: Text('VIVIENDA ID')),
+          DataColumn(label: Text('RECINTO UUID')),
+          DataColumn(label: Text('VIVIENDA UUID')),
           DataColumn(label: Text('Nombre Recinto')),
           DataColumn(label: Text('Patologias Visibles')),
           DataColumn(label: Text('Manifestaciones Ocultas')),
@@ -648,14 +649,14 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(
                 _botonBorrar(
                   tabla: 'recintos',
-                  idColumn: 'id',
-                  id: item['id'],
-                  descripcion: 'recinto ${item['id']}',
+                  idColumn: 'recinto_uuid',
+                  uuid: item['recinto_uuid'],
+                  descripcion: 'recinto ${item['recinto_uuid']}',
                 ),
               ),
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['inspeccion_id'] ?? '-'}')),
-              DataCell(Text('${item['vivienda_id'] ?? '-'}')),
+              DataCell(Text('${item['recinto_uuid'] ?? '-'}')),
+              DataCell(Text('${item['vivienda_uuid'] ?? '-'}')),
               DataCell(Text(item['nombre_recinto'] ?? '-')),
               DataCell(Text(
                 item['patologias_visibles'] == 1 ? 'Sí' : 'No',
@@ -694,8 +695,8 @@ class _DB_ViewerState extends State<DB_Viewer> {
         columns: const [
           DataColumn(label: Text('Eliminar')),
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('INSPECCION ID')),
-          DataColumn(label: Text('RECINTO ID')),
+          DataColumn(label: Text('MURO UUID')),
+          DataColumn(label: Text('RECINTO UUID')),
           DataColumn(label: Text('Eje Muro')),
           DataColumn(label: Text('Tipo de Muro')),
           DataColumn(label: Text('Superficie')),
@@ -708,14 +709,14 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(
                 _botonBorrar(
                   tabla: 'muros',
-                  idColumn: 'id',
-                  id: item['id'],
-                  descripcion: 'muro ${item['id']}',
+                  idColumn: 'muro_uuid',
+                  uuid: item['muro_uuid'],
+                  descripcion: 'muro ${item['muro_uuid']}',
                 ),
               ),
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['inspeccion_id'] ?? '-'}')),
-              DataCell(Text('${item['recinto_id'] ?? '-'}')),
+              DataCell(Text('${item['muro_uuid'] ?? '-'}')),
+              DataCell(Text('${item['recinto_uuid'] ?? '-'}')),
               DataCell(Text('${item['nombre_muro'] ?? '-'}')),
               DataCell(Text(
                 item['tipo_muro'] == 1 ? 'Muro interior' : 'Muro perimetral',
@@ -746,7 +747,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
         columns: const [
           DataColumn(label: Text('Eliminar')),
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('INSPECCION ID')),
+          DataColumn(label: Text('PISO CIELO UUID')),
           DataColumn(label: Text('RECINTO ID')),
           DataColumn(label: Text('Tipo')),
           DataColumn(label: Text('Superficie')),
@@ -758,15 +759,15 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(
                 _botonBorrar(
                   tabla: 'pisocielo',
-                  idColumn: 'id',
-                  id: item['id'],
-                  descripcion: 'pisocielo ${item['id']}',
+                  idColumn: 'pisocielo_uuid',
+                  uuid: item['pisocielo_uuid'],
+                  descripcion: 'pisocielo ${item['pisocielo_uuid']}',
                 ),
               ),
 
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['inspeccion_id'] ?? '-'}')),
-              DataCell(Text('${item['recinto_id'] ?? '-'}')),
+              DataCell(Text('${item['pisocielo_uuid'] ?? '-'}')),
+              DataCell(Text('${item['recinto_uuid'] ?? '-'}')),
               DataCell(Text('${item['tipo'] ?? '-'}')),
               DataCell(Text('${item['superficie'] ?? '-'}')),
               DataCell(Text(textoNivelAfectacion(item['nivel_afectacion']))),
@@ -790,13 +791,13 @@ class _DB_ViewerState extends State<DB_Viewer> {
         headingRowColor:
         MaterialStateProperty.all(Colors.grey.shade300),
         columns: const [
-          DataColumn(label: Text('ID')),
+          DataColumn(label: Text('Sistema UUID')),
           DataColumn(label: Text('Nombre de Sistema')),
         ],
         rows: sistemas_ventilacion.map((item) {
           return DataRow(
             cells: [
-              DataCell(Text('${item['id'] ?? '-'}')),
+              DataCell(Text('${item['sistema_ventilacion_uuid'] ?? '-'}')),
               DataCell(Text('${item['nombre_sistema'] ?? '-'}')),
             ],
           );
@@ -817,18 +818,20 @@ class _DB_ViewerState extends State<DB_Viewer> {
         headingRowColor:
         MaterialStateProperty.all(Colors.grey.shade300),
         columns: const [
-          DataColumn(label: Text('ID')),
-          DataColumn(label: Text('Recinto ID')),
-          DataColumn(label: Text('Sistema ID')),
+          DataColumn(label: Text('VENT RECINTO UUID')),
+          DataColumn(label: Text('RECINTO UUID')),
+          DataColumn(label: Text('SIST VENT UUID')),
           DataColumn(label: Text('Estado')),
         ],
         rows: ventilacion_recintos.map((item) {
           return DataRow(
             cells: [
-              DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['recinto_id'] ?? '-'}')),
-              DataCell(Text('${item['sistema_ventilacion_id'] ?? '-'}')),
-              DataCell(Text('${item['estado'] ?? '-'}')),
+              DataCell(Text('${item['ventilacion_recinto_uuid'] ?? '-'}')),
+              DataCell(Text('${item['recinto_uuid'] ?? '-'}')),
+              DataCell(Text('${item['sistema_ventilacion_uuid'] ?? '-'}')),
+              DataCell(Text(
+                item['estado'] == 1 ? 'Operativo' : 'No Operativo',
+              )),
             ],
           );
         }).toList(),
@@ -848,7 +851,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
         headingRowColor:
         MaterialStateProperty.all(Colors.grey.shade300),
         columns: const [
-          DataColumn(label: Text('ID')),
+          DataColumn(label: Text('PATOLOGIAS UUID')),
           DataColumn(label: Text('Tipo')),
           DataColumn(label: Text('Ubicación')),
 
@@ -856,7 +859,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
         rows: patologias.map((item) {
           return DataRow(
             cells: [
-              DataCell(Text('${item['id'] ?? '-'}')),
+              DataCell(Text('${item['patologia_uuid'] ?? '-'}')),
               DataCell(Text('${item['tipo'] ?? '-'}')),
               DataCell(Text('${item['ubicacion'] ?? '-'}')),
 
@@ -880,9 +883,9 @@ class _DB_ViewerState extends State<DB_Viewer> {
         MaterialStateProperty.all(Colors.grey.shade300),
         columns: const [
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('INSPECCION ID')),
-          DataColumn(label: Text('MURO ID')),
-          DataColumn(label: Text('PATOLOGIA ID')),
+          DataColumn(label: Text('PATOOGIAS MURO UUID')),
+          DataColumn(label: Text('MURO UUID')),
+          DataColumn(label: Text('PATOLOGIA UUID')),
           DataColumn(label: Text('Estado')),
           DataColumn(label: Text('Superficie')),
 
@@ -891,9 +894,9 @@ class _DB_ViewerState extends State<DB_Viewer> {
           return DataRow(
             cells: [
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['inspeccion_id'] ?? '-'}')),
-              DataCell(Text('${item['muro_id'] ?? '-'}')),
-              DataCell(Text('${item['patologia_id'] ?? '-'}')),
+              DataCell(Text('${item['patologia_muro_uuid'] ?? '-'}')),
+              DataCell(Text('${item['muro_uuid'] ?? '-'}')),
+              DataCell(Text('${item['patologia_uuid'] ?? '-'}')),
               DataCell(Text(
                 item['estado'] == 1 ? 'Si' : 'No',
               )),
@@ -919,9 +922,9 @@ class _DB_ViewerState extends State<DB_Viewer> {
         MaterialStateProperty.all(Colors.grey.shade300),
         columns: const [
           DataColumn(label: Text('ID')),
-          DataColumn(label: Text('INSPECCION ID')),
-          DataColumn(label: Text('PISO CIELO ID')),
-          DataColumn(label: Text('PATOLOGIA ID')),
+          DataColumn(label: Text('PAT PISO CIELO UUID')),
+          DataColumn(label: Text('PISO CIELO UUID')),
+          DataColumn(label: Text('PATOLOGIA UUID')),
           DataColumn(label: Text('Tipo')),
           DataColumn(label: Text('Estado')),
           DataColumn(label: Text('Superficie')),
@@ -931,9 +934,9 @@ class _DB_ViewerState extends State<DB_Viewer> {
           return DataRow(
             cells: [
               DataCell(Text('${item['id'] ?? '-'}')),
-              DataCell(Text('${item['inspeccion_id'] ?? '-'}')),
-              DataCell(Text('${item['pisocielo_id'] ?? '-'}')),
-              DataCell(Text('${item['patologia_id'] ?? '-'}')),
+              DataCell(Text('${item['patologia_pisocielo_uuid'] ?? '-'}')),
+              DataCell(Text('${item['pisocielo_uuid'] ?? '-'}')),
+              DataCell(Text('${item['patologia_uuid'] ?? '-'}')),
               DataCell(Text('${item['tipo'] ?? '-'}')),
               DataCell(Text(
                 item['estado'] == 1 ? 'Si' : 'No',
@@ -951,7 +954,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
   Widget _botonBorrar({
     required String tabla,
     required String idColumn,
-    required int id,
+    required String uuid,
     required String descripcion,
   }) {
     return IconButton(
@@ -980,7 +983,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           await LocalDatabase.borrarDato(
             tabla: tabla,
             idColumn: idColumn,
-            id: id,
+            uuid: uuid,
           );
 
           // 🔥 Recarga todo (respeta CASCADE)

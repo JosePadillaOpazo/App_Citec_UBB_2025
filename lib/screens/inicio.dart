@@ -54,7 +54,6 @@ class Inicio extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               appState.HoraInicio();
-                              appState.iniciarNuevaInspeccion();
                               Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                   transitionDuration: const Duration(milliseconds: 400),
@@ -713,18 +712,18 @@ class Inicio extends StatelessWidget {
               onPressed: () async {
                 if (nombreController.text.isEmpty) return;
 
-                await LocalDatabase.insertarProyecto({
-                  'nombre_proyecto': nombreController.text,
-                  'region': regionController.text,
-                  'comuna': comunaController.text,
-                  'etapa': etapaController.text,
-                  'sync_status': 0,
-                  'updated_at': DateTime.now().toIso8601String(),
-                });
+                await LocalDatabase.insertarProyecto(
+                  nombreProyecto: nombreController.text,
+                  region: regionController.text.isEmpty ? null : regionController.text,
+                  comuna: comunaController.text.isEmpty ? null : comunaController.text,
+                  etapa: etapaController.text.isEmpty ? null : etapaController.text,
+                );
+
                 Navigator.pop(context);
               },
               child: const Text('Guardar'),
             ),
+
           ],
         );
       },

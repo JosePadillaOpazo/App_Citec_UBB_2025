@@ -163,28 +163,28 @@ class _InformacionGeneralState extends State<InformacionGeneral> {
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: DropdownButtonFormField<int>(
-              value: appState.proyectoSeleccionadoId,
+            child: DropdownButtonFormField<String>(
+              value: appState.proyectoSeleccionadoUuid,
               decoration: const InputDecoration(
                 labelText: "Proyecto",
                 border: OutlineInputBorder(),
               ),
               items: appState.proyectos.map((proyecto) {
-                return DropdownMenuItem<int>(
-                  value: proyecto['id'],
+                return DropdownMenuItem<String>(
+                  value: proyecto['proyecto_uuid'],
                   child: Text(proyecto['nombre_proyecto']),
                 );
               }).toList(),
               onChanged: appState.proyectos.isEmpty
-                  ? null
-                  : (value) {
+                ? null
+                : (value) {
                 appState.seleccionarProyecto(value);
               },
-
             ),
           ),
 
-          const SizedBox(height: 20),
+
+        const SizedBox(height: 20),
 
           Text(
             "Tipología de Vivienda:" ,

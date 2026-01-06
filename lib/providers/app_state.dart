@@ -60,12 +60,12 @@ class AppState extends ChangeNotifier {
   int cantFotos = 0;
   String? rutaGuardada;
   bool guardando = false;
-  String? inspeccionUuid;
 
   //--> Uso con DB
-  int? proyectoSeleccionadoId;
+  String? proyectoSeleccionadoUuid;
   List<Map<String, dynamic>> proyectos = [];
   Map<String, dynamic>? proyectoSeleccionado;
+
 
 
 
@@ -268,14 +268,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void seleccionarProyecto(int? id) {
-    proyectoSeleccionadoId = id;
+  void seleccionarProyecto(String? uuid) {
+    proyectoSeleccionadoUuid = uuid;
 
-    if (id == null) {
+    if (uuid == null) {
       proyectoSeleccionado = null;
     } else {
       proyectoSeleccionado = proyectos.firstWhere(
-            (p) => p['id'] == id,
+            (p) => p['proyecto_uuid'] == uuid,
       );
     }
 
@@ -283,40 +283,28 @@ class AppState extends ChangeNotifier {
   }
 
 
-  void iniciarNuevaInspeccion() {
-    inspeccionUuid = const Uuid().v4();
-  }
-
   Future<void> guardar(context) async {
     await guardarInspeccion();
     await guardarExcel(context);
   }
 
   Future<void> guardarInspeccion() async {
-    if (inspeccionUuid == null) {
-      debugPrint('❌ No hay inspección activa');
-      return;
-    }
 
     //-------------------------------INSPECCIONES-------------------------------
-    final inspeccionData = {
-      'proyecto_id': proyectoSeleccionadoId,
-      'inspeccion_uuid': inspeccionUuid,
-      'n_ficha': nFichaController.text,
-      'fecha': fechaFormateada,
-      'hora_ingreso': horaInicio,
-      'hora_salida': horaFin,
-      'recibido_por': reciPorController.text,
-      'nombre_receptor': nombreReciController.text,
-      'nombre_inspector': nombreInspectorController.text,
-      'rut_inspector': rutInspectorController.text + "-" + digVerifController.text,
-      'clima': climaController.text,
-      'estado': 'en_progreso',
-      'sync_status': 0,
-      'updated_at': DateTime.now().toIso8601String(),
-    };
+    final inspeccionUuid = await LocalDatabase.insertarInspeccion(
+      proyectoUuid: proyectoSeleccionadoUuid!, // ESTE YA DEBE EXISTIR
+      nFicha: nFichaController.text,
+      fecha: fechaFormateada,
+      horaIngreso: horaInicio,
+      horaSalida: horaFin,
+      recibidoPor: reciPorController.text,
+      nombreReceptor: nombreReciController.text,
+      nombreInspector: nombreInspectorController.text,
+      rutInspector:
+      '${rutInspectorController.text}-${digVerifController.text}',
+      clima: climaController.text.isEmpty ? null : climaController.text,
+    );
 
-    final inspeccion_id = await LocalDatabase.insertarInspeccion(inspeccionData);
 
     //-------------------------------VIVIENDAS-------------------------------
 
@@ -332,215 +320,196 @@ class AppState extends ChangeNotifier {
       ampliaciones_VF = 1;
     }
 
-    final viviendaData = {
-      // 🔗 Relación
-      'proyecto_id': proyectoSeleccionadoId,
-      'inspeccion_id': inspeccion_id,
+    final viviendaUuid = await LocalDatabase.insertarVivienda(
+      inspeccionUuid: inspeccionUuid,
+
+      tipologiaVivienda: tipologiaViviendaController.text,
+      direccion: direccionController.text,
+      superficie: double.tryParse(supViviendaController.text),
+      nPisos: int.tryParse(nPisosController.text),
+
+      orientacionFachada:
+      '${oriFachadaController.text}, ${oriFachadainfoController.text}',
+      orientacionAcceso:
+      '${oriAccesoController.text}, ${oriAccesoinfoController.text}',
+
+      tempExterior: int.tryParse(tempExteriorController.text),
+      humExterior: int.tryParse(humExteriorController.text),
+      tempInterior: int.tryParse(tempInteriorController.text),
+      humInterior: int.tryParse(humInteriorController.text),
+
+      aniosUso: int.tryParse(usoViviendaController.text),
+
+      reparaciones: reparacionesController.text == 'Si' ? 1 : 0,
+      detalleReparaciones: detalleReparacionesController.text,
+
+      ampliaciones: ampliacionesController.text == 'Si' ? 1 : 0,
+      detalleAmpliaciones: detalleAmpliacionesController.text,
+
+      observaciones: obsInfoGeneralController.text,
+
+      nRecintos: int.tryParse(numRecintosController.text),
+      totalHabitantes: int.tryParse(totalHabitantesController.text),
+      numAdultos: int.tryParse(numAdultosController.text),
+      numMenores: int.tryParse(numMenoresController.text),
+      numAdultosMayores: int.tryParse(numAdulMayoresController.text),
+      ocupDiaComp: int.tryParse(ocupDiaCompController.text),
+      ocupIntermitente: int.tryParse(ocupIntermitenteController.text),
+
+      densOcupPrev: int.tryParse(densOcupPrevController.text),
+      densOcupReal: int.tryParse(densOcupRealController.text),
+      observacionesOcupacion: obsOcupVivController.text,
+    );
+
+    debugPrint('🏠 vivienda_uuid: $viviendaUuid');
 
 
-      // 🏠 Datos generales
-      'tipologia_vivienda': tipologiaViviendaController.text,
-      'direccion': direccionController.text,
-      'superficie': double.tryParse(supViviendaController.text),
-      'n_pisos': int.tryParse(nPisosController.text),
-      'orientacion_fachada': oriFachadaController.text + ", " + oriFachadainfoController.text,
-      'orientacion_acceso': oriAccesoController.text + ", " + oriAccesoinfoController.text,
 
-      // 🌡️ Condiciones ambientales
-      'temp_exterior': int.tryParse(tempExteriorController.text),
-      'hum_exterior': int.tryParse(humExteriorController.text),
-      'temp_interior': int.tryParse(tempInteriorController.text),
-      'hum_interior': int.tryParse(humInteriorController.text),
-
-      // ⏳ Antigüedad
-      'a_de_uso': int.tryParse(usoViviendaController.text),
-
-      // 🔧 Reparaciones
-      'reparaciones': reparaciones_VF,
-
-      'detalle_reparaciones': detalleReparacionesController.text,
-
-      // 🏗️ Ampliaciones
-      'ampliaciones': ampliaciones_VF,
-      'detalle_ampliaciones': detalleAmpliacionesController.text,
-
-      // 📝 Observaciones generales
-      'observaciones': obsInfoGeneralController.text,
-
-      // 👨‍👩‍👧‍👦 Ocupación
-      'n_recintos': int.tryParse(numRecintosController.text),
-      'total_habitantes': int.tryParse(totalHabitantesController.text),
-      'num_adultos': int.tryParse(numAdultosController.text),
-      'num_menores': int.tryParse(numMenoresController.text),
-      'num_adul_mayores': int.tryParse(numAdulMayoresController.text),
-      'ocup_dia_comp': int.tryParse(ocupDiaCompController.text),
-      'ocup_intermitente': int.tryParse(ocupIntermitenteController.text),
-
-      // 📊 Densidades (calculadas previamente)
-      'dens_ocup_prev': densOcupPrevController.text,
-      'dens_ocup_real': densOcupRealController.text,
-
-      // 📝 Observaciones de ocupación
-      'observaciones_ocupacion': obsOcupVivController.text,
-      'sync_status': 0,
-      'updated_at': DateTime.now().toIso8601String(),
-    };
-
-    final int vivienda_id = await LocalDatabase.insertarVivienda(viviendaData);
-    debugPrint('🏠 vivienda_id: $vivienda_id');
 
     //-------------------------------RECINTOS-------------------------------
     asignarNombreRecintos(recintos: recintos);
     asignarNombreMuros(muros: hojasM);
 
+      for (final recinto in recintos) {
+        final patologiasVF =
+        recinto.patvisibleController.text == 'Si' ? 1 : 0;
 
-    for (final recinto in recintos) {
+        final manifestacionesVF =
+        recinto.pinOlimpController.text == 'Si' ? 1 : 0;
 
-      int patologias_VF = 0;
+        final olorHumedadVF =
+        recinto.olorhumController.text == 'Si' ? 1 : 0;
 
-      if (recinto.patvisibleController.text == "Si"){
-        patologias_VF = 1;
-      }
+        final modificacionesVF =
+        recinto.modifController.text == 'Si' ? 1 : 0;
 
-      int manifestaciones_VF = 0;
-
-      if (recinto.pinOlimpController.text == "Si"){
-        manifestaciones_VF = 1;
-      }
-
-      int olor_humedad_VF = 0;
-
-      if (recinto.olorhumController.text == "Si"){
-        olor_humedad_VF = 1;
-      }
-      int modificaciones_VF = 0;
-
-      if (recinto.modifController.text == "Si"){
-        modificaciones_VF = 1;
-      }
-      final recinto_id = await LocalDatabase.insertarRecinto({
-        'inspeccion_id': inspeccion_id,
-        'vivienda_id': vivienda_id,
-        'nombre_recinto': recinto.nombreRecintoController.text,
-        'patologias_visibles': patologias_VF,
-        'manifestaciones_ocultas': manifestaciones_VF,
-        'detalles_manifestaciones': recinto.cualpolController.text,
-        'olor_humedad': olor_humedad_VF,
-        'modificaciones': modificaciones_VF,
-        'detalles_modificaciones': recinto.cualmodController.text,
-        'calefaccion': recinto.sistcalefController.text,
-        'tiempo_calefaccion': recinto.tiemcalefController.text,
-        'sync_status': 0,
-        'updated_at': DateTime.now().toIso8601String(),
-
-      });
-
-      debugPrint('📦 Insertando recinto: ${recinto.nombreRecintoController.text}');
-      debugPrint(
-          '${recinto.nombreRecintoController.text} '
-              'tiene ${recinto.muros.length} muros'
-      );
-
-      await LocalDatabase.asociarVentilacionARecinto(recinto_id, inspeccion_id, recinto);
+        final recintoUuid = await LocalDatabase.insertarRecinto(
+          inspeccionUuid: inspeccionUuid,
+          viviendaUuid: viviendaUuid,
+          nombreRecinto: recinto.nombreRecintoController.text,
+          patologiasVisibles: patologiasVF,
+          manifestacionesOcultas: manifestacionesVF,
+          detallesManifestaciones: recinto.cualpolController.text,
+          olorHumedad: olorHumedadVF,
+          modificaciones: modificacionesVF,
+          detallesModificaciones: recinto.cualmodController.text,
+          calefaccion: recinto.sistcalefController.text,
+          tiempoCalefaccion: recinto.tiemcalefController.text,
+        );
 
 
-      int mapNivelAfectacion(String value) {
-        switch (value) {
-          case 'Bajo':
-            return 1;
-          case 'Medio':
-            return 2;
-          case 'Alto':
-            return 3;
-          default:
-            return 0; // Nulo
-        }
-      }
+        debugPrint('📦 Insertando recinto: ${recinto.nombreRecintoController.text}');
+        debugPrint(
+            '${recinto.nombreRecintoController.text} '
+                'tiene ${recinto.muros.length} muros'
+        );
 
-      for (final muro in recinto.muros) {
+        // 👇 A PARTIR DE AHORA TODO USA UUID
+        await LocalDatabase.asociarVentilacionARecinto(
+          recintoUuid,
+          recinto,
+        );
 
-        int muro_tipo = 0;
-        if(muro.tipoMuroController.text == "Muro interior") {
-          muro_tipo = 1;
+        int mapNivelAfectacion(String value) {
+          switch (value) {
+            case 'Bajo':
+              return 1;
+            case 'Medio':
+              return 2;
+            case 'Alto':
+              return 3;
+            default:
+              return 0; // Nulo
+          }
         }
 
-        final muro_id = await LocalDatabase.insertarMuros({
-          'inspeccion_id': inspeccion_id,
-          'recinto_id': recinto_id,
-          'nombre_muro': muro.nombreMuroController.text,
-          'tipo_muro': muro_tipo,
-          'superficie': double.tryParse(muro.supmuroController.text),
-          'superficie_ventana': double.tryParse(muro.supventanaController.text),
-          'nivel_afectacion': mapNivelAfectacion(muro.nivelafecController.text),
-          'sync_status': 0,
-          'updated_at': DateTime.now().toIso8601String(),
-        });
-        
-        debugPrint(
-          '   🧱 Insertando muro: ${muro.nombreMuroController.text} '
-              '(Recinto ID: $recinto_id)',
-        );
+        for (final muro in recinto.muros) {
+          final tipoMuro =
+          muro.tipoMuroController.text == 'Muro interior' ? 1 : 0;
 
-        await LocalDatabase.insertarPatologiasMuro(muro_id, inspeccion_id, muro);
+          final muroUuid = await LocalDatabase.insertarMuro(
+            recintoUuid: recintoUuid, // ✅ ahora SÍ existe
+            nombreMuro: muro.nombreMuroController.text,
+            tipoMuro: tipoMuro,
+            superficie: double.tryParse(muro.supmuroController.text),
+            superficieVentana:
+            double.tryParse(muro.supventanaController.text),
+            nivelAfectacion:
+            mapNivelAfectacion(muro.nivelafecController.text),
+          );
+
+          await LocalDatabase.asociarPatologiasAMuro(
+            muroUuid: muroUuid,
+            muro: muro,
+          );
+        }
+
+        final pisocielo = recinto.hojaPisoCielo;
+
+
+        if (pisocielo != null) {
+
+          final pisoUuid = await LocalDatabase.insertarPisoCielo(
+            recintoUuid: recintoUuid,
+            tipo: "Piso",
+            superficie: double.tryParse(pisocielo.supPisoController.text),
+            nivelAfectacion:
+            mapNivelAfectacion(pisocielo.nivelafecPisoController.text),
+          );
+          debugPrint(
+            '   🧱 Insertando piso: ${pisocielo.nombre} '
+                '(Recinto UUID: $recintoUuid)',
+          );
+
+          await LocalDatabase.asociarPatologiasAPisoCielo(
+            pisocieloUuid: pisoUuid,
+            tipo: "Piso",
+            pisocielo: pisocielo,
+          );
+
+          final cieloUuid = await LocalDatabase.insertarPisoCielo(
+            recintoUuid: recintoUuid,
+            tipo: "Cielo",
+            superficie: double.tryParse(pisocielo.supCieloController.text),
+            nivelAfectacion:
+            mapNivelAfectacion(pisocielo.nivelafecCieloController.text),
+          );
+          debugPrint(
+            '   🧱 Insertando cielo: ${pisocielo.nombre} '
+                '(Recinto UUID: $recintoUuid)',
+          );
+
+          await LocalDatabase.asociarPatologiasAPisoCielo(
+            pisocieloUuid: cieloUuid,
+            tipo: "Cielo",
+            pisocielo: pisocielo,
+          );
+
+
+
+
+
+
+
+
+
+        }
+
+
       }
 
 
 
-      final pisocielo = recinto.hojaPisoCielo;
-
-
-      if (pisocielo != null) {
-
-        final pisocielo_id = await LocalDatabase.insertarPisoCielo({
-          'recinto_id': recinto_id,
-          'inspeccion_id': inspeccion_id,
-          'tipo': 'Piso',
-          'superficie': double.tryParse(pisocielo.supPisoController.text),
-
-          'nivel_afectacion': mapNivelAfectacion(pisocielo.nivelafecPisoController.text),
-          'sync_status': 0,
-          'updated_at': DateTime.now().toIso8601String(),
-        });
-        debugPrint(
-          '   🧱 Insertando piso: ${pisocielo.nombre} '
-              '(Recinto ID: $recinto_id)',
-        );
-
-        await LocalDatabase.insertarPatologiasPisoCielo(
-         pisocielo_id, "Piso", inspeccion_id, pisocielo);
-
-
-        await LocalDatabase.insertarPisoCielo({
-          'recinto_id': recinto_id,
-          'inspeccion_id': inspeccion_id,
-          'tipo': 'Cielo',
-          'superficie': double.tryParse(pisocielo.supCieloController.text),
-          'nivel_afectacion': mapNivelAfectacion(pisocielo.nivelafecCieloController.text),
-          'sync_status': 0,
-          'updated_at': DateTime.now().toIso8601String(),
-        });
-        debugPrint(
-          '   🧱 Insertando cielo: ${pisocielo.nombre} '
-              '(Recinto ID: $recinto_id)',
-        );
-
-        await LocalDatabase.insertarPatologiasPisoCielo(
-            pisocielo_id, "Cielo",inspeccion_id, pisocielo);
-
-
-
-
-
-      }
 
 
 
 
 
 
-    }
 
-    debugPrint('✅ Inspección guardada');
+
+
+
   }
 
 
@@ -678,7 +647,7 @@ class AppState extends ChangeNotifier {
     // LIMPIAR CONTROLADORES DE TEXTO
     // ---------------------------------------------------------------------------
     proyectoSeleccionado = null;
-    proyectoSeleccionadoId = null;
+    proyectoSeleccionadoUuid = null;
 
     List<TextEditingController> controllersClean = [
       // Formularios generales
