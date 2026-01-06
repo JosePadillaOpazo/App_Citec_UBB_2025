@@ -76,8 +76,8 @@ class LocalDatabase {
       await db.execute(_crearPatologias_PisoCielo);
       debugPrint('✅ Tabla patologias_elemento creada');
 
-      await db.execute(_crearRecinto_Ventilacion);
-      debugPrint('✅ Tabla recinto_ventilacion creada');
+      await db.execute(_crearVentilacionRecintos);
+      debugPrint('✅ Tabla ventilacion_recintos creada');
 
 
       debugPrint('🎉 TODAS LAS TABLAS CREADAS CORRECTAMENTE');
@@ -94,7 +94,9 @@ class LocalDatabase {
     nombre_proyecto TEXT,
     region TEXT,
     comuna TEXT,
-    etapa TEXT
+    etapa TEXT,
+    sync_status INTEGER DEFAULT 0,
+    updated_at TEXT
 
   );
   ''';
@@ -110,11 +112,11 @@ class LocalDatabase {
     return await db.query('proyectos', orderBy: 'nombre_proyecto ASC');
   }
 
-
   static const _crearInspecciones = '''
   CREATE TABLE inspecciones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    uuid TEXT NOT NULL,
+    proyecto_id INTEGER NOT NULL,
+    inspeccion_uuid TEXT NOT NULL,
     n_ficha TEXT,
     fecha TEXT,
     hora_ingreso TEXT,
@@ -125,7 +127,13 @@ class LocalDatabase {
     rut_inspector TEXT,
     clima TEXT,
     estado TEXT,
-    sync_status INTEGER
+    sync_status INTEGER DEFAULT 0,
+    updated_at TEXT,
+    
+    FOREIGN KEY (proyecto_id)
+      REFERENCES proyectos(id)
+      ON DELETE CASCADE
+    
   );
   ''';
 
@@ -139,10 +147,12 @@ class LocalDatabase {
   }
 
 
+
   static const _crearViviendas = '''
   CREATE TABLE viviendas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     proyecto_id INTEGER NOT NULL,
+    inspeccion_id INTEGER NOT NULL,
     tipologia_vivienda TEXT,
     direccion TEXT,
     superficie FLOAT,
@@ -169,9 +179,15 @@ class LocalDatabase {
     dens_ocup_prev INTEGER,
     dens_ocup_real INTEGER,
     observaciones_ocupacion TEXT,
+    sync_status INTEGER DEFAULT 0,
+    updated_at TEXT,
   
     FOREIGN KEY (proyecto_id)
       REFERENCES proyectos(id)
+      ON DELETE CASCADE,
+      
+    FOREIGN KEY (inspeccion_id)
+      REFERENCES inspecciones(id)
       ON DELETE CASCADE
   );
   ''';
@@ -190,6 +206,7 @@ class LocalDatabase {
   static const _crearRecintos = '''
     CREATE TABLE recintos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      inspeccion_id INTEGER NOT NULL,
       vivienda_id INTEGER,
       nombre_recinto TEXT,
       patologias_visibles INTEGER NOT NULL CHECK (patologias_visibles IN (0,1)),
@@ -200,10 +217,17 @@ class LocalDatabase {
       detalles_modificaciones TEXT,
       calefaccion TEXT,
       tiempo_calefaccion INTEGER,
+      sync_status INTEGER DEFAULT 0,
+      updated_at TEXT,
       
+      FOREIGN KEY (inspeccion_id)
+        REFERENCES inspecciones(id)
+        ON DELETE CASCADE,
+        
       FOREIGN KEY (vivienda_id)
         REFERENCES viviendas(id)
         ON DELETE CASCADE
+        
     );
   ''';
 
@@ -218,22 +242,27 @@ class LocalDatabase {
     }
   }
 
+
   static const _crearMuros = '''
     CREATE TABLE muros (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-    
+      inspeccion_id INTEGER NOT NULL,
       recinto_id INTEGER,
       nombre_muro TEXT,
-
       tipo_muro INTEGER NOT NULL CHECK (tipo_muro IN (0,1)),
       superficie REAL,
       superficie_ventana REAL,
-    
       nivel_afectacion INTEGER NOT NULL CHECK (nivel_afectacion IN (0,1,2,3)),
+      sync_status INTEGER DEFAULT 0,
+      updated_at TEXT,
     
+      FOREIGN KEY (inspeccion_id)
+        REFERENCES inspecciones(id)
+        ON DELETE CASCADE,
       FOREIGN KEY (recinto_id)
         REFERENCES recintos(id)
         ON DELETE CASCADE
+        
     );
   ''';
 
@@ -248,18 +277,27 @@ class LocalDatabase {
     }
   }
 
+
   static const _crearPisoCielo  = '''
     CREATE TABLE pisocielo (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-    
+      inspeccion_id INTEGER NOT NULL,
       recinto_id INTEGER,
       tipo TEXT,              
       superficie REAL,
       nivel_afectacion INTEGER NOT NULL CHECK (nivel_afectacion IN (0,1,2,3)),
+      sync_status INTEGER DEFAULT 0,
+      updated_at TEXT,
     
+      FOREIGN KEY (inspeccion_id)
+        REFERENCES inspecciones(id)
+        ON DELETE CASCADE,
+        
       FOREIGN KEY (recinto_id)
         REFERENCES recintos(id)
         ON DELETE CASCADE
+        
+    
     );
   ''';
 
@@ -275,21 +313,25 @@ class LocalDatabase {
   }
 
 
+
   static const _crearPatologias = '''
     CREATE TABLE patologias (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tipo TEXT NOT NULL,           
-    ubicacion TEXT NOT NULL    
+    ubicacion TEXT NOT NULL,
+    sync_status INTEGER DEFAULT 0,
+    updated_at TEXT
   );
   ''';
 
   static Future<void> insertarListadoPatologias(Database db) async {
+    final now = DateTime.now().toIso8601String();
+
     final patologias = [
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Encuentro esquina muro'},
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Encuentro cielo muro'},
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Encuentro piso muro'},
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Rasgo de ventana'},
-      {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Puntual'},
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Bajo ventana (antepecho)'},
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Área central'},
       {'tipo': 'Manchas de humedad / moho', 'ubicacion': 'Puntual localizada y/o extendida'},
@@ -298,7 +340,6 @@ class LocalDatabase {
       {'tipo': 'Daño físico mecánico', 'ubicacion': 'Encuentro cielo muro'},
       {'tipo': 'Daño físico mecánico', 'ubicacion': 'Encuentro piso muro'},
       {'tipo': 'Daño físico mecánico', 'ubicacion': 'Rasgo de ventana'},
-      {'tipo': 'Daño físico mecánico', 'ubicacion': 'Puntual'},
       {'tipo': 'Daño físico mecánico', 'ubicacion': 'Bajo ventana (antepecho)'},
       {'tipo': 'Daño físico mecánico', 'ubicacion': 'Área central'},
       {'tipo': 'Daño físico mecánico', 'ubicacion': 'Puntual localizada y/o extendida'},
@@ -308,70 +349,90 @@ class LocalDatabase {
     for (var patologia in patologias) {
       await db.insert(
         'patologias',
-        patologia,
+        {
+          ...patologia,
+          'sync_status': 1, // catálogo, no pendiente
+          'updated_at': now,
+        },
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
     }
   }
 
+
   static const _crearPatologias_Muro = '''
     CREATE TABLE patologias_muro (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      inspeccion_id INTEGER NOT NULL,
       muro_id INTEGER NOT NULL,
       patologia_id INTEGER NOT NULL,  
       estado INTEGER NOT NULL CHECK (estado IN (0,1)),
       superficie TEXT NOT NULL,     
+      sync_status INTEGER DEFAULT 0,
+      updated_at TEXT,
     
+      FOREIGN KEY (inspeccion_id)
+        REFERENCES inspecciones(id)
+        ON DELETE CASCADE,
+        
       FOREIGN KEY (muro_id)
         REFERENCES muros(id)
         ON DELETE CASCADE,
+        
       FOREIGN KEY (patologia_id)
         REFERENCES patologias(id)
         ON DELETE CASCADE
+        
+        
     );
 
   ''';
 
-  static Future<int> insertarPatologiasMuro(Map<String, dynamic> data) async {
-    final db = await database;
-    try {
-      return await db.insert('patologias_muro', data);
-    } catch (e) {
-      debugPrint('❌ Error insertando patologias_muro: $e');
-      debugPrint('📄 Data: $data');
-      rethrow;
-    }
-  }
 
 
   static const _crearPatologias_PisoCielo = '''
     CREATE TABLE patologias_pisocielo(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      inspeccion_id INTEGER NOT NULL,
       pisocielo_id INTEGER NOT NULL,
       patologia_id INTEGER NOT NULL,  
       tipo TEXT NOT NULL,
       estado INTEGER NOT NULL CHECK (estado IN (0,1)),
       superficie REAL,     
+      sync_status INTEGER DEFAULT 0,
+      updated_at TEXT,
     
+      FOREIGN KEY (inspeccion_id)
+        REFERENCES inspecciones(id)
+        ON DELETE CASCADE,
+        
       FOREIGN KEY (pisocielo_id)
         REFERENCES pisocielo(id)
         ON DELETE CASCADE,
+        
       FOREIGN KEY (patologia_id)
         REFERENCES patologias(id)
         ON DELETE CASCADE
+        
+
     );
   ''';
-
 
 
   static const _crearSistemas_Ventilacion = '''
     CREATE TABLE sistemas_ventilacion (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nombre_sistema TEXT NOT NULL
+      nombre_sistema TEXT NOT NULL,
+      sync_status INTEGER DEFAULT 1,
+      updated_at TEXT
     );
-  ''';
+''';
+
+
 
   static Future<void> insertarListadoSistemas(Database db) async {
+    final now = DateTime.now().toIso8601String();
+
     final sistemas = [
       {'nombre_sistema': 'Aireador'},
       {'nombre_sistema': 'Extractor'},
@@ -384,28 +445,48 @@ class LocalDatabase {
     for (var sistema in sistemas) {
       await db.insert(
         'sistemas_ventilacion',
-        sistema,
-        conflictAlgorithm: ConflictAlgorithm.ignore, // evita duplicados
+        {
+          ...sistema,
+          'sync_status': 1, // catálogo
+          'updated_at': now,
+        },
+        conflictAlgorithm: ConflictAlgorithm.ignore,
       );
     }
   }
 
-  static const _crearRecinto_Ventilacion = '''
-    CREATE TABLE recintos_ventilacion (
+
+  static const _crearVentilacionRecintos = '''
+    CREATE TABLE ventilacion_recintos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      inspeccion_id INTEGER NOT NULL,
       recinto_id INTEGER NOT NULL,
       sistema_ventilacion_id INTEGER NOT NULL,
       estado TEXT,
-      FOREIGN KEY (recinto_id) REFERENCES recintos(id) ON DELETE CASCADE,
-      FOREIGN KEY (sistema_ventilacion_id) REFERENCES sistemas_ventilacion(id) ON DELETE CASCADE
+      sync_status INTEGER DEFAULT 0,
+      updated_at TEXT,
+    
+      FOREIGN KEY (inspeccion_id) 
+        REFERENCES inspecciones(id) 
+        ON DELETE CASCADE,
+        
+      FOREIGN KEY (recinto_id) 
+        REFERENCES recintos(id) 
+        ON DELETE CASCADE,
+        
+      FOREIGN KEY (sistema_ventilacion_id) 
+        REFERENCES sistemas_ventilacion(id) 
+        ON DELETE CASCADE
+        
     );
     ''';
+
   // ---------------------------------------------------------------------------
   // FUNCIONES DE RELACIONES
   // ---------------------------------------------------------------------------
 
   static Future<void> insertarPatologiasPisoCielo(
-      int pisocielo_id, String tipo, HojaPisoCielo pisocielo) async {
+      int pisocielo_id, tipo, inspeccion_id, HojaPisoCielo pisocielo) async {
 
     final db = await database;
 
@@ -413,27 +494,27 @@ class LocalDatabase {
       case 'Piso':
         // Mapa de patologia_id a sus controllers de estado y superficie
         final Map<int, Map<String, TextEditingController>> patologias = {
-          7: {
+          6: {
             'estado': pisocielo.mh_aCentralPisoController,
             'superficie': pisocielo.mh_supaCentralPisoController,
           },
-          8: {
+          7: {
             'estado': pisocielo.mh_punlocPisoController,
             'superficie': pisocielo.mh_supPunlocPisoController,
           },
-          9: {
+          8: {
             'estado': pisocielo.mh_perimetroPisoController,
             'superficie': pisocielo.mh_supperimetroPisoController,
           },
-          16: {
+          14: {
             'estado': pisocielo.df_aCentralPisoController,
             'superficie': pisocielo.df_supaCentralPisoController,
           },
-          17: {
+          15: {
             'estado': pisocielo.df_punlocPisoController,
             'superficie': pisocielo.df_supPunlocPisoController,
           },
-          18: {
+          16: {
             'estado': pisocielo.df_perimetroPisoController,
             'superficie': pisocielo.df_supperimetroPisoController,
           },
@@ -456,6 +537,7 @@ class LocalDatabase {
             await db.insert(
               'patologias_pisocielo',
               {
+                'inspeccion_id': inspeccion_id,
                 'pisocielo_id': pisocielo_id,
                 'patologia_id': patologiaId,
                 'tipo': tipo,
@@ -474,27 +556,27 @@ class LocalDatabase {
         case 'Cielo':
         // Mapa de patologia_id a sus controllers de estado y superficie
           final Map<int, Map<String, TextEditingController>> patologias = {
-            7: {
+            6: {
               'estado': pisocielo.mh_aCentralCieloController,
               'superficie': pisocielo.mh_supaCentralCieloController,
             },
-            8: {
+            7: {
               'estado': pisocielo.mh_punlocCieloController,
               'superficie': pisocielo.mh_supPunlocCieloController,
             },
-            9: {
+            8: {
               'estado': pisocielo.mh_perimetroCieloController,
               'superficie': pisocielo.mh_supperimetroCieloController,
             },
-            16: {
+            14: {
               'estado': pisocielo.df_aCentralCieloController,
               'superficie': pisocielo.df_supaCentralCieloController,
             },
-            17: {
+            15: {
               'estado': pisocielo.df_punlocCieloController,
               'superficie': pisocielo.df_supPunlocCieloController,
             },
-            18: {
+            16: {
               'estado': pisocielo.df_perimetroCieloController,
               'superficie': pisocielo.df_supperimetroCieloController,
             },
@@ -512,6 +594,7 @@ class LocalDatabase {
               await db.insert(
                 'patologias_pisocielo',
                 {
+                  'inspeccion_id': inspeccion_id,
                   'pisocielo_id': pisocielo_id,
                   'patologia_id': patologiaId,
                   'tipo': tipo,
@@ -535,8 +618,8 @@ class LocalDatabase {
 
 
 
-  static Future<void> asociarSistemasARecinto(
-      int recinto_id, Recinto recinto) async {
+  static Future<void> asociarVentilacionARecinto(
+      int recinto_id, inspeccion_id, Recinto recinto) async {
 
     final db = await database;
 
@@ -552,13 +635,15 @@ class LocalDatabase {
 
     for (var entry in sistemas.entries) {
       final sistema_id = entry.key;
+
       final estado = entry.value.text.trim();
 
       // Solo insertar si hay un estado definido
       if (estado.isNotEmpty) {
         await db.insert(
-          'recintos_ventilacion',
+          'ventilacion_recintos',
           {
+            'inspeccion_id': inspeccion_id,
             'recinto_id': recinto_id,
             'sistema_ventilacion_id': sistema_id,
             'estado': estado,
@@ -571,9 +656,122 @@ class LocalDatabase {
   }
 
 
+
+
+  static Future<void> insertarPatologiasMuro(int muro_id, inspeccion_id, HojaMuro muro) async {
+
+    final db = await database;
+
+    // Mapa de patologia_id a sus controllers de estado y superficie
+    final Map<int, Map<String, TextEditingController>> patologias = {
+      1: {
+        'estado': muro.mh_encEsqMurController,
+        'superficie': muro.mh_supencEsqMurController,
+      },
+      2: {
+        'estado': muro.mh_encCieMurController,
+        'superficie': muro.mh_supencCieMurController,
+      },
+      3: {
+        'estado': muro.mh_encPisMurController,
+        'superficie': muro.mh_supencPisMurController,
+      },
+      4: {
+        'estado': muro.mh_rasgventController,
+        'superficie': muro.mh_suprasgventController,
+      },
+      5: {
+        'estado': muro.mh_bajovenController,
+        'superficie': muro.mh_supbajovenController,
+      },
+      6: {
+        'estado': muro.mh_aCentralController,
+        'superficie': muro.mh_supaCentralController,
+      },
+      7: {
+        'estado': muro.mh_punLocController,
+        'superficie': muro.mh_suppunLocController,
+      },
+      9: {
+        'estado': muro.df_encEsqMurController,
+        'superficie': muro.df_supencEsqMurController,
+      },
+      10: {
+        'estado': muro.df_encCieMurController,
+        'superficie': muro.df_supencCieMurController,
+      },
+      11: {
+        'estado': muro.df_encPisMurController,
+        'superficie': muro.df_supencPisMurController,
+      },
+      12: {
+        'estado': muro.df_rasgventController,
+        'superficie': muro.df_suprasgventController,
+      },
+      13: {
+        'estado': muro.df_bajovenController,
+        'superficie': muro.df_supbajovenController,
+      },
+      14: {
+        'estado': muro.df_aCentralController,
+        'superficie': muro.df_supaCentralController,
+      },
+      15: {
+        'estado': muro.df_punLocController,
+        'superficie': muro.df_suppunLocController,
+      },
+
+
+
+    };
+
+    for (var entry in patologias.entries) {
+      final patologiaId = entry.key;
+      final estadoText = entry.value['estado']!.text.trim();
+      final superficieText = entry.value['superficie']!.text.trim();
+
+      if (estadoText.isNotEmpty) {
+        final estado = (estadoText.toLowerCase() == 'si' || estadoText == '1') ? 1 : 0;
+        final superficie = double.tryParse(superficieText) ?? 0;
+        await db.insert(
+          'patologias_muro',
+          {
+            'inspeccion_id': inspeccion_id,
+            'muro_id': muro_id,
+            'patologia_id': patologiaId,
+            'estado': estado,
+            'superficie': superficie,
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        debugPrint('✅ Patología insertada: $patologiaId, estado: $estado, superficie: $superficie, muro ID: $muro_id');
+      }
+    }
+
+  }
+
+
+
   // ---------------------------------------------------------------------------
   // BORRAR BASE DE DATOS (solo para desarrollo)
   // ---------------------------------------------------------------------------
+
+
+  static Future<int> borrarDato({
+    required String tabla,
+    required String idColumn,
+    required int? id,
+  }) async {
+    final db = await database;
+
+    return await db.delete(
+      tabla,
+      where: '$idColumn = ?',
+      whereArgs: [id],
+    );
+  }
+
 
   static Future<void> borrarBaseDeDatos() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
@@ -587,6 +785,9 @@ class LocalDatabase {
       debugPrint('ℹ️ No existe la base de datos');
     }
   }
+
+
+
 
 
 }

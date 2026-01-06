@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
@@ -14,6 +14,8 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 import 'package:file_picker/file_picker.dart';
 import '../screens/inicio.dart';
 import '../db_local/db_local.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/sync_service.dart';
 
 
 class AppState extends ChangeNotifier {
@@ -21,6 +23,34 @@ class AppState extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Asignacion de variables y etiquetas para usar en el app
   // ---------------------------------------------------------------------------
+  late final StreamSubscription _connectivitySub;
+  //final SyncService _syncService = SyncService();
+
+  Future<void> initApp() async {
+    // 1️⃣ Debug / verificación de BD (opcional)
+    final db = await LocalDatabase.database;
+    final tables = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+    );
+    debugPrint('📋 TABLAS EN BD: $tables');
+
+    // 2️⃣ Escuchar conectividad y sincronizar
+    _connectivitySub = Connectivity()
+        .onConnectivityChanged
+        .listen((result) async {
+      if (result != ConnectivityResult.none) {
+        //await _syncService.syncAll();
+      }
+    });
+  }
+
+
+  @override
+  void dispose() {
+    _disposeControllers();
+    _connectivitySub.cancel();
+    super.dispose();
+  }
 
   final picker = ImagePicker();
   final List<Recinto> recintos = [];
@@ -253,20 +283,9 @@ class AppState extends ChangeNotifier {
   }
 
 
-
-  Future<void> initApp() async {
-    final db = await LocalDatabase.database;
-    final tables = await db.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table'"
-    );
-
-    debugPrint('📋 TABLAS EN BD: $tables');
-  }
-
   void iniciarNuevaInspeccion() {
     inspeccionUuid = const Uuid().v4();
   }
-
 
   Future<void> guardar(context) async {
     await guardarInspeccion();
@@ -281,7 +300,8 @@ class AppState extends ChangeNotifier {
 
     //-------------------------------INSPECCIONES-------------------------------
     final inspeccionData = {
-      'uuid': inspeccionUuid,
+      'proyecto_id': proyectoSeleccionadoId,
+      'inspeccion_uuid': inspeccionUuid,
       'n_ficha': nFichaController.text,
       'fecha': fechaFormateada,
       'hora_ingreso': horaInicio,
@@ -293,9 +313,10 @@ class AppState extends ChangeNotifier {
       'clima': climaController.text,
       'estado': 'en_progreso',
       'sync_status': 0,
+      'updated_at': DateTime.now().toIso8601String(),
     };
 
-    await LocalDatabase.insertarInspeccion(inspeccionData);
+    final inspeccion_id = await LocalDatabase.insertarInspeccion(inspeccionData);
 
     //-------------------------------VIVIENDAS-------------------------------
 
@@ -314,6 +335,8 @@ class AppState extends ChangeNotifier {
     final viviendaData = {
       // 🔗 Relación
       'proyecto_id': proyectoSeleccionadoId,
+      'inspeccion_id': inspeccion_id,
+
 
       // 🏠 Datos generales
       'tipologia_vivienda': tipologiaViviendaController.text,
@@ -359,6 +382,8 @@ class AppState extends ChangeNotifier {
 
       // 📝 Observaciones de ocupación
       'observaciones_ocupacion': obsOcupVivController.text,
+      'sync_status': 0,
+      'updated_at': DateTime.now().toIso8601String(),
     };
 
     final int vivienda_id = await LocalDatabase.insertarVivienda(viviendaData);
@@ -394,6 +419,7 @@ class AppState extends ChangeNotifier {
         modificaciones_VF = 1;
       }
       final recinto_id = await LocalDatabase.insertarRecinto({
+        'inspeccion_id': inspeccion_id,
         'vivienda_id': vivienda_id,
         'nombre_recinto': recinto.nombreRecintoController.text,
         'patologias_visibles': patologias_VF,
@@ -404,6 +430,8 @@ class AppState extends ChangeNotifier {
         'detalles_modificaciones': recinto.cualmodController.text,
         'calefaccion': recinto.sistcalefController.text,
         'tiempo_calefaccion': recinto.tiemcalefController.text,
+        'sync_status': 0,
+        'updated_at': DateTime.now().toIso8601String(),
 
       });
 
@@ -413,7 +441,7 @@ class AppState extends ChangeNotifier {
               'tiene ${recinto.muros.length} muros'
       );
 
-      await LocalDatabase.asociarSistemasARecinto(recinto_id, recinto);
+      await LocalDatabase.asociarVentilacionARecinto(recinto_id, inspeccion_id, recinto);
 
 
       int mapNivelAfectacion(String value) {
@@ -436,19 +464,24 @@ class AppState extends ChangeNotifier {
           muro_tipo = 1;
         }
 
-        await LocalDatabase.insertarMuros({
+        final muro_id = await LocalDatabase.insertarMuros({
+          'inspeccion_id': inspeccion_id,
           'recinto_id': recinto_id,
           'nombre_muro': muro.nombreMuroController.text,
           'tipo_muro': muro_tipo,
           'superficie': double.tryParse(muro.supmuroController.text),
           'superficie_ventana': double.tryParse(muro.supventanaController.text),
           'nivel_afectacion': mapNivelAfectacion(muro.nivelafecController.text),
+          'sync_status': 0,
+          'updated_at': DateTime.now().toIso8601String(),
         });
         
         debugPrint(
           '   🧱 Insertando muro: ${muro.nombreMuroController.text} '
               '(Recinto ID: $recinto_id)',
         );
+
+        await LocalDatabase.insertarPatologiasMuro(muro_id, inspeccion_id, muro);
       }
 
 
@@ -460,10 +493,13 @@ class AppState extends ChangeNotifier {
 
         final pisocielo_id = await LocalDatabase.insertarPisoCielo({
           'recinto_id': recinto_id,
+          'inspeccion_id': inspeccion_id,
           'tipo': 'Piso',
           'superficie': double.tryParse(pisocielo.supPisoController.text),
 
           'nivel_afectacion': mapNivelAfectacion(pisocielo.nivelafecPisoController.text),
+          'sync_status': 0,
+          'updated_at': DateTime.now().toIso8601String(),
         });
         debugPrint(
           '   🧱 Insertando piso: ${pisocielo.nombre} '
@@ -471,14 +507,17 @@ class AppState extends ChangeNotifier {
         );
 
         await LocalDatabase.insertarPatologiasPisoCielo(
-         pisocielo_id, "Piso", pisocielo);
+         pisocielo_id, "Piso", inspeccion_id, pisocielo);
 
 
         await LocalDatabase.insertarPisoCielo({
           'recinto_id': recinto_id,
+          'inspeccion_id': inspeccion_id,
           'tipo': 'Cielo',
           'superficie': double.tryParse(pisocielo.supCieloController.text),
           'nivel_afectacion': mapNivelAfectacion(pisocielo.nivelafecCieloController.text),
+          'sync_status': 0,
+          'updated_at': DateTime.now().toIso8601String(),
         });
         debugPrint(
           '   🧱 Insertando cielo: ${pisocielo.nombre} '
@@ -486,7 +525,7 @@ class AppState extends ChangeNotifier {
         );
 
         await LocalDatabase.insertarPatologiasPisoCielo(
-            pisocielo_id, "Cielo", pisocielo);
+            pisocielo_id, "Cielo",inspeccion_id, pisocielo);
 
 
 
@@ -634,12 +673,6 @@ class AppState extends ChangeNotifier {
     }
   }
 
-
-
-
-
-
-
   void resetApp(BuildContext context) {
     // ---------------------------------------------------------------------------
     // LIMPIAR CONTROLADORES DE TEXTO
@@ -660,7 +693,9 @@ class AppState extends ChangeNotifier {
       supViviendaController,
       nPisosController,
       oriFachadaController,
+      oriFachadainfoController,
       oriAccesoController,
+      oriAccesoinfoController,
       climaController,
       tempExteriorController,
       humExteriorController,
@@ -989,19 +1024,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ---------------------------------------------------------------------------
-  // Funciones usadas para el guardado de excel
-  // ---------------------------------------------------------------------------
-
-  void rutaGuardarExcel(String? ruta) {
-    rutaGuardada = ruta;
-    notifyListeners();
-  }
-
-  void guardandoExcel(bool value) {
-    guardando = value;
-    notifyListeners();
-  }
 
   // ---------------------------------------------------------------------------
   // Funciones de manejo de imagenes de info general
@@ -1807,36 +1829,96 @@ class AppState extends ChangeNotifier {
         nombreRecintoActual = "Recinto 1";
         nombreHojaMuro = "Muro Eje A - Recinto 1";
         muro_eje_p_info_r1 = false;
-        muro_eje_p_r1 = false;
+        muro_eje_b_r1 = false;
+        muro_eje_c_r1 = false;
+        muro_eje_d_r1 = false;
+        muro_eje_e_r1 = false;
+        muro_eje_f_r1 = false;
+        muro_eje_g_r1 = false;
+        piso_cielo_r1 = false;
         r1_murop_nombreController = TextEditingController(text: "(_)");
+        r1_murob_nombreController = TextEditingController(text: "(_)");
+        r1_muroc_nombreController = TextEditingController(text: "(_)");
+        r1_murod_nombreController = TextEditingController(text: "(_)");
+        r1_muroe_nombreController = TextEditingController(text: "(_)");
+        r1_murof_nombreController = TextEditingController(text: "(_)");
+        r1_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 10:
         nombreRecintoActual = "Recinto 2";
         nombreHojaMuro = "Muro Eje A - Recinto 2";
         muro_eje_p_info_r2 = false;
         muro_eje_p_r2 = false;
+        muro_eje_c_r2 = false;
+        muro_eje_d_r2 = false;
+        muro_eje_e_r2 = false;
+        muro_eje_f_r2 = false;
+        muro_eje_g_r2 = false;
+        piso_cielo_r2 = false;
         r2_murop_nombreController = TextEditingController(text: "(_)");
+        r2_murob_nombreController = TextEditingController(text: "(_)");
+        r2_muroc_nombreController = TextEditingController(text: "(_)");
+        r2_murod_nombreController = TextEditingController(text: "(_)");
+        r2_muroe_nombreController = TextEditingController(text: "(_)");
+        r2_murof_nombreController = TextEditingController(text: "(_)");
+        r2_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 19:
         nombreRecintoActual = "Recinto 3";
         nombreHojaMuro = "Muro Eje A - Recinto 3";
         muro_eje_p_info_r3 = false;
         muro_eje_p_r3 = false;
+        muro_eje_c_r3 = false;
+        muro_eje_d_r3 = false;
+        muro_eje_e_r3 = false;
+        muro_eje_f_r3 = false;
+        muro_eje_g_r3 = false;
+        piso_cielo_r3 = false;
         r3_murop_nombreController = TextEditingController(text: "(_)");
+        r3_murob_nombreController = TextEditingController(text: "(_)");
+        r3_muroc_nombreController = TextEditingController(text: "(_)");
+        r3_murod_nombreController = TextEditingController(text: "(_)");
+        r3_muroe_nombreController = TextEditingController(text: "(_)");
+        r3_murof_nombreController = TextEditingController(text: "(_)");
+        r3_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 28:
         nombreRecintoActual = "Recinto 4";
         nombreHojaMuro = "Muro Eje A - Recinto 4";
         muro_eje_p_info_r4 = false;
         muro_eje_p_r4 = false;
+        muro_eje_c_r4 = false;
+        muro_eje_d_r4 = false;
+        muro_eje_e_r4 = false;
+        muro_eje_f_r4 = false;
+        muro_eje_g_r4 = false;
+        piso_cielo_r4 = false;
         r4_murop_nombreController = TextEditingController(text: "(_)");
+        r4_murob_nombreController = TextEditingController(text: "(_)");
+        r4_muroc_nombreController = TextEditingController(text: "(_)");
+        r4_murod_nombreController = TextEditingController(text: "(_)");
+        r4_muroe_nombreController = TextEditingController(text: "(_)");
+        r4_murof_nombreController = TextEditingController(text: "(_)");
+        r4_murog_nombreController = TextEditingController(text: "(_)");
         break;
       case 37:
         nombreRecintoActual = "Recinto 5";
         nombreHojaMuro = "Muro Eje A - Recinto 5";
         muro_eje_p_info_r5 = false;
         muro_eje_p_r5 = false;
+        muro_eje_c_r5 = false;
+        muro_eje_d_r5 = false;
+        muro_eje_e_r5 = false;
+        muro_eje_f_r5 = false;
+        muro_eje_g_r5 = false;
+        piso_cielo_r5 = false;
         r5_murop_nombreController = TextEditingController(text: "(_)");
+        r5_murob_nombreController = TextEditingController(text: "(_)");
+        r5_muroc_nombreController = TextEditingController(text: "(_)");
+        r5_murod_nombreController = TextEditingController(text: "(_)");
+        r5_muroe_nombreController = TextEditingController(text: "(_)");
+        r5_murof_nombreController = TextEditingController(text: "(_)");
+        r5_murog_nombreController = TextEditingController(text: "(_)");
         break;
 
     //-->agregar más recintos
@@ -2276,7 +2358,7 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('C8').cellStyle.bold = true;
 
       sheet.getRangeByName('F8:R8').merge();
-      sheet.getRangeByName('F8').setText(nombreProyectoController.text);
+      sheet.getRangeByName('F8').setText(proyectoSeleccionado?['nombre_proyecto'] ?? '');
 
       sheet.getRangeByName('C9:E9').merge();
       sheet.getRangeByName('C9').setText("Tipología de Vivienda");
@@ -5184,8 +5266,8 @@ class AppState extends ChangeNotifier {
   }
 
 
-  @override
-  void dispose() {
+
+  void _disposeControllers() {
     nombreProyectoController.dispose();
     tipologiaViviendaController.dispose();
     direccionController.dispose();
@@ -5223,7 +5305,6 @@ class AppState extends ChangeNotifier {
     nFichaController.dispose();
     recinto2_nombreController.dispose();
     recinto3_nombreController.dispose();
-    super.dispose();
   }
 }
 

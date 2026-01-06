@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "836797471702",
+    "project_id": "app-citec-ubb",
+    "storage_bucket": "app-citec-ubb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836797471702:android:d5e2e430593e713822e277",
+        "android_client_info": {
+          "package_name": "com.josepadilla.app_citec_2025"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1GwgaxiV8HBQUISS1JaSJQFTAaKOd5W8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

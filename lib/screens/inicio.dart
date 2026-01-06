@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../db_local/db_local.dart';
 import 'principal.dart';
 import 'db_viwer.dart';
@@ -190,6 +191,7 @@ class Inicio extends StatelessWidget {
     final regionController = TextEditingController();
     final comunaController = TextEditingController();
     final etapaController = TextEditingController();
+
 
     await showDialog(
       context: context,
@@ -716,8 +718,9 @@ class Inicio extends StatelessWidget {
                   'region': regionController.text,
                   'comuna': comunaController.text,
                   'etapa': etapaController.text,
+                  'sync_status': 0,
+                  'updated_at': DateTime.now().toIso8601String(),
                 });
-                debugPrint('NOMBRE: ${nombreController.text}');
                 Navigator.pop(context);
               },
               child: const Text('Guardar'),
