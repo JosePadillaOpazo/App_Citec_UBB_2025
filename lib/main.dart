@@ -1,14 +1,24 @@
 import 'package:app_citec_2025/screens/inicio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 import 'providers/app_state.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+  }
+
   final appState = AppState();
   await appState.initApp();
+  //await appState.resetNumeroFicha();
 
   runApp(
     ChangeNotifierProvider.value(

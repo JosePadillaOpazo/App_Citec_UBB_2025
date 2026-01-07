@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
@@ -20,30 +21,22 @@ import '../services/sync_service.dart';
 
 class AppState extends ChangeNotifier {
 
-  // ---------------------------------------------------------------------------
-  // Asignacion de variables y etiquetas para usar en el app
-  // ---------------------------------------------------------------------------
   late final StreamSubscription _connectivitySub;
-  //final SyncService _syncService = SyncService();
 
   Future<void> initApp() async {
-    // 1️⃣ Debug / verificación de BD (opcional)
-    final db = await LocalDatabase.database;
-    final tables = await db.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table'"
-    );
-    debugPrint('📋 TABLAS EN BD: $tables');
 
-    // 2️⃣ Escuchar conectividad y sincronizar
     _connectivitySub = Connectivity()
         .onConnectivityChanged
         .listen((result) async {
       if (result != ConnectivityResult.none) {
-        //await _syncService.syncAll();
+        try {
+          await SyncService.syncAll();
+        } catch (e) {
+
+        }
       }
     });
   }
-
 
   @override
   void dispose() {
@@ -51,6 +44,10 @@ class AppState extends ChangeNotifier {
     _connectivitySub.cancel();
     super.dispose();
   }
+
+  // ---------------------------------------------------------------------------
+  // Asignacion de variables y etiquetas para usar en el app
+  // ---------------------------------------------------------------------------
 
   final picker = ImagePicker();
   final List<Recinto> recintos = [];
@@ -60,12 +57,14 @@ class AppState extends ChangeNotifier {
   int cantFotos = 0;
   String? rutaGuardada;
   bool guardando = false;
+  static const _dispositivoKey = 'dispositivo_uuid';
+  static const _contadorKey = 'ultimo_numero_ficha';
+  String? n_Ficha;
 
   //--> Uso con DB
   String? proyectoSeleccionadoUuid;
   List<Map<String, dynamic>> proyectos = [];
   Map<String, dynamic>? proyectoSeleccionado;
-
 
 
 
@@ -155,9 +154,6 @@ class AppState extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Controllers
   // ---------------------------------------------------------------------------
-
-  //-->Formularios generales
-  final TextEditingController nFichaController = TextEditingController();
 
 
   //-->Hoja Información general
@@ -263,6 +259,33 @@ class AppState extends ChangeNotifier {
   //                                                                            Funciones
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
 
+  static Future<String> generarNumeroFicha() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 1️⃣ Obtener o generar ID único del dispositivo
+    String? dispositivoId = prefs.getString(_dispositivoKey);
+    if (dispositivoId == null) {
+      dispositivoId = const Uuid().v4().substring(0, 6); // Ej: 'a1b2c3'
+      await prefs.setString(_dispositivoKey, dispositivoId);
+    }
+
+    // 2️⃣ Obtener el último número de ficha y aumentar en 1
+    int ultimoNumero = prefs.getInt(_contadorKey) ?? 0;
+    int nuevoNumero = ultimoNumero + 1;
+    await prefs.setInt(_contadorKey, nuevoNumero);
+
+    // 3️⃣ Formatear la ficha como <DISPOSITIVO>-<NUMERO_PAD>
+    String ficha = '$dispositivoId-${nuevoNumero.toString().padLeft(5, '0')}';
+    return ficha; // Ej: 'a1b2c3-00001'
+  }
+
+  Future<void> resetNumeroFicha() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('ultimo_numero_ficha', 0); // o el valor inicial que quieras
+    print('🔄 Contador de ficha reseteado');
+  }
+
+
   Future<void> cargarProyectos() async {
     proyectos = await LocalDatabase.obtenerProyectos();
     notifyListeners();
@@ -278,14 +301,145 @@ class AppState extends ChangeNotifier {
             (p) => p['proyecto_uuid'] == uuid,
       );
     }
-
     notifyListeners();
   }
 
 
   Future<void> guardar(context) async {
+    await guardarMurosEnRecintos();
+    await guardarPisoCieloEnRecintos();
     await guardarInspeccion();
     await guardarExcel(context);
+  }
+
+  Future<void> guardarMurosEnRecintos() async {
+    if(muro_eje_p_info_r1==true){
+      asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje A - Recinto 1');
+      if(muro_eje_b_r1==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje B - Recinto 1');
+      }
+      if(muro_eje_c_r1==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje C - Recinto 1');
+      }
+      if(muro_eje_d_r1==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje D - Recinto 1');
+      }
+      if(muro_eje_e_r1==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje E - Recinto 1');
+      }
+      if(muro_eje_f_r1==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje F - Recinto 1');
+      }
+      if(muro_eje_g_r1==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 1', nombreMuro: 'Muro Eje G - Recinto 1');
+      }
+    }
+
+    if(muro_eje_p_info_r2==true){
+      asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje A - Recinto 2');
+      if(muro_eje_b_r2==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje B - Recinto 2');
+      }
+      if(muro_eje_c_r2==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje C - Recinto 2');
+      }
+      if(muro_eje_d_r2==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje D - Recinto 2');
+      }
+      if(muro_eje_e_r2==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje E - Recinto 2');
+      }
+      if(muro_eje_f_r2==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje F - Recinto 2');
+      }
+      if(muro_eje_g_r2==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje G - Recinto 2');
+      }
+    }
+
+    if(muro_eje_p_info_r3==true){
+      asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje A - Recinto 3');
+      if(muro_eje_b_r3==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje B - Recinto 3');
+      }
+      if(muro_eje_c_r3==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 2', nombreMuro: 'Muro Eje C - Recinto 3');
+      }
+      if(muro_eje_d_r3==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje D - Recinto 3');
+      }
+      if(muro_eje_e_r3==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje E - Recinto 3');
+      }
+      if(muro_eje_f_r3==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje F - Recinto 3');
+      }
+      if(muro_eje_g_r3==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 3', nombreMuro: 'Muro Eje G - Recinto 3');
+      }
+    }
+
+    if(muro_eje_p_info_r4==true){
+      asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje A - Recinto 4');
+      if(muro_eje_b_r4==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje B - Recinto 4');
+      }
+      if(muro_eje_c_r4==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje C - Recinto 4');
+      }
+      if(muro_eje_d_r4==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje D - Recinto 4');
+      }
+      if(muro_eje_e_r4==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje E - Recinto 4');
+      }
+      if(muro_eje_f_r4==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje F - Recinto 4');
+      }
+      if(muro_eje_g_r4==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 4', nombreMuro: 'Muro Eje G - Recinto 4');
+      }
+    }
+
+    if(muro_eje_p_info_r5==true){
+      asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje A - Recinto 5');
+      if(muro_eje_b_r5==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje B - Recinto 5');
+      }
+      if(muro_eje_c_r5==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje C - Recinto 5');
+      }
+      if(muro_eje_d_r5==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje D - Recinto 5');
+      }
+      if(muro_eje_e_r5==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje E - Recinto 5');
+      }
+      if(muro_eje_f_r5==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje F - Recinto 5');
+      }
+      if(muro_eje_g_r5==true){
+        asignarMuroARecinto(nombreRecinto: 'Recinto 5', nombreMuro: 'Muro Eje G - Recinto 5');
+      }
+    }
+  }
+
+  Future<void> guardarPisoCieloEnRecintos() async {
+    if(muro_eje_p_info_r1==true){
+      asignarPisoCieloARecinto(nombreRecinto: 'Recinto 1', nombrePisoCielo: 'Piso Cielo - Recinto 1');
+    }
+    if(muro_eje_p_info_r2==true){
+      asignarPisoCieloARecinto(nombreRecinto: 'Recinto 2', nombrePisoCielo: 'Piso Cielo - Recinto 2');
+    }
+    if(muro_eje_p_info_r3==true){
+      asignarPisoCieloARecinto(nombreRecinto: 'Recinto 3', nombrePisoCielo: 'Piso Cielo - Recinto 3');
+    }
+    if(muro_eje_p_info_r4==true){
+      asignarPisoCieloARecinto(nombreRecinto: 'Recinto 4', nombrePisoCielo: 'Piso Cielo - Recinto 4');
+    }
+    if(muro_eje_p_info_r5==true){
+      asignarPisoCieloARecinto(nombreRecinto: 'Recinto 5', nombrePisoCielo: 'Piso Cielo - Recinto 5');
+    }
   }
 
   Future<void> guardarInspeccion() async {
@@ -293,7 +447,7 @@ class AppState extends ChangeNotifier {
     //-------------------------------INSPECCIONES-------------------------------
     final inspeccionUuid = await LocalDatabase.insertarInspeccion(
       proyectoUuid: proyectoSeleccionadoUuid!, // ESTE YA DEBE EXISTIR
-      nFicha: nFichaController.text,
+      nFicha: await n_Ficha!,
       fecha: fechaFormateada,
       horaIngreso: horaInicio,
       horaSalida: horaFin,
@@ -486,28 +640,9 @@ class AppState extends ChangeNotifier {
           );
 
 
-
-
-
-
-
-
-
         }
 
-
       }
-
-
-
-
-
-
-
-
-
-
-
 
 
   }
@@ -527,6 +662,21 @@ class AppState extends ChangeNotifier {
       notifyListeners();
     }
 
+  }
+
+  void eliminarMuroARecinto({
+    required String nombreRecinto,
+    required String nombreMuro,
+  }) {
+    final recinto = comprobarRecinto(nombreRecinto);
+    final muro = comprobarHojaMuro(nombreMuro);
+
+    if (recinto == null || muro == null) return;
+
+    if (!recinto.muros.any((m) => m.nombre == muro.nombre)) {
+      recinto.muros.remove(muro);
+      notifyListeners();
+    }
   }
 
   void asignarPisoCieloARecinto({
@@ -650,8 +800,6 @@ class AppState extends ChangeNotifier {
     proyectoSeleccionadoUuid = null;
 
     List<TextEditingController> controllersClean = [
-      // Formularios generales
-      nFichaController,
 
       // Información general
       tipologiaViviendaController,
@@ -894,24 +1042,20 @@ class AppState extends ChangeNotifier {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Funcion de agregar una hoja recinto
-  // ---------------------------------------------------------------------------
-  void agregarRecinto({
-    required String nombre,
-  }) {
-    for (final r in recintos) {
-      if (r.nombre == nombre) return;
-    }
 
-    recintos.add(Recinto(nombre: nombre));
-    notifyListeners();
-  }
 
 
   // ---------------------------------------------------------------------------
   // Funcion de obtener una hoja recinto
   // ---------------------------------------------------------------------------
+
+  Recinto? comprobarRecinto(String nombre) {
+    try {
+      return recintos.firstWhere((h) => h.nombre == nombre);
+    } catch (_) {
+      return null;
+    }
+  }
 
   Recinto obtenerRecinto(String nombre) {
     try {
@@ -921,7 +1065,6 @@ class AppState extends ChangeNotifier {
       recintos.add(nuevaHoja);
       return nuevaHoja;
     }
-
   }
 
 
@@ -938,6 +1081,13 @@ class AppState extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Funcion de obtener una hoja muro
   // ---------------------------------------------------------------------------
+  HojaMuro? comprobarHojaMuro(String nombre) {
+    try {
+      return hojasM.firstWhere((h) => h.nombre == nombre);
+    } catch (_) {
+      return null;
+    }
+  }
 
   HojaMuro obtenerHojaMuro(String nombre) {
     try {
@@ -990,6 +1140,12 @@ class AppState extends ChangeNotifier {
 
   void HoraFin() {
     horaFin = DateFormat('HH:mm').format(DateTime.now());
+    notifyListeners();
+  }
+
+  Future<void> CrearNumeroFicha() async {
+    n_Ficha = await generarNumeroFicha();
+    debugPrint('n_Ficha: $n_Ficha');
     notifyListeners();
   }
 
@@ -1798,6 +1954,7 @@ class AppState extends ChangeNotifier {
         nombreRecintoActual = "Recinto 1";
         nombreHojaMuro = "Muro Eje A - Recinto 1";
         muro_eje_p_info_r1 = false;
+        muro_eje_p_r1 = false;
         muro_eje_b_r1 = false;
         muro_eje_c_r1 = false;
         muro_eje_d_r1 = false;
@@ -1925,6 +2082,7 @@ class AppState extends ChangeNotifier {
     );
     if (confirmar == true) {
       eliminarRecinto(indexHoja!, indexHojaMuro!);
+
 
       pantallaActual = 0;
       notifyListeners();
@@ -2126,6 +2284,7 @@ class AppState extends ChangeNotifier {
 
     if (confirmar == true) {
       eliminarHojaMuro(indexHoja!);
+
 
       pantallaActual = 0;
       notifyListeners();
@@ -2341,7 +2500,7 @@ class AppState extends ChangeNotifier {
       sheet.getRangeByName('C10').cellStyle.bold = true;
 
       sheet.getRangeByName('F10:G10').merge();
-      sheet.getRangeByName('F10').setText(nFichaController.text);
+      sheet.getRangeByName('F10').setText(await n_Ficha);
 
       sheet.getRangeByName('H10').setText("Fecha");
       sheet.getRangeByName('H10').cellStyle.bold = true;
@@ -5271,10 +5430,11 @@ class AppState extends ChangeNotifier {
     densOcupPrevController.dispose();
     densOcupRealController.dispose();
     obsOcupVivController.dispose();
-    nFichaController.dispose();
     recinto2_nombreController.dispose();
     recinto3_nombreController.dispose();
   }
+
+
 }
 
 

@@ -4,7 +4,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:io';
-
 import '../providers/app_state.dart';
 
 class LocalDatabase {
@@ -25,8 +24,6 @@ class LocalDatabase {
 
     String path = join(documentsDirectory.path, _dbName);
 
-    debugPrint('📁 DB PATH: $path');
-
     return await openDatabase(
       path,
       version: _dbVersion,
@@ -38,56 +35,39 @@ class LocalDatabase {
   }
 
   static Future<void> _onCreate(Database db, int version) async {
-    debugPrint('🟢 CREANDO BASE DE DATOS v$version');
 
     try {
       await db.execute(_crearInspecciones);
-      debugPrint('✅ Tabla inspecciones creada');
 
       await db.execute(_crearProyectos);
-      debugPrint('✅ Tabla proyectos creada');
 
       await db.execute(_crearViviendas);
-      debugPrint('✅ Tabla viviendas creada');
 
       await db.execute(_crearRecintos);
-      debugPrint('✅ Tabla recintos creada');
 
       await db.execute(_crearMuros);
-      debugPrint('✅ Tabla muros creada');
 
       await db.execute(_crearPisoCielo);
-      debugPrint('✅ Tabla pisocielo creada');
 
       await db.execute(_crearPatologias);
-      debugPrint('✅ Tabla patologias_elemento creada');
 
       await insertarListadoPatologias(db);
-      debugPrint('✅ Tabla patologias predefinidos creada');
 
       await db.execute(_crearSistemas_Ventilacion);
-      debugPrint('✅ Tabla sistemas_ventilacion creada');
 
       await insertarListadoSistemas(db);
-      debugPrint('✅ Tabla sistemas_ventilacion predefinidos creada');
 
       await db.execute(_crearPatologias_Muro);
-      debugPrint('✅ Tabla patologias_elemento creada');
 
       await db.execute(_crearPatologias_PisoCielo);
-      debugPrint('✅ Tabla patologias_elemento creada');
 
       await db.execute(_crearVentilacionRecintos);
-      debugPrint('✅ Tabla ventilacion_recintos creada');
 
 
-      debugPrint('🎉 TODAS LAS TABLAS CREADAS CORRECTAMENTE');
     } catch (e) {
-      debugPrint('❌ ERROR CREANDO LA BASE DE DATOS: $e');
       rethrow;
     }
   }
-
 
   static const _crearProyectos = '''
     CREATE TABLE proyectos (
@@ -125,7 +105,6 @@ class LocalDatabase {
 
     return proyectoUuid;
   }
-
 
   static Future<List<Map<String, dynamic>>> obtenerProyectos() async {
     final db = await database;
@@ -382,7 +361,7 @@ class LocalDatabase {
   }) async {
     final db = await database;
     final recintoUuid = const Uuid().v4();
-
+    final now = DateTime.now().millisecondsSinceEpoch;
     await db.insert('recintos', {
       'recinto_uuid': recintoUuid,
       'inspeccion_uuid': inspeccionUuid,
@@ -397,7 +376,7 @@ class LocalDatabase {
       'calefaccion': calefaccion,
       'tiempo_calefaccion': tiempoCalefaccion,
       'sync_status': 0,
-      'updated_at': DateTime.now().toIso8601String(),
+      'updated_at': now,
     });
 
     return recintoUuid;
@@ -437,7 +416,7 @@ class LocalDatabase {
   }) async {
     final db = await database;
     final muroUuid = const Uuid().v4();
-
+    final now = DateTime.now().millisecondsSinceEpoch;
     await db.insert('muros', {
       'muro_uuid': muroUuid,
       'recinto_uuid': recintoUuid,
@@ -447,7 +426,7 @@ class LocalDatabase {
       'superficie_ventana': superficieVentana,
       'nivel_afectacion': nivelAfectacion,
       'sync_status': 0,
-      'updated_at': DateTime.now().toIso8601String(),
+      'updated_at': now,
     });
 
     return muroUuid;
@@ -484,7 +463,7 @@ class LocalDatabase {
   }) async {
     final db = await database;
     final pisocieloUuid = const Uuid().v4();
-
+    final now = DateTime.now().millisecondsSinceEpoch;
     await db.insert('pisocielo', {
       'pisocielo_uuid': pisocieloUuid,
       'recinto_uuid': recintoUuid,
@@ -492,7 +471,7 @@ class LocalDatabase {
       'superficie': superficie,
       'nivel_afectacion': nivelAfectacion,
       'sync_status': 0,
-      'updated_at': DateTime.now().toIso8601String(),
+      'updated_at': now,
     });
 
     return pisocieloUuid;
@@ -505,7 +484,9 @@ class LocalDatabase {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       patologia_uuid TEXT NOT NULL UNIQUE,
       tipo TEXT NOT NULL,
-      ubicacion TEXT NOT NULL
+      ubicacion TEXT NOT NULL,
+      sync_status INTEGER DEFAULT 0,
+      updated_at INTEGER
     );
 
   ''';
@@ -567,10 +548,11 @@ class LocalDatabase {
 
   static const _crearSistemas_Ventilacion = '''
     CREATE TABLE sistemas_ventilacion (
-      sistema_ventilacion_uuid TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      sistema_ventilacion_uuid TEXT NOT NULL UNIQUE,
       nombre_sistema TEXT NOT NULL,
-      sync_status INTEGER DEFAULT 1,
-      updated_at TEXT
+      sync_status INTEGER DEFAULT 0,
+      updated_at INTEGER
     );
 
 ''';
@@ -579,14 +561,15 @@ class LocalDatabase {
 
   static const _crearVentilacionRecintos = '''
     CREATE TABLE ventilacion_recintos (
-      ventilacion_recinto_uuid TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      ventilacion_recinto_uuid TEXT NOT NULL UNIQUE,
       recinto_uuid TEXT NOT NULL,
       sistema_ventilacion_uuid TEXT NOT NULL,
     
       estado INTEGER NOT NULL CHECK (estado IN (0,1)),
     
       sync_status INTEGER DEFAULT 0,
-      updated_at TEXT,
+      updated_at INTEGER,
      
       FOREIGN KEY (recinto_uuid)
         REFERENCES recintos(recinto_uuid)
@@ -604,7 +587,7 @@ class LocalDatabase {
   // ---------------------------------------------------------------------------
 
   static Future<void> insertarListadoSistemas(Database db) async {
-    final now = DateTime.now().toIso8601String();
+    final now = DateTime.now().millisecondsSinceEpoch;
 
     final sistemas = [
       {
@@ -638,7 +621,7 @@ class LocalDatabase {
         'sistemas_ventilacion',
         {
           ...sistema,
-          'sync_status': 1,
+          'sync_status': 0,
           'updated_at': now,
         },
         conflictAlgorithm: ConflictAlgorithm.ignore,
@@ -647,6 +630,7 @@ class LocalDatabase {
   }
 
   static Future<void> insertarListadoPatologias(Database db) async {
+    final now = DateTime.now().millisecondsSinceEpoch;
     final patologias = [
       {
         'patologia_uuid': PatologiasUUID.humEsqMuro,
@@ -734,141 +718,15 @@ class LocalDatabase {
     for (final patologia in patologias) {
       await db.insert(
         'patologias',
-        patologia,
+        {
+          ...patologia,
+          'sync_status': 0,
+          'updated_at': now,
+        },
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
     }
   }
-
-  static Future<void> insertarPatologiasPisoCielo(
-      int pisocielo_id, tipo, inspeccion_id, HojaPisoCielo pisocielo) async {
-
-    final db = await database;
-
-    switch(tipo) {
-      case 'Piso':
-        // Mapa de patologia_id a sus controllers de estado y superficie
-        final Map<int, Map<String, TextEditingController>> patologias = {
-          6: {
-            'estado': pisocielo.mh_aCentralPisoController,
-            'superficie': pisocielo.mh_supaCentralPisoController,
-          },
-          7: {
-            'estado': pisocielo.mh_punlocPisoController,
-            'superficie': pisocielo.mh_supPunlocPisoController,
-          },
-          8: {
-            'estado': pisocielo.mh_perimetroPisoController,
-            'superficie': pisocielo.mh_supperimetroPisoController,
-          },
-          14: {
-            'estado': pisocielo.df_aCentralPisoController,
-            'superficie': pisocielo.df_supaCentralPisoController,
-          },
-          15: {
-            'estado': pisocielo.df_punlocPisoController,
-            'superficie': pisocielo.df_supPunlocPisoController,
-          },
-          16: {
-            'estado': pisocielo.df_perimetroPisoController,
-            'superficie': pisocielo.df_supperimetroPisoController,
-          },
-        };
-
-        for (var entry in patologias.entries) {
-          final patologiaId = entry.key;
-
-
-
-          final estadoText = entry.value['estado']!.text.trim();
-          final superficieText = entry.value['superficie']!.text.trim();
-
-
-
-          if (estadoText.isNotEmpty) {
-            final estado = (estadoText.toLowerCase() == 'si' || estadoText == '1') ? 1 : 0;
-            final superficie = double.tryParse(superficieText) ?? 0;
-
-            await db.insert(
-              'patologias_pisocielo',
-              {
-                'pisocielo_id': pisocielo_id,
-                'patologia_id': patologiaId,
-                'tipo': tipo,
-                'estado': estado,
-                'superficie': superficie,
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-
-            debugPrint('✅ Patología insertada: $patologiaId, estado: $estado, superficie: $superficie, piso/cielo ID: $pisocielo_id');
-          }
-        }
-          break;
-
-
-        case 'Cielo':
-        // Mapa de patologia_id a sus controllers de estado y superficie
-          final Map<int, Map<String, TextEditingController>> patologias = {
-            6: {
-              'estado': pisocielo.mh_aCentralCieloController,
-              'superficie': pisocielo.mh_supaCentralCieloController,
-            },
-            7: {
-              'estado': pisocielo.mh_punlocCieloController,
-              'superficie': pisocielo.mh_supPunlocCieloController,
-            },
-            8: {
-              'estado': pisocielo.mh_perimetroCieloController,
-              'superficie': pisocielo.mh_supperimetroCieloController,
-            },
-            14: {
-              'estado': pisocielo.df_aCentralCieloController,
-              'superficie': pisocielo.df_supaCentralCieloController,
-            },
-            15: {
-              'estado': pisocielo.df_punlocCieloController,
-              'superficie': pisocielo.df_supPunlocCieloController,
-            },
-            16: {
-              'estado': pisocielo.df_perimetroCieloController,
-              'superficie': pisocielo.df_supperimetroCieloController,
-            },
-          };
-          for (var entry in patologias.entries) {
-            final patologiaId = entry.key;
-            final estadoText = entry.value['estado']!.text.trim();
-            final superficieText = entry.value['superficie']!.text.trim();
-
-
-            if (estadoText.isNotEmpty) {
-              final estado = (estadoText.toLowerCase() == 'si' || estadoText == '1') ? 1 : 0;
-              final superficie = double.tryParse(superficieText) ?? 0;
-
-              await db.insert(
-                'patologias_pisocielo',
-                {
-                  'pisocielo_id': pisocielo_id,
-                  'patologia_id': patologiaId,
-                  'tipo': tipo,
-                  'estado': estado,
-                  'superficie': superficie,
-                },
-                conflictAlgorithm: ConflictAlgorithm.replace,
-              );
-
-              debugPrint('✅ Patología insertada: $patologiaId, estado: $estado, superficie: $superficie, piso/cielo ID: $pisocielo_id');
-            }
-          }
-
-          break;
-
-    };
-
-
-
-  }
-
 
 
   static Future<void> asociarVentilacionARecinto(
@@ -876,6 +734,7 @@ class LocalDatabase {
       Recinto recinto,
       ) async {
     final db = await database;
+    final now = DateTime.now().millisecondsSinceEpoch;
     const uuid = Uuid();
 
     // Mapa controller → nombre del sistema
@@ -923,7 +782,7 @@ class LocalDatabase {
           'sistema_ventilacion_uuid': sistemaUuid,
           'estado': estado,
           'sync_status': 0,
-          'updated_at': DateTime.now().toIso8601String(),
+          'updated_at': now,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -939,6 +798,7 @@ class LocalDatabase {
     required HojaMuro muro,
   }) async {
     final db = await database;
+    final now = DateTime.now().millisecondsSinceEpoch;
     const uuid = Uuid();
 
 
@@ -1084,7 +944,7 @@ class LocalDatabase {
           'estado': estado,
           'superficie': superficie,
           'sync_status': 0,
-          'updated_at': DateTime.now().toIso8601String(),
+          'updated_at': now,
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -1101,6 +961,7 @@ class LocalDatabase {
     required HojaPisoCielo pisocielo,
   }) async {
     final db = await database;
+    final now = DateTime.now().millisecondsSinceEpoch;
     const uuid = Uuid();
 
     switch(tipo) {
@@ -1192,7 +1053,7 @@ class LocalDatabase {
                 'estado': estado,
                 'superficie': superficie,
                 'sync_status': 0,
-                'updated_at': DateTime.now().toIso8601String(),
+                'updated_at': now,
               },
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
@@ -1291,7 +1152,7 @@ class LocalDatabase {
               'estado': estado,
               'superficie': superficie,
               'sync_status': 0,
-              'updated_at': DateTime.now().toIso8601String(),
+              'updated_at': now,
             },
             conflictAlgorithm: ConflictAlgorithm.replace,
           );

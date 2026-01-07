@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../db_local/db_local.dart';
+import '../services/sync_service.dart';
 import 'principal.dart';
 import 'db_viwer.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,8 @@ class Inicio extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               appState.HoraInicio();
+                              appState.CrearNumeroFicha();
+
                               Navigator.of(context).pushReplacement(
                                 PageRouteBuilder(
                                   transitionDuration: const Duration(milliseconds: 400),

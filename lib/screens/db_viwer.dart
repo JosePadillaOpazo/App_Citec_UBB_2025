@@ -423,6 +423,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('ID')),
           DataColumn(label: Text('PROYECTO UUID')),
           DataColumn(label: Text('INSPECCION UUID')),
+          DataColumn(label: Text('N Ficha')),
           DataColumn(label: Text('Fecha')),
           DataColumn(label: Text('Ingreso')),
           DataColumn(label: Text('Salida')),
@@ -448,6 +449,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text('${item['id'] ?? '-'}')),
               DataCell(Text('${item['proyecto_uuid'] ?? '-'}')),
               DataCell(Text('${item['inspeccion_uuid'] ?? '-'}')),
+              DataCell(Text('${item['n_ficha'] ?? '-'}')),
               DataCell(Text('${item['fecha'] ?? '-'}')),
               DataCell(Text('${item['hora_ingreso'] ?? '-'}')),
               DataCell(Text('${item['hora_salida'] ?? '-'}')),
@@ -461,7 +463,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
                   item['estado'] ?? '-',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: item['estado'] == 'ok'
+                    color: item['estado'] == 'sincronizado'
                         ? Colors.green
                         : Colors.red,
                   ),
@@ -498,6 +500,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('Región')),
           DataColumn(label: Text('Comuna')),
           DataColumn(label: Text('Etapa')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: proyectos.map((item) {
           return DataRow(
@@ -515,6 +518,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text('${item['region'] ?? '-'}')),
               DataCell(Text('${item['comuna'] ?? '-'}')),
               DataCell(Text('${item['etapa'] ?? '-'}')),
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -564,6 +577,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('Dens. Prev')),
           DataColumn(label: Text('Dens. Real')),
           DataColumn(label: Text('Obs. Ocupación')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: viviendas.map((item) {
           return DataRow(
@@ -609,6 +623,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text('${item['dens_ocup_prev'] ?? '-'}')),
               DataCell(Text('${item['dens_ocup_real'] ?? '-'}')),
               DataCell(Text(item['observaciones_ocupacion'] ?? '-')),
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -642,6 +666,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('Detalles Modificaciones')),
           DataColumn(label: Text('Calefacción')),
           DataColumn(label: Text('Tiempo Calefacción')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: recintos.map((item) {
           return DataRow(
@@ -674,6 +699,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text(item['detalles_modificaciones'] ?? '-')),
               DataCell(Text(item['calefaccion'] ?? '-')),
               DataCell(Text('${item['tiempo_calefaccion'] ?? '-'}')),
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -702,6 +737,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('Superficie')),
           DataColumn(label: Text('Superficie de Ventana')),
           DataColumn(label: Text('Nivel Afectación')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: muros.map((item) {
           return DataRow(
@@ -724,7 +760,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text('${item['superficie'] ?? '-'}')),
               DataCell(Text('${item['superficie_ventana'] ?? '-'}')),
               DataCell(Text(textoNivelAfectacion(item['nivel_afectacion']))),
-
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
 
             ],
           );
@@ -752,6 +797,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('Tipo')),
           DataColumn(label: Text('Superficie')),
           DataColumn(label: Text('Nivel Afectación')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: pisocielo.map((item) {
           return DataRow(
@@ -771,7 +817,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text('${item['tipo'] ?? '-'}')),
               DataCell(Text('${item['superficie'] ?? '-'}')),
               DataCell(Text(textoNivelAfectacion(item['nivel_afectacion']))),
-
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -793,12 +848,23 @@ class _DB_ViewerState extends State<DB_Viewer> {
         columns: const [
           DataColumn(label: Text('Sistema UUID')),
           DataColumn(label: Text('Nombre de Sistema')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: sistemas_ventilacion.map((item) {
           return DataRow(
             cells: [
               DataCell(Text('${item['sistema_ventilacion_uuid'] ?? '-'}')),
               DataCell(Text('${item['nombre_sistema'] ?? '-'}')),
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -822,6 +888,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('RECINTO UUID')),
           DataColumn(label: Text('SIST VENT UUID')),
           DataColumn(label: Text('Estado')),
+          DataColumn(label: Text('Sync')),
         ],
         rows: ventilacion_recintos.map((item) {
           return DataRow(
@@ -832,6 +899,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text(
                 item['estado'] == 1 ? 'Operativo' : 'No Operativo',
               )),
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -854,7 +931,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('PATOLOGIAS UUID')),
           DataColumn(label: Text('Tipo')),
           DataColumn(label: Text('Ubicación')),
-
+          DataColumn(label: Text('Sync')),
         ],
         rows: patologias.map((item) {
           return DataRow(
@@ -862,7 +939,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
               DataCell(Text('${item['patologia_uuid'] ?? '-'}')),
               DataCell(Text('${item['tipo'] ?? '-'}')),
               DataCell(Text('${item['ubicacion'] ?? '-'}')),
-
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -888,7 +974,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('PATOLOGIA UUID')),
           DataColumn(label: Text('Estado')),
           DataColumn(label: Text('Superficie')),
-
+          DataColumn(label: Text('Sync')),
         ],
         rows: patologias_muro.map((item) {
           return DataRow(
@@ -901,7 +987,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
                 item['estado'] == 1 ? 'Si' : 'No',
               )),
               DataCell(Text('${item['superficie'] ?? '-'}')),
-
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
@@ -928,7 +1023,7 @@ class _DB_ViewerState extends State<DB_Viewer> {
           DataColumn(label: Text('Tipo')),
           DataColumn(label: Text('Estado')),
           DataColumn(label: Text('Superficie')),
-
+          DataColumn(label: Text('Sync')),
         ],
         rows: patologias_pisocielo.map((item) {
           return DataRow(
@@ -942,7 +1037,16 @@ class _DB_ViewerState extends State<DB_Viewer> {
                 item['estado'] == 1 ? 'Si' : 'No',
               )),
               DataCell(Text('${item['superficie'] ?? '-'}')),
-
+              DataCell(
+                Icon(
+                  item['sync_status'] == 1
+                      ? Icons.cloud_done
+                      : Icons.cloud_off,
+                  color: item['sync_status'] == 1
+                      ? Colors.green
+                      : Colors.red,
+                ),
+              ),
             ],
           );
         }).toList(),
