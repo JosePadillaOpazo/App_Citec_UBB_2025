@@ -129,8 +129,38 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
                 return;
               }
 
-              appState.HoraFin();
-              await appState.guardar(context);
+              final bool? confirmar = await showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => AlertDialog(
+                  title: const Text('Guardar el proceso'),
+                  content: const Text(
+                    '¿Estás seguro de que deseas guardar la inspección?',
+                  ),
+                  actions: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                    ),
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Continuar inspección', style: TextStyle(color: Colors.white)),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Guardar', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              );
+
+              // 2️⃣ Evaluar respuesta
+              if (confirmar == true) {
+                appState.HoraFin();
+                await appState.guardar(context);
+              }
             },
           ),
 
