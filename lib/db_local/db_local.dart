@@ -317,7 +317,6 @@ class LocalDatabase {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
   
       recinto_uuid TEXT NOT NULL UNIQUE,
-      inspeccion_uuid TEXT NOT NULL,
       vivienda_uuid TEXT NOT NULL,
   
       nombre_recinto TEXT,
@@ -332,11 +331,6 @@ class LocalDatabase {
    
       sync_status INTEGER DEFAULT 0,
       updated_at INTEGER,
-      
-       FOREIGN KEY (inspeccion_uuid)
-        REFERENCES inspecciones(inspeccion_uuid)
-        ON DELETE CASCADE,
-      
     
       FOREIGN KEY (vivienda_uuid)
         REFERENCES viviendas(vivienda_uuid)
@@ -347,7 +341,6 @@ class LocalDatabase {
 
 
   static Future<String> insertarRecinto({
-    required String inspeccionUuid,
     required String viviendaUuid,
     required String nombreRecinto,
     required int patologiasVisibles,
@@ -364,7 +357,6 @@ class LocalDatabase {
     final now = DateTime.now().millisecondsSinceEpoch;
     await db.insert('recintos', {
       'recinto_uuid': recintoUuid,
-      'inspeccion_uuid': inspeccionUuid,
       'vivienda_uuid': viviendaUuid,
       'nombre_recinto': nombreRecinto,
       'patologias_visibles': patologiasVisibles,

@@ -538,7 +538,6 @@ class AppState extends ChangeNotifier {
         recinto.modifController.text == 'Si' ? 1 : 0;
 
         final recintoUuid = await LocalDatabase.insertarRecinto(
-          inspeccionUuid: inspeccionUuid,
           viviendaUuid: viviendaUuid,
           nombreRecinto: recinto.nombreRecintoController.text,
           patologiasVisibles: patologiasVF,

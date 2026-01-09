@@ -15,7 +15,7 @@ class Inicio extends StatelessWidget {
     final appState = context.read<AppState>();
 
     return Scaffold(
-      backgroundColor: Colors.blueAccent,
+      backgroundColor: const Color(0xFF1B2E51),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final bool isTablet = constraints.maxWidth >= 600;
@@ -49,7 +49,6 @@ class Inicio extends StatelessWidget {
 
                         SizedBox(height: isTablet ? 48 : 32),
 
-                        /// BOTÓN
                         SizedBox(
                           width: isTablet ? 320 : double.infinity,
                           child: ElevatedButton(
@@ -96,7 +95,7 @@ class Inicio extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 20),
-
+/*
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
@@ -174,7 +173,7 @@ class Inicio extends StatelessWidget {
                             }
                         ),
 
-
+*/
                       ],
                     ),
                   ),

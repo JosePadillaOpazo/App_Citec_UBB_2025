@@ -86,7 +86,10 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
           'App Citec Ubb',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.blueAccent,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        backgroundColor: const Color(0xFF014898),
         centerTitle: true,
         actions: [
           IconButton(
@@ -272,7 +275,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
         child: Column(
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blueAccent),
+              decoration: BoxDecoration(color: const Color(0xFF014898),),
               child: Row(
                 children: [
                   Icon(Icons.description, color: Colors.white, size: 40),
